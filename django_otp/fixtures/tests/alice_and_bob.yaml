@@ -1,0 +1,65 @@
+- fields:
+    date_joined: 2012-07-15 16:03:02.420965
+    email: alice@example.com
+    first_name: ''
+    groups: []
+    is_active: true
+    is_staff: false
+    is_superuser: false
+    last_login: 2012-07-17 19:00:09.753345
+    last_name: ''
+    password: sha1$76223$c4f1daa1f2f3a7a3a6737538873ba335c60b5b7d
+    user_permissions: []
+    username: alice
+  model: auth.user
+  pk: 1
+
+- fields:
+    date_joined: 2012-07-15 16:03:02.420965
+    email: bob@example.com
+    first_name: ''
+    groups: []
+    is_active: true
+    is_staff: false
+    is_superuser: false
+    last_login: 2012-07-17 19:00:09.753345
+    last_name: ''
+    password: sha1$76223$c4f1daa1f2f3a7a3a6737538873ba335c60b5b7d
+    user_permissions: []
+    username: bob
+  model: auth.user
+  pk: 2
+
+- fields: {confirmed: true, name: Emergency Tokens, user: 1}
+  model: otp_static.staticdevice
+  pk: 1
+- fields: {device: 1, token: alice1}
+  model: otp_static.statictoken
+  pk: 1
+- fields: {device: 1, token: alice1}
+  model: otp_static.statictoken
+  pk: 2
+- fields: {device: 1, token: alice2}
+  model: otp_static.statictoken
+  pk: 3
+
+- fields: {confirmed: true, name: Emergency Tokens, user: 2}
+  model: otp_static.staticdevice
+  pk: 10
+- fields: {device: 10, token: bob1}
+  model: otp_static.statictoken
+  pk: 11
+- fields: {device: 10, token: bob1}
+  model: otp_static.statictoken
+  pk: 12
+- fields: {device: 10, token: bob2}
+  model: otp_static.statictoken
+  pk: 13
+
+- fields: 
+    confirmed: true
+    key: c2153fc45ab56736a27fce502496c3ebd4ae2725
+    name: Console
+    user: 1
+  model: otp_email.emaildevice
+  pk: 1
