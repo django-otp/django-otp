@@ -1,0 +1,11 @@
+include CHANGES LICENSE README
+
+recursive-include django_otp/templates *
+recursive-include django_otp/fixtures *
+
+recursive-include django_otp/plugins/otp_email/templates *
+
+recursive-include docs *.rst *.py
+prune docs/build
+
+global-exclude *.pyc *.pyo
