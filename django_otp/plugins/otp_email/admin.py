@@ -5,7 +5,14 @@ from .models import EmailDevice
 
 
 class EmailDeviceAdmin(admin.ModelAdmin):
-    pass
+    fieldsets = [
+        ('Identity', {
+            'fields': ['user', 'name', 'confirmed'],
+        }),
+        ('Configuration', {
+            'fields': ['key'],
+        }),
+    ]
 
 
 # Somehow this is getting imported twice, triggering a useless exception.

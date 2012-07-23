@@ -8,10 +8,7 @@ authentication backend. The primary target is developers wishing to incorporate
 OTPs into their Django projects as a form of `two-factor authentication
 <http://en.wikipedia.org/wiki/Two-factor_authentication>`_.
 
-This project includes two simple OTP plugins: one that generates and stores
-fixed tokens (typically for emergency use) and another that delivers tokens by
-email. The email plugin is largely for demonstration purposes, so developers
-will typically want to install at least one other plugin, distributed
+This project includes several simple OTP plugins and more are available
 separately. This package also includes an implementation of OATH `HOTP
 <http://tools.ietf.org/html/rfc4226>`_ and `TOTP
 <http://tools.ietf.org/html/rfc6238>`_ for convenience, as these are standard
