@@ -10,6 +10,12 @@ class StaticTokenInline(admin.TabularInline):
 
 
 class StaticDeviceAdmin(admin.ModelAdmin):
+    fieldsets = [
+        ('Identity', {
+            'fields': ['user', 'name', 'confirmed'],
+        }),
+    ]
+
     inlines = [
         StaticTokenInline,
     ]

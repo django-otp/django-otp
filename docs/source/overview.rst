@@ -1,11 +1,10 @@
 Overview and Key Concepts
 =========================
 
-The django_otp package contains a framework for supporting one-time passwords,
-but it does not support any specific types of devices itself. Two starter
-plugins are included in subpackages--:mod:`django_otp.plugins.otp_static` and
-:mod:`django_otp.plugins.otp_email`--but most developers will want to install at least one
-other django-otp plugin, :ref:`distributed separately <other-plugins>`.
+The django_otp package contains a framework for processing one-time passwords as
+well as support for :ref:`several types <built-in-plugins>` of OTP devices.
+Support for additional devices is handled by plugins, :ref:`distributed
+separately <other-plugins>`.
 
 Adding two-factor authentication to your Django site involves four main tasks:
 
@@ -71,15 +70,15 @@ Plugins and Devices
 -------------------
 
 A django-otp plugin is simply a Django app that contains one or more models that
-are subclassed from :class:`django_otp.models.Device`. By convention, each
-plugin typically has one device model. Remember that when we use the term
-:term:`device` in this context, we're not necessarily referring to a physical
-device. At the code level, a device is a model object that can verify a
-particular type of OTP. For example, you might have a `YubiKey
-<http://www.yubico.com/yubikey>`_ that supports both the Yubico OTP algorithm
-and the HOTP standard: these would be represented as different devices and
-likely served by different plugins. A device that delivered HOTP values to a
-user by SMS would be a third device defined by another plugin.
+are subclassed from :class:`django_otp.models.Device`. Each model class supports
+a single type of OTP device. Remember that when we use the term :term:`device`
+in this context, we're not necessarily referring to a physical device. At the
+code level, a device is a model object that can verify a particular type of OTP.
+For example, you might have a `YubiKey <http://www.yubico.com/yubikey>`_ that
+supports both the Yubico OTP algorithm and the HOTP standard: these would be
+represented as different devices and likely served by different plugins. A
+device that delivered HOTP values to a user by SMS would be a third device
+defined by another plugin.
 
 OTP plugins are distributed as Django apps; to install a plugin, just add it to
 :setting:`INSTALLED_APPS` like any other. The order can be significant: any time
@@ -97,13 +96,42 @@ devices that deliver a token to the user through an independent channel, such as
 SMS.
 
 Internally, devices can be flagged as confirmed or unconfirmed. By default,
-devices are confirmed as soon as they are created, but a plugin that wishes to
-include a confirmation step can mark a device unconfirmed initially. Unconfirmed
-devices will be ignored by the high-level OTP APIs.
+devices are confirmed as soon as they are created, but a plugin or deployment
+that wishes to include a confirmation step can mark a device unconfirmed
+initially. Unconfirmed devices will be ignored by the high-level OTP APIs.
 
+
+.. _built-in-plugins:
 
 Built-in Plugins
 ~~~~~~~~~~~~~~~~
+
+django-otp includes support for several standard device types.
+:class:`~django_otp.plugins.otp_hotp.models.HOTPDevice` and
+:class:`~django_otp.plugins.otp_totp.models.TOTPDevice` handle standard OTP
+algorithms, which can be used with a variety of OTP generators. For example,
+it's easy to pair these devices with `Google Authenticator
+<http://code.google.com/p/google-authenticator/>`_ using the otpauth `URL scheme
+<http://code.google.com/p/google-authenticator/wiki/KeyUriFormat>`_.
+
+
+HOTP Devices
+++++++++++++
+
+.. module:: django_otp.plugins.otp_hotp
+
+.. automodule:: django_otp.plugins.otp_hotp.models
+    :members:
+
+
+TOTP Devices
+++++++++++++
+
+.. module:: django_otp.plugins.otp_totp
+
+.. automodule:: django_otp.plugins.otp_totp.models
+    :members:
+
 
 Static Devices
 ++++++++++++++
@@ -133,11 +161,9 @@ Email Devices
 Other Plugins
 ~~~~~~~~~~~~~~
 
-The framework author also maintains several plugins to go along with it.
-Third-party plugins are not listed here.
+The framework author also maintains a couple of other plugins for less common
+devices. Third-party plugins are not listed here.
 
-    - `django-otp-oath <http://pypi.python.org/pypi/django-otp-oath>`_ supports
-      HOTP and TOTP.
     - `django-otp-yubikey <http://pypi.python.org/pypi/django-otp-yubikey>`_
       supports YubiKey USB devices.
     - `django-otp-sns <http://pypi.python.org/pypi/django-otp-sns>`_ supports
@@ -149,8 +175,7 @@ Settings
 
 .. setting:: OTP_LOGIN_URL
 
-OTP_LOGIN_URL
-~~~~~~~~~~~~~
+**OTP_LOGIN_URL**
 
 Default: alias for :setting:`LOGIN_URL`
 
@@ -163,10 +188,14 @@ Glossary
 
 .. glossary::
 
-    two-factor authentication
-        An authentication policy that requires a user to present two proofs of
-        identity. The first is typically a password and the second is
-        frequently tied to some physical device in the user's possession.
+    authenticated
+        A user whose credentials have been accepted by Django's authentication
+        API is considered authenticated.
+
+    device
+        A mechanism by which a user can acquire an OTP. This might correspond to
+        a physical device dedicated to such a purpose, a virtual device such as
+        a smart phone app, or even a set of stored single-use tokens.
 
     OTP
         A one-time password. This is a generated value that a user can present
@@ -177,14 +206,10 @@ Glossary
         An encoded OTP. Some OTPs consist of structured data, in which case
         they will be encoded into a printable string for transport.
 
-    device
-        A mechanism by which a user can acquire an OTP. This might correspond to
-        a physical device dedicated to such a purpose, a virtual device such as
-        a smart phone app, or even a set of stored single-use tokens.
-
-    authenticated
-        A user whose credentials have been accepted by Django's authentication
-        API is considered authenticated.
+    two-factor authentication
+        An authentication policy that requires a user to present two proofs of
+        identity. The first is typically a password and the second is
+        frequently tied to some physical device in the user's possession.
 
     verified
         A user whose credentials have been accepted by Django's authentication

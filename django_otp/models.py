@@ -1,3 +1,4 @@
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 
 
@@ -19,7 +20,7 @@ class DeviceManager(models.Manager):
 
             device_cls = import_class(device_type)
             device = device_cls.objects.get(id=device_id)
-        except StandardError:
+        except (ObjectDoesNotExist, StandardError):
             device = None
 
         return device
@@ -70,9 +71,9 @@ class Device(models.Model):
 
         A :class:`~django_otp.models.DeviceManager`.
     """
-    user = models.ForeignKey('auth.User')
-    name = models.CharField(max_length=64)
-    confirmed = models.BooleanField(default=True)
+    user = models.ForeignKey('auth.User', help_text=u"The user that this device belongs to.")
+    name = models.CharField(max_length=64, help_text=u"The human-readable name of this device.")
+    confirmed = models.BooleanField(default=True, help_text=u"Is this device ready for use?")
 
     objects = DeviceManager()
 

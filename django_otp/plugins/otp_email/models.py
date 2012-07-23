@@ -20,13 +20,12 @@ class EmailDevice(Device):
 
     .. attribute:: key
 
-        The secret key for the TOTP algorithm. This must be encoded as 40
-        hexadecimal digits (20 bytes when decoded).
+        A hex-encoded secret key of up to 40 bytes. (Default: 20 random bytes)
     """
-    key = models.CharField(max_length=40,
-                           validators=[hex_validator(20)],
+    key = models.CharField(max_length=80,
+                           validators=[hex_validator()],
                            default=lambda: random_hex(20),
-                           help_text=u'A hex-encoded 20-byte secret key')
+                           help_text=u'A hex-encoded secret key of up to 20 bytes.')
 
     @property
     def bin_key(self):
