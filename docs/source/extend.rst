@@ -16,8 +16,7 @@ method:
     :noindex:
 
 Most devices will also need to define one or more model fields to do anything
-interesting. Here's a simple implementation of a generic TOTP device using a
-20-byte key::
+interesting. Here's a simple implementation of a generic TOTP device::
 
     from binascii import unhexlify
 
@@ -29,10 +28,10 @@ interesting. Here's a simple implementation of a generic TOTP device using a
 
 
     class TOTPDevice(Device):
-        key = models.CharField(max_length=40,
-                               validators=[hex_validator(20)],
+        key = models.CharField(max_length=80,
+                               validators=[hex_validator()],
                                default=lambda: random_hex(20),
-                               help_text=u'A hex-encoded 20-byte secret key')
+                               help_text=u'A hex-encoded secret key of up to 40 bytes.')
 
         @property
         def bin_key(self):

@@ -109,16 +109,12 @@ class Device(models.Model):
         """
         return None
 
-    def verify_token(self, token, peek=False):
+    def verify_token(self, token):
         """
-        Verifies a token.
+        Verifies a token. As a rule, the token will no longer be valid if this
+        returns ``True``.
 
         :param string token: The OTP token provided by the user.
-
-        :param bool peek: If ``True``, the token should be verified
-            non-destructively. Normally a token becomes invalid as soon as it
-            has been verified.
-
         :rtype: bool
         """
         return False

@@ -14,8 +14,7 @@ def hex_validator(length=0):
     :param int length: If greater than 0, validation will fail unless the
         decoded value is exactly this number of bytes.
 
-    :raises: :exc:`~django.core.exceptions.ValidationError` if the value is not
-        a string of hex digits or does not match the required length.
+    :rtype: function
 
     >>> hex_validator()('0123456789abcdef')
     >>> hex_validator(8)('0123456789abcdef')
