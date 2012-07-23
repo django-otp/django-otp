@@ -4,8 +4,10 @@ recursive-include django_otp/templates *
 recursive-include django_otp/fixtures *
 
 recursive-include django_otp/plugins/otp_email/templates *
+recursive-include django_otp/plugins/otp_hotp/fixtures *
+recursive-include django_otp/plugins/otp_totp/fixtures *
 
-recursive-include docs *.rst *.py
+recursive-include docs Makefile *.rst *.py
 prune docs/build
 
 global-exclude *.pyc *.pyo
