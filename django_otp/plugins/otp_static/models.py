@@ -15,11 +15,10 @@ class StaticDevice(Device):
     This model has no fields of its own, but serves as a container for
     :class:`StaticToken` objects.
     """
-    def verify_token(self, token, peek=False):
+    def verify_token(self, token):
         try:
             match = self.token_set.filter(token=token).iterator().next()
-            if not peek:
-                match.delete()
+            match.delete()
         except StopIteration:
             match = None
 
