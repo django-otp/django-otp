@@ -6,7 +6,6 @@ class DeviceManager(models.Manager):
     The :class:`~django.db.models.Manager` object installed as
     ``Device.objects``.
     """
-
     def from_persistent_id(self, path):
         """
         Loads a device form its persistent id::
@@ -100,7 +99,7 @@ class Device(models.Model):
         challenge to the databse.
 
         :returns: A message to the user. This should be a string that fits
-            comfortably in the template ``u'OTP Challenge: {0}'``. This may
+            comfortably in the template ``'OTP Challenge: {0}'``. This may
             return ``None`` if this device is not interactive.
         :rtype: string or ``None``
 
