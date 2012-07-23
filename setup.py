@@ -14,17 +14,19 @@ setup(
         'django_otp',
         'django_otp.tests',
         'django_otp.plugins.otp_email',
+        'django_otp.plugins.otp_hotp',
         'django_otp.plugins.otp_static',
         'django_otp.plugins.otp_static.management',
         'django_otp.plugins.otp_static.management.commands',
+        'django_otp.plugins.otp_totp',
     ],
     url='https://bitbucket.org/psagers/django-otp',
     license='BSD',
     install_requires=[
-        'django >= 1.3'
+        'django>=1.3'
     ],
     classifiers=[
-        "Development Status :: 1 - Planning",
+        "Development Status :: 4 - Beta",
         "Programming Language :: Python :: 2",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: BSD License",
