@@ -133,6 +133,17 @@ Email Devices
 Other Plugins
 ~~~~~~~~~~~~~~
 
+The framework author also maintains several plugins to go along with it.
+Third-party plugins are not listed here.
+
+    - `django-otp-oath <http://pypi.python.org/pypi/django-otp-oath>`_ supports
+      HOTP and TOTP.
+    - `django-otp-yubikey <http://pypi.python.org/pypi/django-otp-yubikey>`_
+      supports YubiKey USB devices.
+    - `django-otp-sns <http://pypi.python.org/pypi/django-otp-sns>`_ supports
+      delivering OTPs via Amazon's Simple Notification Service.
+
+
 Settings
 --------
 
