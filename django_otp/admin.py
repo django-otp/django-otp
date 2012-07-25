@@ -39,6 +39,11 @@ class OTPAdminSite(AdminSite):
     treated as if :attr:`~django.contrib.auth.models.User.is_staff` is
     ``False``.
     """
+    #: The default instance name of this admin site. You should instantiate
+    #: this class as ``OTPAdminSite(OTPAdminSite.name)`` to make sure the admin
+    #: templates render the correct URLs.
+    name = 'otpadmin'
+
     login_form = OTPAdminAuthenticationForm
 
     #: This is a modified Django 1.3 admin login template that includes our OTP

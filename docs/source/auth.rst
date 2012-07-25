@@ -88,7 +88,7 @@ your normal login views, django-otp includes an
 :class:`~django.contrib.admin.AdminSite` subclass for admin integration.
 
 .. autoclass:: django_otp.admin.OTPAdminSite
-    :members: login_form, login_template, has_permission
+    :members: name, login_form, login_template, has_permission
 
 .. autoclass:: django_otp.admin.OTPAdminAuthenticationForm
 
@@ -177,9 +177,6 @@ django-otp does not include any standard mechanism for managing a user's devices
 outside of the admin interface. All plugins are expected to include admin
 integration, which should be sufficient for many sites. Some sites may want to
 provide users a self-service API to manage devices, but this will be very
-site-specific. For example, one site may be catering to technical users and
-allow them control over secret keys; another might be designed for novice users
-and offer as few choices as possible.
-
-Managing a user's devices is just a matter of managing
-:class:`~django_otp.models.Device`-derived model objects. 
+site-specific. Fortunately, managing a user's devices is just a matter of
+managing :class:`~django_otp.models.Device`-derived model objects, so it will be
+easy to implement.
