@@ -33,12 +33,15 @@ class TOTPDevice(Device):
 
     .. attribute:: tolerance
 
-        The number of time steps in the past or future to allow. (Default: 1)
+        The number of time steps in the past or future to allow. For example,
+        if this is 1, we'll accept any of three tokens: the current one, the
+        previous one, and the next one. (Default: 1)
 
     .. attribute:: drift
 
         The number of time steps the prover is known to deviate from our clock.
-        (Default: 0)
+        If :setting:`OTP_TOTP_SYNC` is ``True``, we'll update this any time we
+        match a token that is not the current one. (Default: 0)
     """
     key = models.CharField(max_length=80, validators=[hex_validator()], default=lambda: random_hex(20), help_text=u"A hex-encoded secret key of up to 40 bytes.")
     step = models.PositiveSmallIntegerField(default=30, help_text=u"The time step in seconds.")
@@ -64,7 +67,7 @@ class TOTPDevice(Device):
 
             for offset in range(-self.tolerance, self.tolerance + 1):
                 if totp(key, self.step, self.t0, self.digits, self.drift + offset) == token:
-                    if (offset != 0) and settings.OTP_OATH_TOTP_SYNC:
+                    if (offset != 0) and settings.OTP_TOTP_SYNC:
                         self.drift += offset
                         self.save()
 

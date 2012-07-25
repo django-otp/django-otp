@@ -24,12 +24,41 @@ Installation
 
 Basic installation has only two steps:
 
-    #. Install :mod:`django_otp` and any plugins that you'd like to use. These
-       are simply Django apps to be installed in the usual way.
+    #. Install :mod:`django_otp` and any :ref:`plugins <built-in-plugins>` that
+       you'd like to use. These are simply Django apps to be installed in the
+       usual way.
 
     #. Add :class:`django_otp.middleware.OTPMiddleware` to
        :setting:`MIDDLEWARE_CLASSES`. It must be installed *after*
        :class:`~django.contrib.auth.middleware.AuthenticationMiddleware`.
+
+For example::
+
+    INSTALLED_APPS = [
+        'django.contrib.auth',
+        'django.contrib.contenttypes',
+        'django.contrib.sessions',
+        'django.contrib.sites',
+        'django.contrib.messages',
+        'django.contrib.staticfiles',
+        'django.contrib.admin',
+        'django.contrib.admindocs',
+
+        'django_otp',
+        'django_otp.plugins.otp_totp',
+        'django_otp.plugins.otp_hotp',
+        'django_otp.plugins.otp_static',
+    ]
+
+    MIDDLEWARE_CLASSES = [
+        'django.middleware.common.CommonMiddleware',
+        'django.contrib.sessions.middleware.SessionMiddleware',
+        'django.middleware.csrf.CsrfViewMiddleware',
+        'django.contrib.auth.middleware.AuthenticationMiddleware',
+        'django_otp.middleware.OTPMiddleware',
+        'django.contrib.messages.middleware.MessageMiddleware',
+    ]
+
 
 You'll need to sync your database to load the new OTP device models.
 
@@ -118,6 +147,12 @@ it's easy to pair these devices with `Google Authenticator
 HOTP Devices
 ++++++++++++
 
+`HOTP <http://tools.ietf.org/html/rfc4226#section-5>`_ is an algorithm that
+generates a pseudo-random sequence of codes based on an incrementing counter.
+Every time a prover generates a new code or a verifier verifies one, they
+increment their respective counters. This algorithm will fail if the prover
+generates too many codes without a successful verification.
+
 .. module:: django_otp.plugins.otp_hotp
 
 .. automodule:: django_otp.plugins.otp_hotp.models
@@ -127,10 +162,33 @@ HOTP Devices
 TOTP Devices
 ++++++++++++
 
+`TOTP <http://tools.ietf.org/html/rfc6238#section-4>`_ is an algorithm that
+generates a pseudo-random sequence of codes based on the current time. A typical
+implementation will change codes every 30 seconds, although this is
+configurable. This algorithm will fail if the prover and verifier have clocks
+that drift too far apart.
+
 .. module:: django_otp.plugins.otp_totp
 
 .. automodule:: django_otp.plugins.otp_totp.models
     :members:
+
+TOTP Settings
+'''''''''''''
+
+**OTP_TOTP_SYNC**
+
+.. setting:: OTP_TOTP_SYNC
+
+Default: ``True``
+
+If true, then TOTP devices will keep track of differences between the prover's
+clock and our own. Any time a
+:class:`~django_otp.plugins.otp_totp.models.TOTPDevice` matches a token in the
+past or future, it will update
+:attr:`~django_otp.plugins.otp_totp.models.TOTPDevice.drift` to the number of
+time steps that the two sides are out of sync. For subsequent tokens, we'll
+slide the window of acceptable tokens by this number.
 
 
 Static Devices

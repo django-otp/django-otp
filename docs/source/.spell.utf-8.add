@@ -78,3 +78,7 @@ KeyUriFormat
 wiki
 p
 otpauth
+attr
+rfc4226
+ietf
+rfc6238
