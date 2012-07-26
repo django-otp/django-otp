@@ -91,6 +91,18 @@ class Device(models.Model):
     def import_path(self):
         return '{0}.{1}'.format(self.__module__, self.__class__.__name__)
 
+    def is_interactive(self):
+        """
+        Returns ``True`` if this is an interactive device. The default
+        implementation returns ``True`` if
+        :meth:`~django_otp.models.Device.generate_challenge` has been
+        overridden, but subclasses are welcome to provide smarter
+        implementations.
+
+        :rtype: bool
+        """
+        return not hasattr(self.generate_challenge, 'stub')
+
     def generate_challenge(self):
         """
         Generates a challenge value that the user will need to produce a token.
@@ -108,6 +120,7 @@ class Device(models.Model):
             StandardError and report it to the user.
         """
         return None
+    generate_challenge.stub = True
 
     def verify_token(self, token):
         """

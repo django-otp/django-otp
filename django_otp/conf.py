@@ -1,7 +1,7 @@
 import django.conf
 
 
-class OTPSettings(object):
+class Settings(object):
     """
     This is a simple class to take the place of the global settings object. An
     instance will contain all of our settings as attributes, with default values
@@ -21,4 +21,4 @@ class OTPSettings(object):
             setattr(self, name, value)
 
 
-settings = OTPSettings()
+settings = Settings()

@@ -1,4 +1,5 @@
-from random import choice
+from base64 import b32encode
+from os import urandom
 
 from django.db import models
 
@@ -24,15 +25,6 @@ class StaticDevice(Device):
 
         return (match is not None)
 
-    @staticmethod
-    def random_token():
-        """
-        Returns a new random static token.
-
-        :rtype: str
-        """
-        return ''.join(choice('abcdefghjkmnpqrstuvwxyz') for i in xrange(16))
-
 
 class StaticToken(models.Model):
     """
@@ -48,3 +40,12 @@ class StaticToken(models.Model):
     """
     device = models.ForeignKey(StaticDevice, related_name='token_set')
     token = models.CharField(max_length=16, db_index=True)
+
+    @staticmethod
+    def random_token():
+        """
+        Returns a new random static token.
+
+        :rtype: str
+        """
+        return b32encode(urandom(10)).lower()

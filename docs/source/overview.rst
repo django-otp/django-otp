@@ -59,7 +59,6 @@ For example::
         'django.contrib.messages.middleware.MessageMiddleware',
     ]
 
-
 You'll need to sync your database to load the new OTP device models.
 
 

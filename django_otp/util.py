@@ -1,5 +1,5 @@
 from binascii import hexlify, unhexlify
-from random import randrange
+from os import urandom
 
 from django.core.exceptions import ValidationError
 
@@ -41,7 +41,8 @@ def hex_validator(length=0):
 
 def random_hex(length=20):
     """
-    Returns a string of random bytes encoded as hex. This is useful for secret
+    Returns a string of random bytes encoded as hex. This uses
+    :func:`os.urandom`, so it should be suitable for generating cryptographic
     keys.
 
     :param int length: The number of (decoded) bytes to return.
@@ -49,6 +50,4 @@ def random_hex(length=20):
     :returns: A string of hex digits.
     :rtype: str
     """
-    data = ''.join(chr(randrange(256)) for i in xrange(length))
-
-    return hexlify(data)
+    return hexlify(urandom(length))
