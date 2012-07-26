@@ -17,7 +17,7 @@ class TOTPTest(TestCase):
         Load the device and move it to the fourth time step. The current token
         is 154567.
         """
-        settings.OTP_OATH_TOTP_SYNC = False
+        settings.OTP_TOTP_SYNC = False
         self.device = TOTPDevice.objects.get()
         self.device.t0 = int(time() - (30 * 3))
 
@@ -40,7 +40,7 @@ class TOTPTest(TestCase):
         self.assertEqual(results, [False]*1 + [True]*3 + [False]*6)
 
     def test_sync_drift(self):
-        settings.OTP_OATH_TOTP_SYNC = True
+        settings.OTP_TOTP_SYNC = True
         self.device.tolerance = 2
         ok = self.device.verify_token(self.tokens[5])
 
@@ -49,9 +49,9 @@ class TOTPTest(TestCase):
 
     def test_sync_results(self):
         self.device.tolerance = 1
-        settings.OTP_OATH_TOTP_SYNC = True
+        settings.OTP_TOTP_SYNC = True
         self.device.verify_token(self.tokens[4])
-        settings.OTP_OATH_TOTP_SYNC = False
+        settings.OTP_TOTP_SYNC = False
         results = [self.device.verify_token(token) for token in self.tokens]
 
         self.assertEqual(self.device.drift, 1)
