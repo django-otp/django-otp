@@ -115,7 +115,7 @@ The Low-Level API
 .. autofunction:: django_otp.login
 
 .. autoclass:: django_otp.models.Device
-    :members: objects, generate_challenge, verify_token
+    :members: objects, is_interactive, generate_challenge, verify_token
 
 .. autoclass:: django_otp.models.DeviceManager
     :members: devices_for_user

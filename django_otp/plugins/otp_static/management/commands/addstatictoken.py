@@ -35,7 +35,7 @@ class Command(BaseCommand):
 
         token = options.get('token')
         if token is None:
-            token = StaticDevice.random_token()
+            token = StaticToken.random_token()
 
         device.token_set.add(StaticToken(token=token))
 
