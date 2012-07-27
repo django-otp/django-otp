@@ -5,6 +5,10 @@ from .models import TOTPDevice
 
 
 class TOTPDeviceAdmin(admin.ModelAdmin):
+    """
+    :class:`~django.contrib.admin.ModelAdmin` for
+    :class:`~django_otp.plugins.otp_totp.models.TOTPDevice`.
+    """
     fieldsets = [
         ('Identity', {
             'fields': ['user', 'name', 'confirmed'],

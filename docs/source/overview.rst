@@ -139,7 +139,7 @@ django-otp includes support for several standard device types.
 :class:`~django_otp.plugins.otp_totp.models.TOTPDevice` handle standard OTP
 algorithms, which can be used with a variety of OTP generators. For example,
 it's easy to pair these devices with `Google Authenticator
-<http://code.google.com/p/google-authenticator/>`_ using the otpauth `URL scheme
+<http://code.google.com/p/google-authenticator/>`_ using the `otpauth URL scheme
 <http://code.google.com/p/google-authenticator/wiki/KeyUriFormat>`_.
 
 
@@ -157,6 +157,8 @@ generates too many codes without a successful verification.
 .. automodule:: django_otp.plugins.otp_hotp.models
     :members:
 
+.. autoclass:: django_otp.plugins.otp_hotp.admin.HOTPDeviceAdmin
+
 
 TOTP Devices
 ++++++++++++
@@ -171,6 +173,8 @@ that drift too far apart.
 
 .. automodule:: django_otp.plugins.otp_totp.models
     :members:
+
+.. autoclass:: django_otp.plugins.otp_totp.admin.TOTPDeviceAdmin
 
 TOTP Settings
 '''''''''''''
@@ -198,6 +202,8 @@ Static Devices
 .. automodule:: django_otp.plugins.otp_static.models
     :members: StaticDevice, StaticToken
 
+.. autoclass:: django_otp.plugins.otp_static.admin.StaticDeviceAdmin
+
 The static plugin also includes a management command called ``addstatictoken``,
 which will add a single static token to any account. This is useful for
 bootstrapping and emergency access. Run ``manage.py addstatictoken -h`` for
@@ -211,6 +217,8 @@ Email Devices
 
 .. automodule:: django_otp.plugins.otp_email.models
     :members: EmailDevice
+
+.. autoclass:: django_otp.plugins.otp_email.admin.EmailDeviceAdmin
 
 
 .. _other-plugins:

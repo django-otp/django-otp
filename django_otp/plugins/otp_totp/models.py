@@ -11,37 +11,42 @@ from .conf import settings
 
 class TOTPDevice(Device):
     """
-    A generic TOTP device. The model fields mostly correspond to the arguments
-    to :func:`django_otp.oath.totp`. They all have sensible defaults, including
-    the key, which is randomly generated.
+    A generic TOTP :class:`~django_otp.models.Device`. The model fields mostly
+    correspond to the arguments to :func:`django_otp.oath.totp`. They all have
+    sensible defaults, including the key, which is randomly generated.
 
     .. attribute:: key
 
-        A hex-encoded secret key of up to 40 bytes. (Default: 20 random bytes)
+        *CharField*: A hex-encoded secret key of up to 40 bytes. (Default: 20
+        random bytes)
 
     .. attribute:: step
 
-        The time step in seconds. (Default: 30)
+        *PositiveSmallIntegerField*: The time step in seconds. (Default: 30)
 
     .. attribute:: t0
 
-        The Unix time at which to begin counting steps. (Default: 0)
+        *BigIntegerField*: The Unix time at which to begin counting steps.
+        (Default: 0)
 
     .. attribute:: digits
 
-        The number of digits to expect in a token. (Default: 6)
+        *PositiveSmallIntegerField*: The number of digits to expect in a token
+        (6 or 8).  (Default: 6)
 
     .. attribute:: tolerance
 
-        The number of time steps in the past or future to allow. For example,
-        if this is 1, we'll accept any of three tokens: the current one, the
-        previous one, and the next one. (Default: 1)
+        *PositiveSmallIntegerField*: The number of time steps in the past or
+        future to allow. For example, if this is 1, we'll accept any of three
+        tokens: the current one, the previous one, and the next one. (Default:
+        1)
 
     .. attribute:: drift
 
-        The number of time steps the prover is known to deviate from our clock.
-        If :setting:`OTP_TOTP_SYNC` is ``True``, we'll update this any time we
-        match a token that is not the current one. (Default: 0)
+        *SmallIntegerField*: The number of time steps the prover is known to
+        deviate from our clock.  If :setting:`OTP_TOTP_SYNC` is ``True``, we'll
+        update this any time we match a token that is not the current one.
+        (Default: 0)
     """
     key = models.CharField(max_length=80, validators=[hex_validator()], default=lambda: random_hex(20), help_text=u"A hex-encoded secret key of up to 40 bytes.")
     step = models.PositiveSmallIntegerField(default=30, help_text=u"The time step in seconds.")

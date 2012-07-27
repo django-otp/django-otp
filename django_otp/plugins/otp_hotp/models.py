@@ -9,25 +9,28 @@ from django_otp.util import random_hex, hex_validator
 
 class HOTPDevice(Device):
     """
-    A generic HOTP device. The model fields mostly correspond to the arguments
-    to :func:`django_otp.oath.hotp`. They all have sensible defaults, including
-    the key, which is randomly generated.
+    A generic HOTP :class:`~django_otp.models.Device`. The model fields mostly
+    correspond to the arguments to :func:`django_otp.oath.hotp`. They all have
+    sensible defaults, including the key, which is randomly generated.
 
     .. attribute:: key
 
-        A hex-encoded secret key of up to 40 bytes. (Default: 20 random bytes)
+        *CharField*: A hex-encoded secret key of up to 40 bytes. (Default: 20
+        random bytes)
 
     .. attribute:: digits
 
-        The number of digits to expect from the token generator. (Default: 6)
+        *PositiveSmallIntegerField*: The number of digits to expect from the
+        token generator (6 or 8). (Default: 6)
 
     .. attribute:: tolerance
 
-        The number of missed tokens to tolerate. (Default: 5)
+        *PositiveSmallIntegerField*: The number of missed tokens to tolerate.
+        (Default: 5)
 
     .. attribute:: counter
 
-        The next counter value to expect. (Initial: 0)
+        *BigIntegerField*: The next counter value to expect. (Initial: 0)
     """
     key = models.CharField(max_length=80, validators=[hex_validator()], default=lambda: random_hex(20), help_text=u"A hex-encoded secret key of up to 40 bytes.")
     digits = models.PositiveSmallIntegerField(choices=[(6,6), (8,8)], default=6, help_text=u"The number of digits to expect in a token.")
