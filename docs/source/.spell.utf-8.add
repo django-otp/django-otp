@@ -82,3 +82,7 @@ attr
 rfc4226
 ietf
 rfc6238
+HOTPDeviceAdmin
+TOTPDeviceAdmin
+StaticDeviceAdmin
+EmailDeviceAdmin

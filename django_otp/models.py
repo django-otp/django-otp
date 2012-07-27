@@ -51,16 +51,16 @@ class Device(models.Model):
 
     .. attribute:: user
 
-        (Model field) Foreign key to :class:`~django.contrib.auth.models.User`.
+        *ForeignKey*: Foreign key to :class:`~django.contrib.auth.models.User`.
 
     .. attribute:: name
 
-        (Model field) A human-readable name to help the user identify their
+        *CharField*: A human-readable name to help the user identify their
         devices.
 
     .. attribute:: confirmed
 
-        (Model field) A boolean value that tells us whether this device has
+        *BooleanField*: A boolean value that tells us whether this device has
         been confirmed as valid. It defaults to ``True``, but subclasses or
         individual deployments can force it to ``False`` if they wish to create
         a device and then ask the user for confirmation. As a rule, built-in

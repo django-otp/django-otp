@@ -5,6 +5,10 @@ from .models import HOTPDevice
 
 
 class HOTPDeviceAdmin(admin.ModelAdmin):
+    """
+    :class:`~django.contrib.admin.ModelAdmin` for
+    :class:`~django_otp.plugins.otp_hotp.models.HOTPDevice`.
+    """
     fieldsets = [
         ('Identity', {
             'fields': ['user', 'name', 'confirmed'],

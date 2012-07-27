@@ -10,6 +10,10 @@ class StaticTokenInline(admin.TabularInline):
 
 
 class StaticDeviceAdmin(admin.ModelAdmin):
+    """
+    :class:`~django.contrib.admin.ModelAdmin` for
+    :class:`~django_otp.plugins.otp_static.models.StaticDevice`.
+    """
     fieldsets = [
         ('Identity', {
             'fields': ['user', 'name', 'confirmed'],

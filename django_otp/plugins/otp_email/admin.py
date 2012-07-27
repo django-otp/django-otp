@@ -5,6 +5,10 @@ from .models import EmailDevice
 
 
 class EmailDeviceAdmin(admin.ModelAdmin):
+    """
+    :class:`~django.contrib.admin.ModelAdmin` for
+    :class:`~django_otp.plugins.otp_email.models.EmailDevice`.
+    """
     fieldsets = [
         ('Identity', {
             'fields': ['user', 'name', 'confirmed'],

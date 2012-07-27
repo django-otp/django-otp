@@ -8,10 +8,11 @@ from django_otp.models import Device
 
 class StaticDevice(Device):
     """
-    A static device simply consists of random tokens shared by the database and
-    the user. These are frequently used as emergency tokens in case a user's
-    normal device is lost or unavailable. They can be consumed in any order;
-    each token will be removed from the database as soon as it is used.
+    A static :class:`~django_otp.models.Device` simply consists of random
+    tokens shared by the database and the user. These are frequently used as
+    emergency tokens in case a user's normal device is lost or unavailable.
+    They can be consumed in any order; each token will be removed from the
+    database as soon as it is used.
 
     This model has no fields of its own, but serves as a container for
     :class:`StaticToken` objects.
@@ -32,11 +33,11 @@ class StaticToken(models.Model):
 
     .. attribute:: device
 
-        A foreign key to :class:`StaticDevice`.
+        *ForeignKey*: A foreign key to :class:`StaticDevice`.
 
     .. attribute:: token
 
-        A random string up to 16 characters.
+        *CharField*: A random string up to 16 characters.
     """
     device = models.ForeignKey(StaticDevice, related_name='token_set')
     token = models.CharField(max_length=16, db_index=True)
@@ -44,8 +45,8 @@ class StaticToken(models.Model):
     @staticmethod
     def random_token():
         """
-        Returns a new random static token.
+        Returns a new random string that can be used as a static token.
 
         :rtype: str
         """
-        return b32encode(urandom(10)).lower()
+        return b32encode(urandom(5)).lower()

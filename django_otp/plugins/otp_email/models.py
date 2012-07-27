@@ -13,14 +13,15 @@ from .conf import settings
 
 class EmailDevice(Device):
     """
-    An email device delivers a token to the user's registered email address
-    (``user.email``). This is intended for demonstration purposes; if you allow
-    users to reset their passwords via email, then this provides no security
-    benefits.
+    A :class:`~django_otp.models.Device` that delivers a token to the user's
+    registered email address (``user.email``). This is intended for
+    demonstration purposes; if you allow users to reset their passwords via
+    email, then this provides no security benefits.
 
     .. attribute:: key
 
-        A hex-encoded secret key of up to 40 bytes. (Default: 20 random bytes)
+        *CharField*: A hex-encoded secret key of up to 40 bytes. (Default: 20
+        random bytes)
     """
     key = models.CharField(max_length=80,
                            validators=[hex_validator()],
