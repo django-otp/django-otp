@@ -16,12 +16,12 @@ identified the user based on their username and password. Complicating this
 further is the fact some plugins are interactive, in which case verifying the
 user is at least a two-step process.
 
-Authenticating a user can happen in one or two stages. One option is to require
-an OTP up front along with a password. Alternatively, we can accept
-single-factor authentication initially, but allow (or require) the user to
-provide a second factor later on. The following sections begin with the simpler
-strategies and proceed to the lower-level APIs that will allow you to implement
-more complex policies.
+Verifying a user can happen in one or two stages. One option is to require an
+OTP up front along with a password. Alternatively, we can accept single-factor
+authentication initially, but allow (or require) the user to provide a second
+factor later on. The following sections begin with the simpler strategies and
+proceed to the lower-level APIs that will allow you to implement more complex
+policies.
 
 
 The Easy Way
@@ -127,11 +127,10 @@ Authorizing Users
 If you design your site to always require OTP verification in order to log in,
 then your authorization policies don't need to change.
 ``request.user.is_authenticated()`` will be effectively synonymous with
-``request.user.is_verified()``. If, on the other hand, you anticipate having both
-verified and unverified users on your site, you're probably intending to limit
-access to some resources to verified users only.
-
-The primary tool for this is otp_required:
+``request.user.is_verified()``. If, on the other hand, you anticipate having
+both verified and unverified users on your site, you're probably intending to
+limit access to some resources to verified users only. The primary tool for this
+is otp_required:
 
 .. decorator:: django_otp.decorators.otp_required([redirect_field_name='next', login_url=None])
 
