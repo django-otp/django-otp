@@ -21,7 +21,7 @@ def login(request, device):
     :param request: The HTTP request
     :type request: :class:`~django.http.HttpRequest`
 
-    :param device: The OTP device used to authenticate the user.
+    :param device: The OTP device used to verify the user.
     :type device: :class:`~django_otp.models.Device`
     """
     user = getattr(request, 'user', None)
