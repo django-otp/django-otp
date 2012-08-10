@@ -16,6 +16,10 @@ class StaticDevice(Device):
 
     This model has no fields of its own, but serves as a container for
     :class:`StaticToken` objects.
+
+    .. attribute:: token_set
+
+        The RelatedManager for our tokens.
     """
     def verify_token(self, token):
         try:

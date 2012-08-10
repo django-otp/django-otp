@@ -2,7 +2,7 @@ import sys
 from itertools import ifilter
 
 from django.contrib.auth.signals import user_logged_in
-import django.db.models
+from django.db.models import get_apps, get_models
 
 from django_otp.models import Device
 
@@ -74,8 +74,8 @@ def devices_for_user(user, confirmed=True):
 
     :rtype: iterable
     """
-    for model_cls in device_classes():
-        for device in model_cls.objects.devices_for_user(user, confirmed=confirmed):
+    for model in device_classes():
+        for device in model.objects.devices_for_user(user, confirmed=confirmed):
             yield device
 
 
@@ -83,7 +83,10 @@ def device_classes():
     """
     Returns an iterable of all loaded device models.
     """
-    return ifilter(lambda m: issubclass(m, Device), django.db.models.get_models())
+    for app in get_apps():
+        for model in get_models(app):
+            if issubclass(model, Device):
+                yield model
 
 
 def import_class(path):

@@ -1,5 +1,6 @@
 from functools import partial
 
+from django.contrib.auth import BACKEND_SESSION_KEY
 from django.contrib.auth.views import login as auth_login
 
 from .forms import OTPAuthenticationForm, OTPTokenForm
@@ -26,6 +27,9 @@ def login(request, **kwargs):
         form = OTPAuthenticationForm
     else:
         form = partial(OTPTokenForm, user)
+
+        # A minor hack to make django.contrib.auth.login happy
+        user.backend = request.session[BACKEND_SESSION_KEY]
 
     kwargs['authentication_form'] = form
 
