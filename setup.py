@@ -1,6 +1,18 @@
 #!/usr/bin/env python
 
-from distutils.core import setup
+from os import walk
+
+from setuptools import setup, find_packages
+
+
+# Automatically include all package data
+with open('MANIFEST.in', 'w') as manifest:
+    for dirpath, dirnames, filenames in walk('django_otp'):
+        if (len(filenames) > 0) and ('__init__.py' not in filenames):
+            manifest.write('recursive-include {0} *\n'.format(dirpath))
+            dirnames[:] = []
+
+    manifest.write('\nglobal-exclude .DS_Store *.pyc *.pyo .*.sw?\n')
 
 
 setup(
@@ -10,17 +22,9 @@ setup(
     long_description=open('README').read(),
     author='Peter Sagerson',
     author_email='psagersDjwublJf@ignorare.net',
-    packages=[
-        'django_otp',
-        'django_otp.tests',
-        'django_otp.plugins',
-        'django_otp.plugins.otp_email',
-        'django_otp.plugins.otp_hotp',
-        'django_otp.plugins.otp_static',
-        'django_otp.plugins.otp_static.management',
-        'django_otp.plugins.otp_static.management.commands',
-        'django_otp.plugins.otp_totp',
-    ],
+    zip_safe=False,
+    packages=find_packages(),
+    include_package_data=True,
     url='https://bitbucket.org/psagers/django-otp',
     license='BSD',
     install_requires=[

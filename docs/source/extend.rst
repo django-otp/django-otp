@@ -9,7 +9,7 @@ will be detected by the framework and included in the standard forms and APIs.
 Writing a Device
 ----------------
 
-A :class:`django_otp.models.Device` subclass is only required to implement one
+A :class:`~django_otp.models.Device` subclass is only required to implement one
 method:
 
 .. automethod:: django_otp.models.Device.verify_token
@@ -56,9 +56,6 @@ django_otp provides for OATH and hex-encoded values.
 
 If a device uses a challenge-response algorithm or requires some other kind of
 user interaction, it should implement an additional method:
-
-.. autoattribute:: django_otp.models.Device.is_interactive
-    :noindex:
 
 .. automethod:: django_otp.models.Device.generate_challenge
     :noindex:

@@ -145,28 +145,10 @@ will be set to the :class:`~django_otp.models.Device` object that verified the
 user. This can be useful if you want to include the name of the verifying device
 in the UI.
 
-
-Machine Authorization
-~~~~~~~~~~~~~~~~~~~~~
-
-One common use of two-factor authentication is to authorize a specific computer
-or browser to access an account for a period of time (Google uses 30 days for
-their 2-step verification system). This project does not implement that scenario
-directly, but it's easy to accomplish. Here's a suggestion for implementing
-machine authorization with django-otp:
-
-    #. Authenticate a user normally, such as with a password.
-
-    #. Once the user has authenticated successfully, check for a machine
-       authorization cookie. If it's present, proceed normally. If it's absent
-       or expired, require the user to verify with an OTP token.
-
-    #. Once the user has successfully verified, set the machine authorization
-       cookie with the desired expiration.
-
-In a nutshell, you can require your relatively long-lived machine authorization
-cookie in order to access the site, and in turn require two-factor
-authentication in order to set the cookie.
+If you want to use OTPs to establish trusted user agents (e.g. a browser that
+the user claims is on a private and secure computer), look at
+`django-agent-trust <http://pypi.python.org/pypi/django-agent-trust>`_ and
+`django-otp-agents <http://pypi.python.org/pypi/django-otp-agents>`_.
 
 
 Managing Devices

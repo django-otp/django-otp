@@ -18,10 +18,10 @@ def hex_validator(length=0):
 
     >>> hex_validator()('0123456789abcdef')
     >>> hex_validator(8)('0123456789abcdef')
-    >>> hex_validator()('blarg')
+    >>> hex_validator()('phlebotinum')
     Traceback (most recent call last):
         ...
-    ValidationError: [u'blarg is not valid hex-encoded data.']
+    ValidationError: [u'phlebotinum is not valid hex-encoded data.']
     >>> hex_validator(9)('0123456789abcdef')
     Traceback (most recent call last):
         ...
