@@ -42,6 +42,9 @@ class HOTPDevice(Device):
 
     @property
     def bin_key(self):
+        """
+        The secret key as a binary string.
+        """
         return unhexlify(self.key)
 
     def verify_token(self, token):
