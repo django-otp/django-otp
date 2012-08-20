@@ -9,6 +9,7 @@ django-otp
     overview
     auth
     extend
+    changes
 
 
 License

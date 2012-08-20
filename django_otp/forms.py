@@ -91,7 +91,7 @@ class OTPAuthenticationFormMixin(object):
     def _handle_challenge(self, device):
         try:
             challenge = device.generate_challenge() if (device is not None) else None
-        except StandardError as e:
+        except Exception as e:
             error = forms.ValidationError(_('Error generating challenge: {0}'.format(e)))
         else:
             if challenge is None:
@@ -133,8 +133,8 @@ class OTPAuthenticationForm(AuthenticationForm, OTPAuthenticationFormMixin):
            :class:`~django.contrib.auth.forms.AuthenticationForm`.
         #. ``otp_device`` uses a :class:`~django.forms.Select` to allow the user
            to choose one of their registered devices. It will be empty as long
-           as ``form.get_user()`` is ``None`` and should generally be omitted in
-           that case.
+           as ``form.get_user()`` is ``None`` and should generally be omitted
+           from the template in that case.
         #. ``otp_token`` is the field for entering an OTP token. It should
            always be included.
 

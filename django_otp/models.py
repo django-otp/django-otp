@@ -1,4 +1,3 @@
-from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 
 
@@ -20,7 +19,7 @@ class DeviceManager(models.Manager):
 
             device_cls = import_class(device_type)
             device = device_cls.objects.get(id=device_id)
-        except (ObjectDoesNotExist, StandardError):
+        except Exception:
             device = None
 
         return device
@@ -64,8 +63,7 @@ class Device(models.Model):
         been confirmed as valid. It defaults to ``True``, but subclasses or
         individual deployments can force it to ``False`` if they wish to create
         a device and then ask the user for confirmation. As a rule, built-in
-        APIs that enumerate devices will only include those that are marked
-        confirmed.
+        APIs that enumerate devices will only include those that are confirmed.
 
     .. attribute:: objects
 
@@ -116,16 +114,16 @@ class Device(models.Model):
             return ``None`` if this device is not interactive.
         :rtype: string or ``None``
 
-        :raises: Any StandardError is permitted. Callers should trap
-            StandardError and report it to the user.
+        :raises: Any :exc:`~exceptions.Exception` is permitted. Callers should
+            trap Exception and report it to the user.
         """
         return None
     generate_challenge.stub = True
 
     def verify_token(self, token):
         """
-        Verifies a token. As a rule, the token will no longer be valid if this
-        returns ``True``.
+        Verifies a token. In many cases, the token will no longer be valid if
+        this returns ``True``.
 
         :param string token: The OTP token provided by the user.
         :rtype: bool

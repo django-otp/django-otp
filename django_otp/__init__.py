@@ -16,7 +16,9 @@ def login(request, device):
     rejected if it does not belong to ``request.user``.
 
     This is called automatically any time :func:`django.contrib.auth.login` is
-    called with a user having an ``otp_device`` atribute.
+    called with a user having an ``otp_device`` atribute. If you use Django's
+    :func:`~django.contrib.auth.views.login` view with the django-otp
+    authentication forms, then you won't need to call this.
 
     :param request: The HTTP request
     :type request: :class:`~django.http.HttpRequest`
@@ -45,8 +47,8 @@ user_logged_in.connect(_handle_auth_login)
 def match_token(user, token):
     """
     Attempts to verify a :term:`token` on every device attached to the given
-    user until one of them succeeds. As much as possible, you should prefer to
-    verify tokens against specific devices.
+    user until one of them succeeds. When possible, you should prefer to verify
+    tokens against specific devices.
 
     :param user: The user supplying the token.
     :type user: :class:`~django.contrib.auth.models.User`
