@@ -16,8 +16,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
 
     'django_otp',
-    'django_otp.plugins.otp_email',
+    'django_otp.plugins.otp_hotp',
+    'django_otp.plugins.otp_totp',
     'django_otp.plugins.otp_static',
+    'django_otp.plugins.otp_email',
 ]
 
 MIDDLEWARE_CLASSES = [

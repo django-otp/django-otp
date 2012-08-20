@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
 from os import walk
 
 from setuptools import setup, find_packages
@@ -7,12 +8,16 @@ from setuptools import setup, find_packages
 
 # Automatically include all package data
 with open('MANIFEST.in', 'w') as manifest:
+    print('include README CHANGES LICENSE', file=manifest)
+    print('recursive-include docs *.rst *.py Makefile', file=manifest)
+    print('prune docs/build', file=manifest)
+
     for dirpath, dirnames, filenames in walk('django_otp'):
         if (len(filenames) > 0) and ('__init__.py' not in filenames):
-            manifest.write('recursive-include {0} *\n'.format(dirpath))
+            print('recursive-include {0} *'.format(dirpath), file=manifest)
             dirnames[:] = []
 
-    manifest.write('\nglobal-exclude .DS_Store *.pyc *.pyo .*.sw?\n')
+    print('global-exclude .DS_Store *.pyc *.pyo .*.sw?', file=manifest)
 
 
 setup(
