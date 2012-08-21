@@ -20,9 +20,6 @@ INSTALLED_APPS = [
     'django_otp.plugins.otp_totp',
     'django_otp.plugins.otp_static',
     'django_otp.plugins.otp_email',
-
-    'otp_twilio',
-    'otp_yubikey',
 ]
 
 MIDDLEWARE_CLASSES = [
