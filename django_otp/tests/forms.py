@@ -9,6 +9,13 @@ from django_otp.plugins.otp_email.models import EmailDevice
 class AuthFormTest(TestCase):
     fixtures = ['tests/alice_and_bob.yaml']
 
+    def test_empty(self):
+        data = {}
+        form = OTPAuthenticationForm(None, data)
+
+        self.assert_(not form.is_valid())
+        self.assertEqual(form.get_user(), None)
+
     def test_bad_password(self):
         data = {
             'username': 'alice',
