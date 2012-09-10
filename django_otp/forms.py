@@ -52,6 +52,9 @@ class OTPAuthenticationFormMixin(object):
         :rasies: :exc:`~django.core.exceptions.ValidationError` if the user is
             not fully authenticated by an OTP token.
         """
+        if user is None:
+            return
+
         device = self._chosen_device(user)
         token = self.cleaned_data.get('otp_token')
         error = None
