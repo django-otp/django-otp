@@ -1,5 +1,12 @@
 .. vim: ft=rst nospell tw=80
 
+
+v0.1.2 - October 8, 2012 - Bug fix
+----------------------------------
+
+- Fix an exception when an empty login form is submitted.
+
+
 v0.1.0 - August 20, 2012 - Initial Release
 ------------------------------------------
 
