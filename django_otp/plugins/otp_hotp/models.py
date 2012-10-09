@@ -50,7 +50,7 @@ class HOTPDevice(Device):
     def verify_token(self, token):
         try:
             token = int(token)
-        except ValueError:
+        except StandardError:
             verified = False
         else:
             key = self.bin_key
