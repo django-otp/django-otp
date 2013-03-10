@@ -6,7 +6,6 @@ from . import match_token, devices_for_user
 from .models import Device
 
 
-
 class OTPAuthenticationFormMixin(object):
     """
     Shared functionality for
@@ -78,7 +77,7 @@ class OTPAuthenticationFormMixin(object):
         device_id = self.cleaned_data.get('otp_device')
 
         if device_id:
-            device = Device.objects.from_persistent_id(device_id)
+            device = Device.from_persistent_id(device_id)
         else:
             device = None
 

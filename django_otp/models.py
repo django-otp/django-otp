@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 
@@ -6,24 +7,6 @@ class DeviceManager(models.Manager):
     The :class:`~django.db.models.Manager` object installed as
     ``Device.objects``.
     """
-    def from_persistent_id(self, path):
-        """
-        Loads a device form its persistent id::
-
-            device == Device.objects.from_persistent_id(device.persistent_id)
-        """
-        from . import import_class
-
-        try:
-            device_type, device_id = path.rsplit('/', 1)
-
-            device_cls = import_class(device_type)
-            device = device_cls.objects.get(id=device_id)
-        except Exception:
-            device = None
-
-        return device
-
     def devices_for_user(self, user, confirmed=None):
         """
         Returns a queryset for all devices of this class that belong to the
@@ -69,7 +52,7 @@ class Device(models.Model):
 
         A :class:`~django_otp.models.DeviceManager`.
     """
-    user = models.ForeignKey('auth.User', help_text=u"The user that this device belongs to.")
+    user = models.ForeignKey(getattr(settings, 'AUTH_USER_MODEL', 'auth.User'), help_text=u"The user that this device belongs to.")
     name = models.CharField(max_length=64, help_text=u"The human-readable name of this device.")
     confirmed = models.BooleanField(default=True, help_text=u"Is this device ready for use?")
 
@@ -88,6 +71,25 @@ class Device(models.Model):
     @property
     def import_path(self):
         return '{0}.{1}'.format(self.__module__, self.__class__.__name__)
+
+    @classmethod
+    def from_persistent_id(cls, path):
+        """
+        Loads a device from its persistent id::
+
+            device == Device.from_persistent_id(device.persistent_id)
+        """
+        from . import import_class
+
+        try:
+            device_type, device_id = path.rsplit('/', 1)
+
+            device_cls = import_class(device_type)
+            device = device_cls.objects.get(id=device_id)
+        except Exception:
+            device = None
+
+        return device
 
     def is_interactive(self):
         """
