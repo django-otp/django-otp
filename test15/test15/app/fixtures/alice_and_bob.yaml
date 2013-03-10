@@ -1,0 +1,39 @@
+- fields:
+    last_login: 2012-07-17 19:00:09.753345
+    password: sha1$76223$c4f1daa1f2f3a7a3a6737538873ba335c60b5b7d
+    identifier: alice
+  model: app.testuser
+  pk: 1
+
+- fields:
+    last_login: 2012-07-17 19:00:09.753345
+    password: sha1$76223$c4f1daa1f2f3a7a3a6737538873ba335c60b5b7d
+    identifier: bob
+  model: app.testuser
+  pk: 2
+
+- fields: {confirmed: true, name: Emergency Tokens, user: 1}
+  model: otp_static.staticdevice
+  pk: 1
+- fields: {device: 1, token: alice1}
+  model: otp_static.statictoken
+  pk: 1
+- fields: {device: 1, token: alice1}
+  model: otp_static.statictoken
+  pk: 2
+- fields: {device: 1, token: alice2}
+  model: otp_static.statictoken
+  pk: 3
+
+- fields: {confirmed: true, name: Emergency Tokens, user: 2}
+  model: otp_static.staticdevice
+  pk: 10
+- fields: {device: 10, token: bob1}
+  model: otp_static.statictoken
+  pk: 11
+- fields: {device: 10, token: bob1}
+  model: otp_static.statictoken
+  pk: 12
+- fields: {device: 10, token: bob2}
+  model: otp_static.statictoken
+  pk: 13

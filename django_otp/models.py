@@ -33,7 +33,9 @@ class Device(models.Model):
 
     .. attribute:: user
 
-        *ForeignKey*: Foreign key to :class:`~django.contrib.auth.models.User`.
+        *ForeignKey*: Foreign key to your user model, as configured by
+        :setting:`AUTH_USER_MODEL` (:class:`~django.contrib.auth.models.User`
+        by default).
 
     .. attribute:: name
 
