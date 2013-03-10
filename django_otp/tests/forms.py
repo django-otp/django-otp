@@ -7,7 +7,7 @@ from django_otp.plugins.otp_email.models import EmailDevice
 
 
 class AuthFormTest(TestCase):
-    fixtures = ['tests/alice_and_bob.yaml']
+    fixtures = ['django_otp/alice_and_bob.yaml']
 
     def test_empty(self):
         data = {}

@@ -3,8 +3,13 @@ from __future__ import print_function
 from optparse import make_option
 from textwrap import fill
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand, CommandError
-from django.contrib.auth.models import User
+try:
+    from django.contrib.auth import get_user_model
+except ImportError:
+    from django.contrib.auth.models import User
+    get_user_model = lambda: User
 
 from django_otp.plugins.otp_static.models import StaticDevice, StaticToken
 
@@ -14,8 +19,8 @@ class Command(BaseCommand):
         make_option('-t', '--token', dest='token', help=u'The token to add. If omitted, one will be randomly generated.'),
     )
     args = u'<username>'
-    help = fill(u'Adds a single static OTP token to the given user. ' \
-        u'The token will be added to an arbitrary static device ' \
+    help = fill(u'Adds a single static OTP token to the given user. '
+        u'The token will be added to an arbitrary static device '
         u'attached to the user, creating one if necessary.', width=78)
 
     def handle(self, *args, **options):
@@ -25,8 +30,8 @@ class Command(BaseCommand):
         username = args[0]
 
         try:
-            user = User.objects.get(username=username)
-        except User.DoesNotExist:
+            user = get_user_model().objects.get_by_natural_key(username)
+        except ObjectDoesNotExist:
             raise CommandError('User "{0}" does not exist.'.format(username))
 
         device = next(StaticDevice.objects.filter(user=user).iterator(), None)
