@@ -4,7 +4,7 @@ from .models import HOTPDevice
 
 
 class HOTPTest(TestCase):
-    fixtures = ['tests/hotp']
+    fixtures = ['otp_hotp/tests.yaml']
 
     # The next three tokens
     tokens = [782373, 313268, 307722]

@@ -7,7 +7,7 @@ from .conf import settings
 
 
 class TOTPTest(TestCase):
-    fixtures = ['tests/totp']
+    fixtures = ['otp_totp/tests.yaml']
 
     # The next ten tokens
     tokens = [179225, 656163, 839400, 154567, 346912, 471576, 45675, 101397, 491039, 784503]
