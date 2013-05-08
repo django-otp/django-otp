@@ -1,4 +1,4 @@
-v0.1.4 - May 8, 2013 - OTPAdminSite improvement
+v0.1.5 - May 8, 2013 - OTPAdminSite improvement
 -----------------------------------------------
 
 - OTPAdminSite now selects an apporpriate login template automatically, based on
