@@ -1,12 +1,12 @@
 - fields:
-    date_joined: 2012-07-15 16:03:02.420965
+    date_joined: '2012-07-15 16:03:02Z'
     email: alice@example.com
     first_name: ''
     groups: []
     is_active: true
     is_staff: false
     is_superuser: false
-    last_login: 2012-07-17 19:00:09.753345
+    last_login: '2012-07-17 19:00:09Z'
     last_name: ''
     password: sha1$76223$c4f1daa1f2f3a7a3a6737538873ba335c60b5b7d
     user_permissions: []
@@ -15,14 +15,14 @@
   pk: 1
 
 - fields:
-    date_joined: 2012-07-15 16:03:02.420965
+    date_joined: '2012-07-15 16:03:02Z'
     email: bob@example.com
     first_name: ''
     groups: []
     is_active: true
     is_staff: false
     is_superuser: false
-    last_login: 2012-07-17 19:00:09.753345
+    last_login: '2012-07-17 19:00:09Z'
     last_name: ''
     password: sha1$76223$c4f1daa1f2f3a7a3a6737538873ba335c60b5b7d
     user_permissions: []
