@@ -1,8 +1,20 @@
+import django
 from django import forms
 from django.contrib.admin.forms import AdminAuthenticationForm
 from django.contrib.admin.sites import AdminSite
 
 from .forms import OTPAuthenticationFormMixin
+
+
+def _admin_template_for_django_version():
+    minor_django_version = django.VERSION[:2]
+
+    if minor_django_version <= (1, 3):
+        return 'otp/admin13/login.html'
+    elif minor_django_version == (1, 4):
+        return 'otp/admin14/login.html'
+    elif minor_django_version >= (1, 5):
+        return 'otp/admin15/login.html'
 
 
 class OTPAdminAuthenticationForm(AdminAuthenticationForm, OTPAuthenticationFormMixin):
@@ -46,9 +58,10 @@ class OTPAdminSite(AdminSite):
 
     login_form = OTPAdminAuthenticationForm
 
-    #: This is a modified Django 1.3 admin login template that includes our OTP
-    #: fields. Feel free to override this with your own.
-    login_template = 'otp/admin/login.html'
+    #: We automatically select a modified login template based on your Django
+    #: version. If it doesn't look right, your version may not be supported, in
+    #: which case feel free to replace it.
+    login_template = _admin_template_for_django_version()
 
     def has_permission(self, request):
         """
