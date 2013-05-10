@@ -1,12 +1,11 @@
 from binascii import unhexlify
 
+from django.conf import settings
 from django.db import models
 
 from django_otp.models import Device
 from django_otp.oath import totp
 from django_otp.util import random_hex, hex_validator
-
-from .conf import settings
 
 
 class TOTPDevice(Device):
@@ -66,6 +65,8 @@ class TOTPDevice(Device):
         return unhexlify(self.key)
 
     def verify_token(self, token):
+        OTP_TOTP_SYNC = getattr(settings, 'OTP_TOTP_SYNC', True)
+
         try:
             token = int(token)
         except StandardError:
@@ -75,7 +76,7 @@ class TOTPDevice(Device):
 
             for offset in range(-self.tolerance, self.tolerance + 1):
                 if totp(key, self.step, self.t0, self.digits, self.drift + offset) == token:
-                    if (offset != 0) and settings.OTP_TOTP_SYNC:
+                    if (offset != 0) and OTP_TOTP_SYNC:
                         self.drift += offset
                         self.save()
 

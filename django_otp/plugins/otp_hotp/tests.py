@@ -1,16 +1,22 @@
-from django.test import TestCase
+from django.db import IntegrityError
 
-from .models import HOTPDevice
+from django_otp.tests import TestCase
 
 
 class HOTPTest(TestCase):
-    fixtures = ['otp_hotp/tests.yaml']
-
     # The next three tokens
     tokens = [782373, 313268, 307722]
 
     def setUp(self):
-        self.device = HOTPDevice.objects.get()
+        try:
+            alice = self.create_user('alice', 'password')
+        except IntegrityError:
+            self.skipTest(u"Unable to create test user.")
+        else:
+            self.device = alice.hotpdevice_set.create(
+                key='d2e8a68036f68960b1c30532bb6c56da5934d879', digits=6,
+                tolerance=1, counter=0
+            )
 
     def test_normal(self):
         ok = self.device.verify_token(self.tokens[0])

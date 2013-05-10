@@ -17,19 +17,17 @@ with open('MANIFEST.in', 'w') as manifest:
             print('recursive-include {0} *'.format(dirpath), file=manifest)
             dirnames[:] = []
 
-    print('global-exclude .DS_Store *.pyc *.pyo .*.sw?', file=manifest)
-
 
 setup(
     name='django-otp',
-    version='0.1.5',
+    version='0.1.6',
     description='A pluggable framework for adding two-factor authentication to Django using one-time passwords.',
     long_description=open('README').read(),
     author='Peter Sagerson',
     author_email='psagersDjwublJf@ignorare.net',
-    zip_safe=False,
     packages=find_packages(),
     include_package_data=True,
+    zip_safe=False,
     url='https://bitbucket.org/psagers/django-otp',
     license='BSD',
     install_requires=[

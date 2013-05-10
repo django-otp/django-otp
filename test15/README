@@ -1,2 +1,0 @@
-Additional tests for Django 1.5. There's no way to set AUTH_USER_MODEL for
-individual tests, so we need a separate project.
