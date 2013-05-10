@@ -1,3 +1,10 @@
+v0.1.6 - May 9, 2013 - Unit test improvements
+---------------------------------------------
+
+Major unit test cleanup. Tests should pass or be skipped under all supported
+versions of Django, with or without custom users and timzeone support.
+
+
 v0.1.5 - May 8, 2013 - OTPAdminSite improvement
 -----------------------------------------------
 
