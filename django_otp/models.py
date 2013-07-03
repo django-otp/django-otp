@@ -31,6 +31,15 @@ class Device(models.Model):
     Abstract base model for a :term:`device` attached to a user. Plugins must
     subclass this to define their OTP models.
 
+    .. _unsaved_device_warning:
+
+    .. warning::
+
+        OTP devices are inherently stateful. For example, verifying a token is
+        logically a mutating operation on the device, which may involve
+        incrementing a counter or otherwise consuming a token. A device must be
+        committed to the database before it can be used in any way.
+
     .. attribute:: user
 
         *ForeignKey*: Foreign key to your user model, as configured by
@@ -128,13 +137,6 @@ class Device(models.Model):
         """
         Verifies a token. In some cases, the token will no longer be valid if
         this returns ``True``.
-
-        .. warning::
-
-            This method is allowed to call ``self.save()`` any time it wants.
-            Some devices will update themselves on every successful
-            verification. To be safe, this method should only be called on
-            objects that have already been committed to the database.
 
         :param string token: The OTP token provided by the user.
         :rtype: bool

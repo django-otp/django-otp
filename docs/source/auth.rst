@@ -132,11 +132,15 @@ both verified and unverified users on your site, you're probably intending to
 limit access to some resources to verified users only. The primary tool for this
 is otp_required:
 
-.. decorator:: django_otp.decorators.otp_required([redirect_field_name='next', login_url=None])
+.. decorator:: django_otp.decorators.otp_required([redirect_field_name='next', login_url=None, if_configured=False])
 
     Similar to :func:`~django.contrib.auth.decorators.login_required`, but
     requires the user to be :term:`verified`. By default, this redirects users
     to :setting:`OTP_LOGIN_URL`.
+
+    :param if_configured: If ``True``, an authenticated user with no confirmed
+        OTP devices will be allowed. Default is ``False``.
+    :type if_configured: bool
 
 If you need more fine-grained control over authorization decisions, you can use
 ``request.user.is_verified()`` to determine whether the user has been verified
@@ -160,4 +164,5 @@ integration, which should be sufficient for many sites. Some sites may want to
 provide users a self-service API to manage devices, but this will be very
 site-specific. Fortunately, managing a user's devices is just a matter of
 managing :class:`~django_otp.models.Device`-derived model objects, so it will be
-easy to implement.
+easy to implement. Be sure to note the :ref:`warning <unsaved_device_warning>`
+about unsaved :class:`~django_otp.models.Device` objects.
