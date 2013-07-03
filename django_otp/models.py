@@ -119,15 +119,22 @@ class Device(models.Model):
         :rtype: string or ``None``
 
         :raises: Any :exc:`~exceptions.Exception` is permitted. Callers should
-            trap Exception and report it to the user.
+            trap ``Exception`` and report it to the user.
         """
         return None
     generate_challenge.stub = True
 
     def verify_token(self, token):
         """
-        Verifies a token. In many cases, the token will no longer be valid if
+        Verifies a token. In some cases, the token will no longer be valid if
         this returns ``True``.
+
+        .. warning::
+
+            This method is allowed to call ``self.save()`` any time it wants.
+            Some devices will update themselves on every successful
+            verification. To be safe, this method should only be called on
+            objects that have already been committed to the database.
 
         :param string token: The OTP token provided by the user.
         :rtype: bool
