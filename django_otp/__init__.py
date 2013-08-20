@@ -65,9 +65,11 @@ def match_token(user, token):
 
 def devices_for_user(user, confirmed=True):
     """
-    Returns an iterable of all devices registered to the given user.
+    Return an iterable of all devices registered to the given user.
 
-    :param user:
+    Returns an empty iterable for anonymous users.
+
+    :param user: standard or custom user object.
     :type user: :class:`~django.contrib.auth.models.User`
 
     :param confirmed: If ``None``, all matching devices are returned.
@@ -76,9 +78,35 @@ def devices_for_user(user, confirmed=True):
 
     :rtype: iterable
     """
+    if user.is_anonymous():
+        return
+
     for model in device_classes():
         for device in model.objects.devices_for_user(user, confirmed=confirmed):
             yield device
+
+
+def user_has_device(user, confirmed=True):
+    """
+    Return ``True`` if the user has at least one device.
+
+    Returns ``False`` for anonymous users.
+
+    :param user: standard or custom user object.
+    :type user: :class:`~django.contrib.auth.models.User`
+
+    :param confirmed: If ``None``, all matching devices are considered.
+        Otherwise, this can be any true or false value to limit the query
+        to confirmed or unconfirmed devices, respectively.
+    """
+    try:
+        next(devices_for_user(user, confirmed=confirmed))
+    except StopIteration:
+        has_device = False
+    else:
+        has_device = True
+
+    return has_device
 
 
 def device_classes():

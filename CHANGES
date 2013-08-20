@@ -1,3 +1,10 @@
+v0.1.8 -- August 20, 2013 - user_has_device API
+-----------------------------------------------
+
+- Add :func:`django_otp.user_has_device` to detect whether a user has any
+  devices configured. This change supports a fix in django-otp-agents 0.1.4.
+
+
 v0.1.7 -- July 3, 2013 - Decorator improvement
 -----------------------------------------------
 
