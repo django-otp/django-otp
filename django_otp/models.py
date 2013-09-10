@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.utils import six
 
 
 class DeviceManager(models.Manager):
@@ -63,17 +64,23 @@ class Device(models.Model):
 
         A :class:`~django_otp.models.DeviceManager`.
     """
-    user = models.ForeignKey(getattr(settings, 'AUTH_USER_MODEL', 'auth.User'), help_text=u"The user that this device belongs to.")
-    name = models.CharField(max_length=64, help_text=u"The human-readable name of this device.")
-    confirmed = models.BooleanField(default=True, help_text=u"Is this device ready for use?")
+    user = models.ForeignKey(getattr(settings, 'AUTH_USER_MODEL', 'auth.User'), help_text="The user that this device belongs to.")
+    name = models.CharField(max_length=64, help_text="The human-readable name of this device.")
+    confirmed = models.BooleanField(default=True, help_text="Is this device ready for use?")
 
     objects = DeviceManager()
 
     class Meta(object):
         abstract = True
 
+    def __str__(self):
+        if six.PY3:
+            return self.__unicode__()
+        else:
+            return self.__unicode__().encode('utf-8')
+
     def __unicode__(self):
-        return u'{0}: {1}'.format(self.user.username, self.name)
+        return six.u('{0}: {1}'.format(self.user.username, self.name))
 
     @property
     def persistent_id(self):

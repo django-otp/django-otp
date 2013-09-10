@@ -20,7 +20,7 @@ with open('MANIFEST.in', 'w') as manifest:
 
 setup(
     name='django-otp',
-    version='0.1.8',
+    version='0.2.0',
     description='A pluggable framework for adding two-factor authentication to Django using one-time passwords.',
     long_description=open('README').read(),
     author='Peter Sagerson',
@@ -31,14 +31,20 @@ setup(
     url='https://bitbucket.org/psagers/django-otp',
     license='BSD',
     install_requires=[
-        'django >= 1.3'
+        'django >= 1.4'
     ],
     classifiers=[
         "Development Status :: 4 - Beta",
         "Programming Language :: Python :: 2",
+        "Programming Language :: Python :: 2.6",
+        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.2",
+        "Programming Language :: Python :: 3.3",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: BSD License",
         "Topic :: Security",
         "Topic :: Software Development :: Libraries :: Python Modules",
+        "Framework :: Django",
     ],
 )

@@ -1,14 +1,16 @@
+from doctest import DocTestSuite
+
 import django.test
 from django.utils import unittest
-from doctest import DocTestSuite
 
 from django_otp import util
 from django_otp import oath
 
 
-def suite():
+def load_tests(loader, tests, pattern):
     suite = unittest.TestSuite()
 
+    suite.addTests(tests)
     suite.addTest(DocTestSuite(util))
     suite.addTest(DocTestSuite(oath))
 

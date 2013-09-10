@@ -11,12 +11,12 @@ class AuthFormTest(TestCase):
         try:
             alice = self.create_user('alice', 'password')
         except IntegrityError:
-            self.skipTest(u"Failed to create user.")
+            self.skipTest("Failed to create user.")
         else:
             alice.emaildevice_set.create()
 
         if not hasattr(alice, 'email'):
-            self.skipTest(u"User model has no email.")
+            self.skipTest("User model has no email.")
 
     def test_email_interaction(self):
         data = {
@@ -28,15 +28,15 @@ class AuthFormTest(TestCase):
         }
         form = OTPAuthenticationForm(None, data)
 
-        self.assert_(not form.is_valid())
+        self.assertTrue(not form.is_valid())
         alice = form.get_user()
-        self.assert_(alice.get_username() == 'alice')
-        self.assert_(alice.otp_device is None)
+        self.assertTrue(alice.get_username() == 'alice')
+        self.assertTrue(alice.otp_device is None)
         self.assertEqual(len(mail.outbox), 1)
 
         data['otp_token'] = mail.outbox[0].body
         del data['otp_challenge']
         form = OTPAuthenticationForm(None, data)
 
-        self.assert_(form.is_valid())
-        self.assert_(isinstance(form.get_user().otp_device, EmailDevice))
+        self.assertTrue(form.is_valid())
+        self.assertTrue(isinstance(form.get_user().otp_device, EmailDevice))
