@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import user_passes_test
 
-from django_otp import devices_for_user, user_has_device
+from django_otp import user_has_device
 from django_otp.conf import settings
 
 

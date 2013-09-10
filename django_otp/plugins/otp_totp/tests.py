@@ -25,7 +25,7 @@ class TOTPTest(TestCase):
         try:
             alice = self.create_user('alice', 'password')
         except IntegrityError:
-            self.skipTest(u"Unable to create the test user.")
+            self.skipTest("Unable to create the test user.")
         else:
             self.device = alice.totpdevice_set.create(
                 key='2a2bbba1092ffdd25a328ad1a0a5f5d61d7aacc4', step=30,
@@ -55,7 +55,7 @@ class TOTPTest(TestCase):
         with self.settings(OTP_TOTP_SYNC=True):
             ok = self.device.verify_token(self.tokens[5])
 
-        self.assert_(ok)
+        self.assertTrue(ok)
         self.assertEqual(self.device.drift, 2)
 
     def test_sync_results(self):

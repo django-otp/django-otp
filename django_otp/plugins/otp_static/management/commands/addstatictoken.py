@@ -16,12 +16,12 @@ from django_otp.plugins.otp_static.models import StaticDevice, StaticToken
 
 class Command(BaseCommand):
     option_list = BaseCommand.option_list + (
-        make_option('-t', '--token', dest='token', help=u'The token to add. If omitted, one will be randomly generated.'),
+        make_option('-t', '--token', dest='token', help='The token to add. If omitted, one will be randomly generated.'),
     )
-    args = u'<username>'
-    help = fill(u'Adds a single static OTP token to the given user. '
-        u'The token will be added to an arbitrary static device '
-        u'attached to the user, creating one if necessary.', width=78)
+    args = '<username>'
+    help = fill('Adds a single static OTP token to the given user. '
+                'The token will be added to an arbitrary static device '
+                'attached to the user, creating one if necessary.', width=78)
 
     def handle(self, *args, **options):
         if len(args) != 1:
@@ -36,7 +36,7 @@ class Command(BaseCommand):
 
         device = next(StaticDevice.objects.filter(user=user).iterator(), None)
         if device is None:
-            device = StaticDevice.objects.create(user=user, name=u'Backup Code')
+            device = StaticDevice.objects.create(user=user, name='Backup Code')
 
         token = options.get('token')
         if token is None:

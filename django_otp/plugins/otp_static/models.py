@@ -23,7 +23,7 @@ class StaticDevice(Device):
     """
     def verify_token(self, token):
         try:
-            match = self.token_set.filter(token=token).iterator().next()
+            match = next(self.token_set.filter(token=token).iterator())
             match.delete()
         except StopIteration:
             match = None

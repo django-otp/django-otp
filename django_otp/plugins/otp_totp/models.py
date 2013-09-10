@@ -47,29 +47,29 @@ class TOTPDevice(Device):
         update this any time we match a token that is not the current one.
         (Default: 0)
     """
-    key = models.CharField(max_length=80, validators=[hex_validator()], default=lambda: random_hex(20), help_text=u"A hex-encoded secret key of up to 40 bytes.")
-    step = models.PositiveSmallIntegerField(default=30, help_text=u"The time step in seconds.")
-    t0 = models.BigIntegerField(default=0, help_text=u"The Unix time at which to begin counting steps.")
-    digits = models.PositiveSmallIntegerField(choices=[(6,6), (8,8)], default=6, help_text=u"The number of digits to expect in a token.")
-    tolerance = models.PositiveSmallIntegerField(default=1, help_text=u"The number of time steps in the past or future to allow.")
-    drift = models.SmallIntegerField(default=0, help_text=u"The number of time steps the prover is known to deviate from our clock.")
+    key = models.CharField(max_length=80, validators=[hex_validator()], default=lambda: random_hex(20), help_text="A hex-encoded secret key of up to 40 bytes.")
+    step = models.PositiveSmallIntegerField(default=30, help_text="The time step in seconds.")
+    t0 = models.BigIntegerField(default=0, help_text="The Unix time at which to begin counting steps.")
+    digits = models.PositiveSmallIntegerField(choices=[(6, 6), (8, 8)], default=6, help_text="The number of digits to expect in a token.")
+    tolerance = models.PositiveSmallIntegerField(default=1, help_text="The number of time steps in the past or future to allow.")
+    drift = models.SmallIntegerField(default=0, help_text="The number of time steps the prover is known to deviate from our clock.")
 
     class Meta(Device.Meta):
-        verbose_name = u"TOTP device"
+        verbose_name = "TOTP device"
 
     @property
     def bin_key(self):
         """
         The secret key as a binary string.
         """
-        return unhexlify(self.key)
+        return unhexlify(self.key.encode())
 
     def verify_token(self, token):
         OTP_TOTP_SYNC = getattr(settings, 'OTP_TOTP_SYNC', True)
 
         try:
             token = int(token)
-        except StandardError:
+        except Exception:
             verified = False
         else:
             key = self.bin_key

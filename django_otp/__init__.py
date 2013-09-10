@@ -1,5 +1,4 @@
 import sys
-from itertools import ifilter
 
 from django.contrib.auth.signals import user_logged_in
 from django.db.models import get_apps, get_models
@@ -58,7 +57,7 @@ def match_token(user, token):
     :returns: The device that accepted ``token``, if any.
     :rtype: :class:`~django_otp.models.Device` or ``None``
     """
-    matches = ifilter(lambda d: d.verify_token(token), devices_for_user(user))
+    matches = (d for d in devices_for_user(user) if d.verify_token(token))
 
     return next(matches, None)
 

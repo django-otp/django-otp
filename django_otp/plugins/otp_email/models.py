@@ -26,11 +26,11 @@ class EmailDevice(Device):
     key = models.CharField(max_length=80,
                            validators=[hex_validator()],
                            default=lambda: random_hex(20),
-                           help_text=u'A hex-encoded secret key of up to 20 bytes.')
+                           help_text='A hex-encoded secret key of up to 20 bytes.')
 
     @property
     def bin_key(self):
-        return unhexlify(self.key)
+        return unhexlify(self.key.encode())
 
     def generate_challenge(self):
         token = totp(self.bin_key)
@@ -41,14 +41,14 @@ class EmailDevice(Device):
                   settings.OTP_EMAIL_SENDER,
                   [self.user.email])
 
-        message = u'sent by email'
+        message = "sent by email"
 
         return message
 
     def verify_token(self, token):
         try:
             token = int(token)
-        except StandardError:
+        except Exception:
             verified = False
         else:
             verified = any(totp(self.bin_key, drift=drift) == token for drift in [0, -1])

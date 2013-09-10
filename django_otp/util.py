@@ -2,6 +2,7 @@ from binascii import hexlify, unhexlify
 from os import urandom
 
 from django.core.exceptions import ValidationError
+from django.utils import six
 
 
 def hex_validator(length=0):
@@ -17,24 +18,27 @@ def hex_validator(length=0):
     :rtype: function
 
     >>> hex_validator()('0123456789abcdef')
-    >>> hex_validator(8)('0123456789abcdef')
-    >>> hex_validator()('phlebotinum')
+    >>> hex_validator(8)(b'0123456789abcdef')
+    >>> hex_validator()('phlebotinum')          # doctest: +IGNORE_EXCEPTION_DETAIL
     Traceback (most recent call last):
         ...
-    ValidationError: [u'phlebotinum is not valid hex-encoded data.']
-    >>> hex_validator(9)('0123456789abcdef')
+    ValidationError: ['phlebotinum is not valid hex-encoded data.']
+    >>> hex_validator(9)('0123456789abcdef')    # doctest: +IGNORE_EXCEPTION_DETAIL
     Traceback (most recent call last):
         ...
-    ValidationError: [u'0123456789abcdef does not represent exactly 9 bytes.']
+    ValidationError: ['0123456789abcdef does not represent exactly 9 bytes.']
     """
     def _validator(value):
         try:
+            if isinstance(value, six.text_type):
+                value = value.encode()
+
             unhexlify(value)
-        except StandardError:
-            raise ValidationError(u'{0} is not valid hex-encoded data.'.format(value))
+        except Exception:
+            raise ValidationError('{0} is not valid hex-encoded data.'.format(value))
 
         if (length > 0) and (len(value) != length * 2):
-            raise ValidationError(u'{0} does not represent exactly {1} bytes.'.format(value, length))
+            raise ValidationError('{0} does not represent exactly {1} bytes.'.format(value, length))
 
     return _validator
 

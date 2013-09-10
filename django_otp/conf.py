@@ -1,4 +1,5 @@
 import django.conf
+from django.utils.six import iteritems
 
 
 class Settings(object):
@@ -16,7 +17,7 @@ class Settings(object):
         Loads our settings from django.conf.settings, applying defaults for any
         that are omitted.
         """
-        for name, default in self.defaults.iteritems():
+        for name, default in iteritems(self.defaults):
             value = getattr(django.conf.settings, name, default)
             setattr(self, name, value)
 
