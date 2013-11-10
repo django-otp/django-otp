@@ -9,12 +9,12 @@ from .forms import OTPAuthenticationFormMixin
 def _admin_template_for_django_version():
     minor_django_version = django.VERSION[:2]
 
-    if minor_django_version <= (1, 3):
-        return 'otp/admin13/login.html'
-    elif minor_django_version == (1, 4):
+    if minor_django_version <= (1, 4):
         return 'otp/admin14/login.html'
-    elif minor_django_version >= (1, 5):
+    elif minor_django_version == (1, 5):
         return 'otp/admin15/login.html'
+    elif minor_django_version >= (1, 6):
+        return 'otp/admin16/login.html'
 
 
 class OTPAdminAuthenticationForm(AdminAuthenticationForm, OTPAuthenticationFormMixin):
