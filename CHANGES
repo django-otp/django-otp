@@ -1,11 +1,18 @@
-v0.1.8 -- August 20, 2013 - user_has_device API
+v0.2.0 - November 10, 2013 - Django 1.6
+---------------------------------------
+
+- Now supports Django 1.4 to 1.6 on Python 2.6, 2.7, 3.2, and 3.3. This is the
+  first release for Python 3.
+
+
+v0.1.8 - August 20, 2013 - user_has_device API
 -----------------------------------------------
 
 - Add :func:`django_otp.user_has_device` to detect whether a user has any
   devices configured. This change supports a fix in django-otp-agents 0.1.4.
 
 
-v0.1.7 -- July 3, 2013 - Decorator improvement
+v0.1.7 - July 3, 2013 - Decorator improvement
 -----------------------------------------------
 
 - Add if_configured argument to :func:`~django_otp.decorators.otp_required`.
