@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.utils import six
 
@@ -80,7 +81,12 @@ class Device(models.Model):
             return self.__unicode__().encode('utf-8')
 
     def __unicode__(self):
-        return six.u('{0}: {1}'.format(self.user.username, self.name))
+        try:
+            user = self.user
+        except ObjectDoesNotExist:
+            user = None
+
+        return six.u("{0} ({1})".format(self.name, user))
 
     @property
     def persistent_id(self):

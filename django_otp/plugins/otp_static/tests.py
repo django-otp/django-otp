@@ -5,6 +5,25 @@ from django_otp.tests import TestCase
 from .models import StaticDevice
 
 
+class DeviceTest(TestCase):
+    """ A few generic tests to get us started. """
+    def setUp(self):
+        try:
+            self.user = self.create_user('alice', 'password')
+        except Exception:
+            self.skipTest("Unable to create the test user.")
+
+    def test_str(self):
+        device = StaticDevice.objects.create(user=self.user, name="Device")
+
+        str(device)
+
+    def test_str_unpopulated(self):
+        device = StaticDevice()
+
+        str(device)
+
+
 class AuthFormTest(TestCase):
     """
     Test the auth form with static tokens.
