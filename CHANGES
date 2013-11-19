@@ -1,3 +1,9 @@
+v0.2.1 - November 19, 2013 - Bug fix
+------------------------------------
+
+- Fix unicode representation of devices in some exotic scenarios.
+
+
 v0.2.0 - November 10, 2013 - Django 1.6
 ---------------------------------------
 
