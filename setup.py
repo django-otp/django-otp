@@ -31,7 +31,7 @@ setup(
     url='https://bitbucket.org/psagers/django-otp',
     license='BSD',
     install_requires=[
-        'django >= 1.4'
+        'django >= 1.4.2'
     ],
     classifiers=[
         "Development Status :: 4 - Beta",
