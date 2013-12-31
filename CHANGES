@@ -1,3 +1,9 @@
+v0.2.2 - December 31, 2013 - Require Django 1.4.2
+-------------------------------------------------
+
+- Update Django requirement to 1.4.2, the first version with django.utils.six.
+
+
 v0.2.1 - November 19, 2013 - Bug fix
 ------------------------------------
 
