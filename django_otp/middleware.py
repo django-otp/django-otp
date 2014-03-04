@@ -2,6 +2,15 @@ from . import DEVICE_ID_SESSION_KEY
 from .models import Device
 
 
+class IsVerified(object):
+    """ A pickle-friendly lambda. """
+    def __init__(self, user):
+        self.user = user
+
+    def __call__(self):
+        return (self.user.otp_device is not None)
+
+
 class OTPMiddleware(object):
     """
     This must be installed after
@@ -20,7 +29,7 @@ class OTPMiddleware(object):
             return None
 
         user.otp_device = None
-        user.is_verified = lambda: user.otp_device is not None
+        user.is_verified = IsVerified(user)
 
         if user.is_anonymous():
             return None
