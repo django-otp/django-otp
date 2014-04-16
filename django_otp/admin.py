@@ -34,7 +34,10 @@ class OTPAdminAuthenticationForm(AdminAuthenticationForm, OTPAuthenticationFormM
         super(OTPAdminAuthenticationForm, self).__init__(*args, **kwargs)
 
         # A litle extra cheese to make it prettier.
-        self.fields['otp_token'].widget.attrs['style'] = 'width: 14em;'
+        minor_django_version = django.VERSION[:2]
+
+        if minor_django_version < (1, 6):
+            self.fields['otp_token'].widget.attrs['style'] = 'width: 14em;'
 
     def clean(self):
         self.cleaned_data = super(OTPAdminAuthenticationForm, self).clean()
