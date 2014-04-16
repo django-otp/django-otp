@@ -72,7 +72,10 @@ implementors.
 django_otp.oath
 ~~~~~~~~~~~~~~~
 
-.. automodule:: django_otp.oath
+.. module:: django_otp.oath
+.. autofunction:: hotp
+.. autofunction:: totp
+.. autoclass:: TOTP
     :members:
 
 

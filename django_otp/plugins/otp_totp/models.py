@@ -1,10 +1,11 @@
 from binascii import unhexlify
+import time
 
 from django.conf import settings
 from django.db import models
 
 from django_otp.models import Device
-from django_otp.oath import totp
+from django_otp.oath import TOTP
 from django_otp.util import random_hex, hex_validator
 
 
@@ -46,6 +47,14 @@ class TOTPDevice(Device):
         deviate from our clock.  If :setting:`OTP_TOTP_SYNC` is ``True``, we'll
         update this any time we match a token that is not the current one.
         (Default: 0)
+
+    .. attribute:: last_t
+
+        *BigIntegerField*: The time step of the last verified token. To avoid
+        verifying the same token twice, this will be updated on each successful
+        verification. Only tokens at a higher time step will be verified
+        subsequently. (Default: -1)
+
     """
     key = models.CharField(max_length=80, validators=[hex_validator()], default=lambda: random_hex(20), help_text="A hex-encoded secret key of up to 40 bytes.")
     step = models.PositiveSmallIntegerField(default=30, help_text="The time step in seconds.")
@@ -53,6 +62,7 @@ class TOTPDevice(Device):
     digits = models.PositiveSmallIntegerField(choices=[(6, 6), (8, 8)], default=6, help_text="The number of digits to expect in a token.")
     tolerance = models.PositiveSmallIntegerField(default=1, help_text="The number of time steps in the past or future to allow.")
     drift = models.SmallIntegerField(default=0, help_text="The number of time steps the prover is known to deviate from our clock.")
+    last_t = models.BigIntegerField(default=-1, help_text="The t value of the latest verified token. The next token must be at a higher time step.")
 
     class Meta(Device.Meta):
         verbose_name = "TOTP device"
@@ -74,11 +84,16 @@ class TOTPDevice(Device):
         else:
             key = self.bin_key
 
+            totp = TOTP(key, self.step, self.t0, self.digits)
+            totp.time = time.time()
+
             for offset in range(-self.tolerance, self.tolerance + 1):
-                if totp(key, self.step, self.t0, self.digits, self.drift + offset) == token:
+                totp.drift = self.drift + offset
+                if (totp.t() > self.last_t) and (totp.token() == token):
+                    self.last_t = totp.t()
                     if (offset != 0) and OTP_TOTP_SYNC:
                         self.drift += offset
-                        self.save()
+                    self.save()
 
                     verified = True
                     break
