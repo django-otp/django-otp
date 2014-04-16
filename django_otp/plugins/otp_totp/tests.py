@@ -58,11 +58,10 @@ class TOTPTest(TestCase):
         self.assertTrue(ok)
         self.assertEqual(self.device.drift, 2)
 
-    def test_sync_results(self):
-        self.device.tolerance = 1
-        with self.settings(OTP_TOTP_SYNC=True):
-            self.device.verify_token(self.tokens[4])
-        results = [self.device.verify_token(token) for token in self.tokens]
+    def test_no_reuse(self):
+        verified1 = self.device.verify_token(self.tokens[3])
+        verified2 = self.device.verify_token(self.tokens[3])
 
-        self.assertEqual(self.device.drift, 1)
-        self.assertEqual(results, [False] * 3 + [True] * 3 + [False] * 4)
+        self.assertEqual(self.device.last_t, 3)
+        self.assertTrue(verified1)
+        self.assertFalse(verified2)
