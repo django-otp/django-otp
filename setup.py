@@ -20,7 +20,7 @@ with open('MANIFEST.in', 'w') as manifest:
 
 setup(
     name='django-otp',
-    version='0.2.3',
+    version='0.2.4',
     description='A pluggable framework for adding two-factor authentication to Django using one-time passwords.',
     long_description=open('README').read(),
     author='Peter Sagerson',
