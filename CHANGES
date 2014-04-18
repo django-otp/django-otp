@@ -1,3 +1,9 @@
+v0.2.5 - April 18, 2014 - Fix for Python 3.2 with South
+-------------------------------------------------------
+
+- Removed South-generated unicode string literals.
+
+
 v0.2.4 - April 15, 2014 - TOTP plugin fix (migration warning)
 -------------------------------------------------------------
 
@@ -12,6 +18,7 @@ v0.2.4 - April 15, 2014 - TOTP plugin fix (migration warning)
     project uses South, you should first convert it to South with ``manage
     migrate otp_totp 0001 --fake``. If you're not using South, you will need to
     generate and run the appropriate SQL manually.
+
 
 v0.2.3 - March 3, 2014 - Fix pickling
 -------------------------------------
