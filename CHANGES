@@ -1,4 +1,4 @@
-v0.2.5 - April 18, 2014 - Fix for Python 3.2 with South
+v0.2.6 - April 18, 2014 - Fix for Python 3.2 with South
 -------------------------------------------------------
 
 - Removed South-generated unicode string literals.
