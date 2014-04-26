@@ -1,3 +1,10 @@
+v0.2.7 - April 26, 2014 - Fix for Custom user models with South
+---------------------------------------------------------------
+
+- Updated the otp_totp South migrations to support custom user models. Thanks to
+  https://bitbucket.org/robirichter.
+
+
 v0.2.6 - April 18, 2014 - Fix for Python 3.2 with South
 -------------------------------------------------------
 
