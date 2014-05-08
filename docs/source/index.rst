@@ -1,7 +1,7 @@
 django-otp
 ==========
 
-.. include:: ../../README
+.. include:: ../../README.rst
 
 .. toctree::
     :maxdepth: 3
