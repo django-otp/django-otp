@@ -8,7 +8,7 @@ from setuptools import setup, find_packages
 
 # Automatically include all package data
 with open('MANIFEST.in', 'w') as manifest:
-    print('include README CHANGES LICENSE', file=manifest)
+    print('include README.rst CHANGES LICENSE', file=manifest)
     print('recursive-include docs *.rst *.py Makefile', file=manifest)
     print('prune docs/build', file=manifest)
 
@@ -22,7 +22,7 @@ setup(
     name='django-otp',
     version='0.2.7',
     description='A pluggable framework for adding two-factor authentication to Django using one-time passwords.',
-    long_description=open('README').read(),
+    long_description=open('README.rst').read(),
     author='Peter Sagerson',
     author_email='psagersDjwublJf@ignorare.net',
     packages=find_packages(),
