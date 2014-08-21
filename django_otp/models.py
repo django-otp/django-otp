@@ -148,7 +148,7 @@ class Device(models.Model):
 
     def verify_token(self, token):
         """
-        Verifies a token. In some cases, the token will no longer be valid if
+        Verifies a token. As a rule, the token should no longer be valid if
         this returns ``True``.
 
         :param string token: The OTP token provided by the user.

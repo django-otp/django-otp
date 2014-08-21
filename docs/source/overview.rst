@@ -19,6 +19,8 @@ Adding two-factor authentication to your Django site involves four main tasks:
        relying on the Django admin interface).
 
 
+.. _installation:
+
 Installation
 ------------
 
@@ -201,6 +203,7 @@ Static Devices
 .. module:: django_otp.plugins.otp_static
 
 .. automodule:: django_otp.plugins.otp_static.models
+
     :members: StaticDevice, StaticToken
 
 .. autoclass:: django_otp.plugins.otp_static.admin.StaticDeviceAdmin

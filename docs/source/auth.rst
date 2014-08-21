@@ -112,6 +112,8 @@ token to verify, you can use :class:`django_otp.forms.OTPTokenForm`.
 .. autoclass:: django_otp.forms.OTPTokenForm
 
 
+.. _Low-Level API:
+
 The Low-Level API
 ~~~~~~~~~~~~~~~~~
 
@@ -124,7 +126,7 @@ The Low-Level API
 .. autofunction:: django_otp.login
 
 .. autoclass:: django_otp.models.Device
-    :members: objects, is_interactive, generate_challenge, verify_token
+    :members: is_interactive, generate_challenge, verify_token
 
 .. autoclass:: django_otp.models.DeviceManager
     :members: devices_for_user
@@ -163,6 +165,8 @@ the user claims is on a private and secure computer), look at
 `django-agent-trust <http://pypi.python.org/pypi/django-agent-trust>`_ and
 `django-otp-agents <http://pypi.python.org/pypi/django-otp-agents>`_.
 
+
+.. _Managing Devices:
 
 Managing Devices
 ----------------
