@@ -7,6 +7,14 @@ from django_otp.oath import hotp
 from django_otp.util import random_hex, hex_validator
 
 
+def default_key():
+    return random_hex(20)
+
+
+def key_validator(value):
+    return hex_validator()(value)
+
+
 class HOTPDevice(Device):
     """
     A generic HOTP :class:`~django_otp.models.Device`. The model fields mostly
@@ -32,7 +40,7 @@ class HOTPDevice(Device):
 
         *BigIntegerField*: The next counter value to expect. (Initial: 0)
     """
-    key = models.CharField(max_length=80, validators=[hex_validator()], default=lambda: random_hex(20), help_text="A hex-encoded secret key of up to 40 bytes.")
+    key = models.CharField(max_length=80, validators=[key_validator], default=default_key, help_text="A hex-encoded secret key of up to 40 bytes.")
     digits = models.PositiveSmallIntegerField(choices=[(6, 6), (8, 8)], default=6, help_text="The number of digits to expect in a token.")
     tolerance = models.PositiveSmallIntegerField(default=5, help_text="The number of missed tokens to tolerate.")
     counter = models.BigIntegerField(default=0, help_text="The next counter value to expect.")

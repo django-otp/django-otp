@@ -13,9 +13,10 @@ with open('MANIFEST.in', 'w') as manifest:
     print('prune docs/build', file=manifest)
 
     for dirpath, dirnames, filenames in walk('django_otp'):
-        if (len(filenames) > 0) and ('__init__.py' not in filenames):
-            print('recursive-include {0} *'.format(dirpath), file=manifest)
-            dirnames[:] = []
+        if not dirpath.endswith('__pycache__'):
+            if (len(filenames) > 0) and ('__init__.py' not in filenames):
+                print('recursive-include {0} *'.format(dirpath), file=manifest)
+                dirnames[:] = []
 
 
 setup(
@@ -39,7 +40,6 @@ setup(
         "Programming Language :: Python :: 2.6",
         "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.2",
         "Programming Language :: Python :: 3.3",
         "Programming Language :: Python :: 3.4",
         "Intended Audience :: Developers",

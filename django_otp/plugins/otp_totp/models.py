@@ -9,6 +9,14 @@ from django_otp.oath import TOTP
 from django_otp.util import random_hex, hex_validator
 
 
+def default_key():
+    return random_hex(20)
+
+
+def key_validator(value):
+    return hex_validator()(value)
+
+
 class TOTPDevice(Device):
     """
     A generic TOTP :class:`~django_otp.models.Device`. The model fields mostly
@@ -56,7 +64,7 @@ class TOTPDevice(Device):
         subsequently. (Default: -1)
 
     """
-    key = models.CharField(max_length=80, validators=[hex_validator()], default=lambda: random_hex(20), help_text="A hex-encoded secret key of up to 40 bytes.")
+    key = models.CharField(max_length=80, validators=[key_validator], default=default_key, help_text="A hex-encoded secret key of up to 40 bytes.")
     step = models.PositiveSmallIntegerField(default=30, help_text="The time step in seconds.")
     t0 = models.BigIntegerField(default=0, help_text="The Unix time at which to begin counting steps.")
     digits = models.PositiveSmallIntegerField(choices=[(6, 6), (8, 8)], default=6, help_text="The number of digits to expect in a token.")

@@ -11,6 +11,14 @@ from django_otp.util import hex_validator, random_hex
 from .conf import settings
 
 
+def default_key():
+    return random_hex(20)
+
+
+def key_validator(value):
+    return hex_validator()(value)
+
+
 class EmailDevice(Device):
     """
     A :class:`~django_otp.models.Device` that delivers a token to the user's
@@ -24,8 +32,8 @@ class EmailDevice(Device):
         random bytes)
     """
     key = models.CharField(max_length=80,
-                           validators=[hex_validator()],
-                           default=lambda: random_hex(20),
+                           validators=[key_validator],
+                           default=default_key,
                            help_text='A hex-encoded secret key of up to 20 bytes.')
 
     @property
