@@ -12,7 +12,6 @@ separately. This package also includes an implementation of OATH `HOTP
 <http://tools.ietf.org/html/rfc6238>`_ for convenience, as these are standard
 OTP algorithms used by multiple plugins.
 
-This version is supported on Python 2.6, 2.7, 3.2, 3.3, and 3.4; and Django >=
-1.4.2.
+This version is supported on Python 2.6, 2.7, and 3.3+; and Django >= 1.4.2.
 
 .. vim:ft=rst
