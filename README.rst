@@ -14,4 +14,12 @@ OTP algorithms used by multiple plugins.
 
 This version is supported on Python 2.6, 2.7, and 3.3+; and Django >= 1.4.2.
 
+.. warning::
+
+    All plugins now contain both South and Django migrations. If you're using
+    South or upgrading to Django 1.7, please see the `upgrade notes`_ in the
+    documentation first.
+
+.. _upgrade notes: https://pythonhosted.org/django-otp/overview.html#upgrading
+
 .. vim:ft=rst

@@ -21,7 +21,7 @@ with open('MANIFEST.in', 'w') as manifest:
 
 setup(
     name='django-otp',
-    version='0.2.7',
+    version='0.3.0',
     description='A pluggable framework for adding two-factor authentication to Django using one-time passwords.',
     long_description=open('README.rst').read(),
     author='Peter Sagerson',
@@ -35,7 +35,7 @@ setup(
         'django >= 1.4.2'
     ],
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 2.6",
         "Programming Language :: Python :: 2.7",
