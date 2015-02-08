@@ -64,6 +64,73 @@ For example::
 The plugins contain models that must be migrated.
 
 
+.. _upgrading:
+
+Upgrading
+---------
+
+Version 0.2.4 of django-otp introduced a South migration to the otp_totp plugin.
+Version 0.3.0 added Django 1.7 and South migrations to all apps. Care must be
+taken when upgrading in certain cases.
+
+The recommended procedure is:
+
+    1. Upgrade django-otp to 0.2.7, as described below.
+    2. Upgrade Django to 1.7 or later.
+    3. Upgrade django-otp to the latest version.
+
+django-otp 0.4 will drop support for Django < 1.7.
+
+
+Upgrading from 0.2.3 or Earlier
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you're using django-otp <= 0.2.3, you need to convert otp_totp to South
+before going any further::
+
+    pip install 'django-otp==0.2.7'
+    python manage.py migrate otp_totp 0001 --fake
+    python manage.py migrate otp_totp
+
+If you're not using South, you can run ``python manage.py sql otp_totp`` to see
+the definition of the new ``last_t`` field and then construct a suitable ``ALTER
+TABLE`` SQL statement for your database.
+
+
+Upgrading to Django 1.7+
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Once you've upgraded django-otp to version 0.2.4 or later (up to 0.2.7), it's
+safe to switch to Django 1.7 or later. You should not have South installed at
+this point, so any old migrations will simply be ignored.
+
+Once on Django 1.7+, it's safe to upgrade django-otp to 0.3 or later. All
+plugins with models have Django migrations, which will be ignored if the tables
+have already been created.
+
+If you're already on django-otp 0.3 or later when you move to Django 1.7+ (see
+below), you'll want to make sure Django knows that all migrations have already
+been run::
+
+    python manage.py migrate --fake <otp_plugin>
+    ...
+
+
+Upgrading to 0.3.x with South
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you want to upgrade django-otp to 0.3.x under South, you'll need to convert
+all of the remaining plugins. First make sure you're running South 1.0, as
+earlier versions will not find the migrations. Then convert any plugin that you
+have installed::
+
+    pip install 'django-otp>=0.3'
+    python manage.py migrate otp_hotp 0001 --fake
+    python manage.py migrate otp_static 0001 --fake
+    python manage.py migrate otp_yubikey 0001 --fake
+    python manage.py migrate otp_twilio 0001 --fake
+
+
 Authentication and Verification
 -------------------------------
 
