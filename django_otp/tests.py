@@ -1,7 +1,11 @@
 from doctest import DocTestSuite
 
+import django
 import django.test
-from django.utils import unittest
+if django.VERSION < (1, 7):
+    from django.utils import unittest
+else:
+    import unittest
 
 from django_otp import util
 from django_otp import oath
@@ -23,6 +27,8 @@ class TestCase(django.test.TestCase):
     """
     @classmethod
     def setUpClass(cls):
+        super(TestCase, cls).setUpClass()
+
         try:
             from django.contrib.auth import get_user_model
         except ImportError:

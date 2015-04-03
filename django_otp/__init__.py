@@ -1,7 +1,6 @@
 import sys
 
 from django.contrib.auth.signals import user_logged_in
-from django.db.models import get_apps, get_models
 
 from django_otp.models import Device
 
@@ -112,6 +111,24 @@ def device_classes():
     """
     Returns an iterable of all loaded device models.
     """
+    try:
+        from django.apps import apps
+    except ImportError:
+        for model in _device_classes_legacy():
+            yield model
+    else:
+        for config in apps.get_app_configs():
+            for model in config.get_models():
+                if issubclass(model, Device):
+                    yield model
+
+
+def _device_classes_legacy():
+    """
+    Find device models in Django < 1.7.
+    """
+    from django.db.models import get_apps, get_models
+
     for app in get_apps():
         for model in get_models(app):
             if issubclass(model, Device):
