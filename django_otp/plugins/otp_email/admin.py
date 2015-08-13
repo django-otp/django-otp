@@ -17,6 +17,7 @@ class EmailDeviceAdmin(admin.ModelAdmin):
             'fields': ['key'],
         }),
     ]
+    raw_id_fields = ('user',)
 
 
 # Somehow this is getting imported twice, triggering a useless exception.
