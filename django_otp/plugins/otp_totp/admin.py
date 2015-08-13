@@ -20,6 +20,7 @@ class TOTPDeviceAdmin(admin.ModelAdmin):
             'fields': ['drift'],
         }),
     ]
+    raw_id_fields = ('user',)
 
     radio_fields = {'digits': admin.HORIZONTAL}
 
