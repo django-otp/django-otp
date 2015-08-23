@@ -19,7 +19,7 @@ class StaticDeviceAdmin(admin.ModelAdmin):
             'fields': ['user', 'name', 'confirmed'],
         }),
     ]
-    raw_id_fields = ('user',)
+    raw_id_fields = ['user']
 
     inlines = [
         StaticTokenInline,
