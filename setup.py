@@ -1,27 +1,11 @@
 #!/usr/bin/env python
 
-from __future__ import print_function
-from os import walk
-
 from setuptools import setup, find_packages
-
-
-# Automatically include all package data
-with open('MANIFEST.in', 'w') as manifest:
-    print('include README.rst CHANGES LICENSE', file=manifest)
-    print('recursive-include docs *.rst *.py Makefile', file=manifest)
-    print('prune docs/build', file=manifest)
-
-    for dirpath, dirnames, filenames in walk('django_otp'):
-        if not dirpath.endswith('__pycache__'):
-            if (len(filenames) > 0) and ('__init__.py' not in filenames):
-                print('recursive-include {0} *'.format(dirpath), file=manifest)
-                dirnames[:] = []
 
 
 setup(
     name='django-otp',
-    version='0.3.1',
+    version='0.3.2',
     description='A pluggable framework for adding two-factor authentication to Django using one-time passwords.',
     long_description=open('README.rst').read(),
     author='Peter Sagerson',
@@ -42,6 +26,7 @@ setup(
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.3",
         "Programming Language :: Python :: 3.4",
+        "Programming Language :: Python :: 3.5",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: BSD License",
         "Topic :: Security",
