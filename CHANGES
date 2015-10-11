@@ -1,3 +1,13 @@
+v0.3.2 - October 11, 2015 - Django 1.8
+--------------------------------------
+
+- Stop importing models into the root of the package.
+
+- Use ModelAdmin.raw_id_fields for foreign keys to users.
+
+- General cleanup and compatibility with Django 1.9a1.
+
+
 v0.3.1 - April 3, 2015 - Django 1.8
 -----------------------------------
 
