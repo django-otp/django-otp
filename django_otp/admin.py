@@ -13,8 +13,14 @@ def _admin_template_for_django_version():
         return 'otp/admin14/login.html'
     elif minor_django_version == (1, 5):
         return 'otp/admin15/login.html'
-    elif minor_django_version >= (1, 6):
+    elif minor_django_version == (1, 6):
         return 'otp/admin16/login.html'
+    elif minor_django_version == (1, 7):
+        return 'otp/admin17/login.html'
+    elif minor_django_version == (1, 8):
+        return 'otp/admin18/login.html'
+    else:
+        return 'otp/admin19/login.html'
 
 
 class OTPAdminAuthenticationForm(AdminAuthenticationForm, OTPAuthenticationFormMixin):

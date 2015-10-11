@@ -3,7 +3,6 @@ import sys
 from django.contrib.auth.signals import user_logged_in
 
 
-
 DEVICE_ID_SESSION_KEY = 'otp_device_id'
 
 
