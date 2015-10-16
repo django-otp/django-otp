@@ -1,3 +1,9 @@
+v0.3.3 - October 15, 2015 - Django 1.9
+--------------------------------------
+
+- Fix the addstatictoken management command under Django 1.9.
+
+
 v0.3.2 - October 11, 2015 - Django 1.8
 --------------------------------------
 
