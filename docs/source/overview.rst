@@ -270,7 +270,6 @@ Static Devices
 .. module:: django_otp.plugins.otp_static
 
 .. automodule:: django_otp.plugins.otp_static.models
-
     :members: StaticDevice, StaticToken
 
 .. autoclass:: django_otp.plugins.otp_static.admin.StaticDeviceAdmin
