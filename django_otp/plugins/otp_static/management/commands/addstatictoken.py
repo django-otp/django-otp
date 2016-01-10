@@ -1,4 +1,4 @@
-from __future__ import print_function
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 from optparse import make_option
 from textwrap import fill
@@ -28,4 +28,4 @@ class Command(BaseCommand):
         except get_user_model().DoesNotExist:
             raise CommandError('User "{0}" does not exist.'.format(username))
 
-        print(statictoken.token, file=self.stdout)
+        self.stdout.write(statictoken.token)

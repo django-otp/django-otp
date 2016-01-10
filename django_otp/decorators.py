@@ -1,3 +1,5 @@
+from __future__ import absolute_import, division, print_function, unicode_literals
+
 from django.contrib.auth.decorators import user_passes_test
 
 from django_otp import user_has_device
@@ -17,7 +19,9 @@ def otp_required(view=None, redirect_field_name='next', login_url=None, if_confi
     if login_url is None:
         login_url = settings.OTP_LOGIN_URL
 
-    test = lambda user: user.is_verified() or (if_configured and user.is_authenticated() and not user_has_device(user))
+    def test(user):
+        return user.is_verified() or (if_configured and user.is_authenticated() and not user_has_device(user))
+
     decorator = user_passes_test(test, login_url=login_url, redirect_field_name=redirect_field_name)
 
     return decorator if (view is None) else decorator(view)
