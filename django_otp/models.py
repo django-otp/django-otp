@@ -1,3 +1,5 @@
+from __future__ import absolute_import, division, print_function, unicode_literals
+
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
@@ -86,7 +88,7 @@ class Device(models.Model):
         except ObjectDoesNotExist:
             user = None
 
-        return six.u("{0} ({1})".format(self.name, user))
+        return "{0} ({1})".format(self.name, user)
 
     @property
     def persistent_id(self):

@@ -1,3 +1,5 @@
+from __future__ import absolute_import, division, print_function, unicode_literals
+
 from hashlib import sha1
 import hmac
 from struct import pack
@@ -8,7 +10,8 @@ from django.utils import six
 if six.PY3:
     iterbytes = iter
 else:
-    iterbytes = lambda buf: (ord(b) for b in buf)
+    def iterbytes(buf):
+        return (ord(b) for b in buf)
 
 
 def hotp(key, counter, digits=6):
@@ -37,7 +40,7 @@ def hotp(key, counter, digits=6):
     399871
     520489
     """
-    msg = pack('>Q', counter)
+    msg = pack(b'>Q', counter)
     hs = hmac.new(key, msg, sha1).digest()
     hs = list(iterbytes(hs))
 
