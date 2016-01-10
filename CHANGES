@@ -1,3 +1,11 @@
+v0.3.4 - January 10, 2016 - Python 3 cleanup
+--------------------------------------------
+
+- All modules include all four Python 3 __future__ imports for consistency.
+
+- Migrations no longer have byte strings in them.
+
+
 v0.3.3 - October 15, 2015 - Django 1.9
 --------------------------------------
 
