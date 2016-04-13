@@ -10,7 +10,9 @@ except ImportError:
     # Django < 1.4 doesn't have override_settings. Just skip the tests in that
     # case.
     from django.utils.unittest import skip
-    override_settings = lambda *args, **kwargs: skip
+
+    def override_settings(*args, **kwargs):
+        return skip
 
 from django_otp.tests import TestCase
 
@@ -25,14 +27,20 @@ class TOTPTest(TestCase):
         Create a device at the fourth time step. The current token is 154567.
         """
         try:
-            alice = self.create_user('alice', 'password')
+            self.alice = self.create_user('alice', 'password')
         except IntegrityError:
             self.skipTest("Unable to create the test user.")
         else:
-            self.device = alice.totpdevice_set.create(
+            self.device = self.alice.totpdevice_set.create(
                 key='2a2bbba1092ffdd25a328ad1a0a5f5d61d7aacc4', step=30,
                 t0=int(time() - (30 * 3)), digits=6, tolerance=0, drift=0
             )
+
+    def test_default_key(self):
+        device = self.alice.totpdevice_set.create()
+
+        # Make sure we can decode the key.
+        device.bin_key
 
     def test_single(self):
         results = [self.device.verify_token(token) for token in self.tokens]
