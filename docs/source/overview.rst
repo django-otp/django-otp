@@ -209,8 +209,8 @@ django-otp includes support for several standard device types.
 :class:`~django_otp.plugins.otp_totp.models.TOTPDevice` handle standard OTP
 algorithms, which can be used with a variety of OTP generators. For example,
 it's easy to pair these devices with `Google Authenticator
-<http://code.google.com/p/google-authenticator/>`_ using the `otpauth URL scheme
-<http://code.google.com/p/google-authenticator/wiki/KeyUriFormat>`_.
+<https://github.com/google/google-authenticator>`_ using the `otpauth URL scheme
+<https://github.com/google/google-authenticator/wiki/Key-Uri-Format>`_.
 
 
 HOTP Devices
