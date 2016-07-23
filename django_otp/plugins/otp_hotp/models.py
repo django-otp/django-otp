@@ -41,6 +41,7 @@ class HOTPDevice(Device):
     .. attribute:: counter
 
         *BigIntegerField*: The next counter value to expect. (Initial: 0)
+
     """
     key = models.CharField(max_length=80, validators=[key_validator], default=default_key, help_text="A hex-encoded secret key of up to 40 bytes.")
     digits = models.PositiveSmallIntegerField(choices=[(6, 6), (8, 8)], default=6, help_text="The number of digits to expect in a token.")
