@@ -1,5 +1,10 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+try:
+    from django.utils.deprecation import MiddlewareMixin
+except ImportError:
+    MiddlewareMixin = object
+
 from . import DEVICE_ID_SESSION_KEY
 from .models import Device
 
@@ -13,7 +18,7 @@ class IsVerified(object):
         return (self.user.otp_device is not None)
 
 
-class OTPMiddleware(object):
+class OTPMiddleware(MiddlewareMixin):
     """
     This must be installed after
     :class:`~django.contrib.auth.middleware.AuthenticationMiddleware` and
