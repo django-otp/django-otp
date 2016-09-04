@@ -5,17 +5,10 @@ try:
 except ImportError:
     MiddlewareMixin = object
 
+from django.utils.functional import SimpleLazyObject
+
 from . import DEVICE_ID_SESSION_KEY
 from .models import Device
-
-
-class IsVerified(object):
-    """ A pickle-friendly lambda. """
-    def __init__(self, user):
-        self.user = user
-
-    def __call__(self):
-        return (self.user.otp_device is not None)
 
 
 class OTPMiddleware(MiddlewareMixin):
@@ -31,25 +24,28 @@ class OTPMiddleware(MiddlewareMixin):
     """
     def process_request(self, request):
         user = getattr(request, 'user', None)
-
-        if user is None:
-            return None
-
-        user.otp_device = None
-        user.is_verified = IsVerified(user)
-
-        if user.is_anonymous():
-            return None
-
-        device_id = request.session.get(DEVICE_ID_SESSION_KEY)
-        device = Device.from_persistent_id(device_id) if device_id else None
-
-        if (device is not None) and (device.user_id != user.id):
-            device = None
-
-        if (device is None) and (DEVICE_ID_SESSION_KEY in request.session):
-            del request.session[DEVICE_ID_SESSION_KEY]
-
-        user.otp_device = device
+        if user is not None:
+            request.user = SimpleLazyObject(lambda: self._verify_user(request, user))
 
         return None
+
+    def _verify_user(self, request, user):
+        """
+        Sets OTP-related fields on an authenticated user.
+        """
+        user.otp_device = None
+        user.is_verified = lambda: user.otp_device is not None
+
+        if user.is_authenticated():
+            device_id = request.session.get(DEVICE_ID_SESSION_KEY)
+            device = Device.from_persistent_id(device_id) if device_id else None
+
+            if (device is not None) and (device.user_id != user.id):
+                device = None
+
+            if (device is None) and (DEVICE_ID_SESSION_KEY in request.session):
+                del request.session[DEVICE_ID_SESSION_KEY]
+
+            user.otp_device = device
+
+        return user
