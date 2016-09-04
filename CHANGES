@@ -1,3 +1,17 @@
+v0.3.6 - September 4, 2016 - Django 1.10
+----------------------------------------
+
+- `#11`_: Don't break the laziness of ``request.user``.
+
+- `#16`_: Improved error message for invalid tokens.
+
+- `#17`_: Support the new middleware API in Django 1.10.
+
+.. _#11: https://bitbucket.org/psagers/django-otp/issues/11/wasteful-queries-on-every-request
+.. _#16: https://bitbucket.org/psagers/django-otp/issues/16/inappropriate-error-when-_verify_token
+.. _#17: https://bitbucket.org/psagers/django-otp/issues/17/django-110-new-style-middleware
+
+
 v0.3.5 - April 13, 2016 - Fix default TOTP key
 ----------------------------------------------
 
