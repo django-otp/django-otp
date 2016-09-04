@@ -1,17 +1,11 @@
-from __future__ import print_function
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 from optparse import make_option
 from textwrap import fill
 
-from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand, CommandError
-try:
-    from django.contrib.auth import get_user_model
-except ImportError:
-    from django.contrib.auth.models import User
-    get_user_model = lambda: User
 
-from django_otp.plugins.otp_static.models import StaticDevice, StaticToken
+from django_otp.plugins.otp_static.lib import get_user_model, add_static_token
 
 
 class Command(BaseCommand):
@@ -30,18 +24,8 @@ class Command(BaseCommand):
         username = args[0]
 
         try:
-            user = get_user_model().objects.get_by_natural_key(username)
-        except ObjectDoesNotExist:
+            statictoken = add_static_token(username, options.get('token'))
+        except get_user_model().DoesNotExist:
             raise CommandError('User "{0}" does not exist.'.format(username))
 
-        device = next(StaticDevice.objects.filter(user=user).iterator(), None)
-        if device is None:
-            device = StaticDevice.objects.create(user=user, name='Backup Code')
-
-        token = options.get('token')
-        if token is None:
-            token = StaticToken.random_token()
-
-        device.token_set.add(StaticToken(token=token))
-
-        print(token, file=self.stdout)
+        self.stdout.write(statictoken.token)

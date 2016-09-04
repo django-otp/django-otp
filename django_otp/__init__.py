@@ -2,8 +2,6 @@ import sys
 
 from django.contrib.auth.signals import user_logged_in
 
-from django_otp.models import Device
-
 
 DEVICE_ID_SESSION_KEY = 'otp_device_id'
 
@@ -111,6 +109,8 @@ def device_classes():
     """
     Returns an iterable of all loaded device models.
     """
+    from django_otp.models import Device
+
     try:
         from django.apps import apps
     except ImportError:
@@ -128,6 +128,7 @@ def _device_classes_legacy():
     Find device models in Django < 1.7.
     """
     from django.db.models import get_apps, get_models
+    from django_otp.models import Device
 
     for app in get_apps():
         for model in get_models(app):

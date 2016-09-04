@@ -1,7 +1,11 @@
+from __future__ import absolute_import, division, print_function, unicode_literals
+
 from django.db import IntegrityError
 
 from django_otp.forms import OTPAuthenticationForm
 from django_otp.tests import TestCase
+
+from .lib import add_static_token
 from .models import StaticDevice
 
 
@@ -22,6 +26,40 @@ class DeviceTest(TestCase):
         device = StaticDevice()
 
         str(device)
+
+
+class LibTest(TestCase):
+    """
+    Test miscellaneous library functions.
+    """
+    def setUp(self):
+        try:
+            self.user = self.create_user('alice', 'password')
+        except Exception:
+            self.skipTest("Unable to create the test user.")
+
+    def test_add_static_token(self):
+        statictoken = add_static_token('alice')
+
+        self.assertEqual(statictoken.device.user, self.user)
+        self.assertEqual(self.user.staticdevice_set.count(), 1)
+
+    def test_add_static_token_existing_device(self):
+        self.user.staticdevice_set.create(name='Test')
+        statictoken = add_static_token('alice')
+
+        self.assertEqual(statictoken.device.user, self.user)
+        self.assertEqual(self.user.staticdevice_set.count(), 1)
+        self.assertEqual(statictoken.device.name, 'Test')
+
+    def test_add_static_token_no_user(self):
+        with self.assertRaises(self.User.DoesNotExist):
+            add_static_token('bogus')
+
+    def test_add_static_token_specific(self):
+        statictoken = add_static_token('alice', 'token')
+
+        self.assertEqual(statictoken.token, 'token')
 
 
 class AuthFormTest(TestCase):

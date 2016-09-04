@@ -1,14 +1,17 @@
+from __future__ import absolute_import, division, print_function, unicode_literals
+
 from doctest import DocTestSuite
 
 import django
 import django.test
+
+from django_otp import oath
+from django_otp import util
+
 if django.VERSION < (1, 7):
     from django.utils import unittest
 else:
     import unittest
-
-from django_otp import util
-from django_otp import oath
 
 
 def load_tests(loader, tests, pattern):

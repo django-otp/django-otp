@@ -1,3 +1,5 @@
+from __future__ import absolute_import, division, print_function, unicode_literals
+
 import django
 from django import forms
 from django.contrib.admin.forms import AdminAuthenticationForm
@@ -13,8 +15,14 @@ def _admin_template_for_django_version():
         return 'otp/admin14/login.html'
     elif minor_django_version == (1, 5):
         return 'otp/admin15/login.html'
-    elif minor_django_version >= (1, 6):
+    elif minor_django_version == (1, 6):
         return 'otp/admin16/login.html'
+    elif minor_django_version == (1, 7):
+        return 'otp/admin17/login.html'
+    elif minor_django_version == (1, 8):
+        return 'otp/admin18/login.html'
+    else:
+        return 'otp/admin19/login.html'
 
 
 class OTPAdminAuthenticationForm(AdminAuthenticationForm, OTPAuthenticationFormMixin):
@@ -65,6 +73,9 @@ class OTPAdminSite(AdminSite):
     #: version. If it doesn't look right, your version may not be supported, in
     #: which case feel free to replace it.
     login_template = _admin_template_for_django_version()
+
+    def __init__(self, name='otpadmin'):
+        super(OTPAdminSite, self).__init__(name)
 
     def has_permission(self, request):
         """

@@ -16,9 +16,9 @@ class Migration(migrations.Migration):
             name='StaticDevice',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('name', models.CharField(help_text=b'The human-readable name of this device.', max_length=64)),
-                ('confirmed', models.BooleanField(default=True, help_text=b'Is this device ready for use?')),
-                ('user', models.ForeignKey(help_text=b'The user that this device belongs to.', to=settings.AUTH_USER_MODEL)),
+                ('name', models.CharField(help_text='The human-readable name of this device.', max_length=64)),
+                ('confirmed', models.BooleanField(default=True, help_text='Is this device ready for use?')),
+                ('user', models.ForeignKey(help_text='The user that this device belongs to.', to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'abstract': False,
