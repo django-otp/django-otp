@@ -58,22 +58,19 @@ class OTPAuthenticationFormMixin(object):
 
         device = self._chosen_device(user)
         token = self.cleaned_data.get('otp_token')
-        error = None
 
         user.otp_device = None
 
-        if self.cleaned_data.get('otp_challenge'):
-            error = self._handle_challenge(device)
-        elif token:
-            user.otp_device = self._verify_token(user, token, device)
-
-        if user.otp_device is None:
-            self._update_form(user)
-
-            if error is None:
-                error = forms.ValidationError(_('Please enter your OTP token'))
-
-            raise error
+        try:
+            if self.cleaned_data.get('otp_challenge'):
+                self._handle_challenge(device)
+            elif token:
+                user.otp_device = self._verify_token(user, token, device)
+            else:
+                raise forms.ValidationError(_('Please enter your OTP token.'), code='required')
+        finally:
+            if user.otp_device is None:
+                self._update_form(user)
 
     def _chosen_device(self, user):
         device_id = self.cleaned_data.get('otp_device')
@@ -96,20 +93,21 @@ class OTPAuthenticationFormMixin(object):
         try:
             challenge = device.generate_challenge() if (device is not None) else None
         except Exception as e:
-            error = forms.ValidationError(_('Error generating challenge: {0}'.format(e)))
+            raise forms.ValidationError(_('Error generating challenge: {0}'.format(e)))
         else:
             if challenge is None:
-                error = forms.ValidationError(_('The selected OTP device is not interactive'))
+                raise forms.ValidationError(_('The selected OTP device is not interactive'))
             else:
-                error = forms.ValidationError(_('OTP Challenge: {0}').format(challenge))
-
-        return error
+                raise forms.ValidationError(_('OTP Challenge: {0}').format(challenge))
 
     def _verify_token(self, user, token, device=None):
         if device is not None:
             device = device if device.verify_token(token) else None
         else:
             device = match_token(user, token)
+
+        if device is None:
+            raise forms.ValidationError(_('Invalid token. Please make sure you have entered it correctly.'), code='invalid')
 
         return device
 
