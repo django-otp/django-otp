@@ -158,3 +158,35 @@ class TOTP(object):
     @time.deleter
     def time(self):
         self._time = None
+
+    def verify(self, token, tolerance=0, min_t=None):
+        """
+        A high-level verification helper.
+
+        :param int token: The provided token.
+        :param int tolerance: The amount of clock drift you're willing to
+            accommodate, in steps. We'll look for the token at t values in
+            [t - tolerance, t + tolerance].
+        :param int min_t: The minimum t value we'll accept. As a rule, this
+            should be one larger than the largest t value of any previously
+            accepted token.
+        :rtype: bool
+
+        Iff this returns True, `self.drift` will be updated to reflect the
+        drift value that was necessary to match the token.
+
+        """
+        drift_orig = self.drift
+        verified = False
+
+        for offset in range(-tolerance, tolerance + 1):
+            self.drift = drift_orig + offset
+            if (min_t is not None) and (self.t() < min_t):
+                continue
+            elif self.token() == token:
+                verified = True
+                break
+        else:
+            self.drift = drift_orig
+
+        return verified
