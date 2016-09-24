@@ -95,20 +95,14 @@ class TOTPDevice(Device):
         else:
             key = self.bin_key
 
-            totp = TOTP(key, self.step, self.t0, self.digits)
+            totp = TOTP(key, self.step, self.t0, self.digits, self.drift)
             totp.time = time.time()
 
-            for offset in range(-self.tolerance, self.tolerance + 1):
-                totp.drift = self.drift + offset
-                if (totp.t() > self.last_t) and (totp.token() == token):
-                    self.last_t = totp.t()
-                    if (offset != 0) and OTP_TOTP_SYNC:
-                        self.drift += offset
-                    self.save()
-
-                    verified = True
-                    break
-            else:
-                verified = False
+            verified = totp.verify(token, self.tolerance, self.last_t + 1)
+            if verified:
+                self.last_t = totp.t()
+                if OTP_TOTP_SYNC:
+                    self.drift = totp.drift
+                self.save()
 
         return verified

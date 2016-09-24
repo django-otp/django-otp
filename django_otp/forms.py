@@ -123,7 +123,7 @@ class OTPAuthenticationFormMixin(object):
         return list((d.persistent_id, d.name) for d in devices_for_user(user))
 
 
-class OTPAuthenticationForm(AuthenticationForm, OTPAuthenticationFormMixin):
+class OTPAuthenticationForm(OTPAuthenticationFormMixin, AuthenticationForm):
     """
     This form provides the one-stop OTP authentication solution. It should
     only be used when two-factor authentication is required: it does not
@@ -197,7 +197,7 @@ class OTPAuthenticationForm(AuthenticationForm, OTPAuthenticationFormMixin):
         return self.cleaned_data
 
 
-class OTPTokenForm(forms.Form, OTPAuthenticationFormMixin):
+class OTPTokenForm(OTPAuthenticationFormMixin, forms.Form):
     """
     A form that verifies an authenticated user. It looks very much like
     :class:`~django_otp.forms.OTPAuthenticationForm`, but without the username
@@ -240,6 +240,8 @@ class OTPTokenForm(forms.Form, OTPAuthenticationFormMixin):
         self.fields['otp_device'].choices = self.device_choices(user)
 
     def clean(self):
+        super(OTPTokenForm, self).clean()
+
         self.clean_otp(self.user)
 
         return self.cleaned_data
