@@ -115,6 +115,19 @@ class TOTP(object):
     1
     >>> totp.token()
     287082
+    >>> totp.verify(287082)
+    True
+    >>> totp.verify(359152)
+    False
+    >>> totp.verify(359152, tolerance=1)
+    True
+    >>> totp.drift
+    1
+    >>> totp.drift = 0
+    >>> totp.verify(359152, tolerance=1, min_t=3)
+    False
+    >>> totp.drift
+    0
     >>> del totp.time
     >>> totp.t0 = int(time()) - 60
     >>> totp.t()
