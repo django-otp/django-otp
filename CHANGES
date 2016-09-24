@@ -1,3 +1,10 @@
+v0.3.7 - September 24, 2016 - Convenience API
+---------------------------------------------
+
+- Added a convenience API for verifying TOTP tokens:
+  :meth:`django_otp.oath.TOTP.verify`.
+
+
 v0.3.6 - September 4, 2016 - Django 1.10
 ----------------------------------------
 
