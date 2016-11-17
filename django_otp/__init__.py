@@ -1,5 +1,6 @@
 import sys
 
+import django
 from django.contrib.auth.signals import user_logged_in
 
 
@@ -74,7 +75,7 @@ def devices_for_user(user, confirmed=True):
 
     :rtype: iterable
     """
-    if user.is_anonymous():
+    if _user_is_anonymous(user):
         return
 
     for model in device_classes():
@@ -147,3 +148,21 @@ def import_class(path):
     cls = getattr(mod, name)
 
     return cls
+
+def _user_is_authenticated(user):
+    """Wraps django's user.is_authenticated to support both Django 2 and
+    pre-1.10.
+
+    """
+    if django.VERSION >= (1,10):
+        return user.is_authenticated
+    return user.is_authenticated()
+
+def _user_is_anonymous(user):
+    """Wraps django's user.is_anonymous to support both Django 2 and
+    pre-1.10.
+
+    """
+    if django.VERSION >= (1,10):
+        return user.is_anonymous
+    return user.is_anonymous()

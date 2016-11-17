@@ -7,7 +7,7 @@ except ImportError:
 
 from django.utils.functional import SimpleLazyObject
 
-from . import DEVICE_ID_SESSION_KEY
+from . import DEVICE_ID_SESSION_KEY, _user_is_authenticated
 from .models import Device
 
 
@@ -36,7 +36,7 @@ class OTPMiddleware(MiddlewareMixin):
         user.otp_device = None
         user.is_verified = lambda: user.otp_device is not None
 
-        if user.is_authenticated():
+        if _user_is_authenticated(user):
             device_id = request.session.get(DEVICE_ID_SESSION_KEY)
             device = Device.from_persistent_id(device_id) if device_id else None
 
