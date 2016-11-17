@@ -67,7 +67,7 @@ class Device(models.Model):
 
         A :class:`~django_otp.models.DeviceManager`.
     """
-    user = models.ForeignKey(getattr(settings, 'AUTH_USER_MODEL', 'auth.User'), help_text="The user that this device belongs to.")
+    user = models.ForeignKey(getattr(settings, 'AUTH_USER_MODEL', 'auth.User'), help_text="The user that this device belongs to.", on_delete=models.CASCADE)
     name = models.CharField(max_length=64, help_text="The human-readable name of this device.")
     confirmed = models.BooleanField(default=True, help_text="Is this device ready for use?")
 

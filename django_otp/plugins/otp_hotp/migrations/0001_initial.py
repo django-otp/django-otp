@@ -23,7 +23,7 @@ class Migration(migrations.Migration):
                 ('digits', models.PositiveSmallIntegerField(default=6, help_text='The number of digits to expect in a token.', choices=[(6, 6), (8, 8)])),
                 ('tolerance', models.PositiveSmallIntegerField(default=5, help_text='The number of missed tokens to tolerate.')),
                 ('counter', models.BigIntegerField(default=0, help_text='The next counter value to expect.')),
-                ('user', models.ForeignKey(help_text='The user that this device belongs to.', to=settings.AUTH_USER_MODEL)),
+                ('user', models.ForeignKey(help_text='The user that this device belongs to.', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
             options={
                 'abstract': False,
