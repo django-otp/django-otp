@@ -149,20 +149,16 @@ def import_class(path):
 
     return cls
 
-def _user_is_authenticated(user):
-    """Wraps django's user.is_authenticated to support both Django 2 and
-    pre-1.10.
 
+def _user_is_authenticated(user):
     """
-    if django.VERSION >= (1,10):
-        return user.is_authenticated
-    return user.is_authenticated()
+    Wraps django's user.is_authenticated to support both Django 2 and pre-1.10.
+    """
+    return user.is_authenticated if (django.VERSION >= (1, 10)) else user.is_authenticated()
+
 
 def _user_is_anonymous(user):
-    """Wraps django's user.is_anonymous to support both Django 2 and
-    pre-1.10.
-
     """
-    if django.VERSION >= (1,10):
-        return user.is_anonymous
-    return user.is_anonymous()
+    Wraps django's user.is_anonymous to support both Django 2 and pre-1.10.
+    """
+    return user.is_anonymous if (django.VERSION >= (1, 10)) else user.is_anonymous()
