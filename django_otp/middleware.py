@@ -7,8 +7,8 @@ except ImportError:
 
 from django.utils.functional import SimpleLazyObject
 
-from . import DEVICE_ID_SESSION_KEY, _user_is_authenticated
-from .models import Device
+from django_otp import DEVICE_ID_SESSION_KEY, _user_is_authenticated
+from django_otp.models import Device
 
 
 class OTPMiddleware(MiddlewareMixin):
