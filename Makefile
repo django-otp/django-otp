@@ -1,7 +1,7 @@
-.PHONY: all sdist wheel sign upload clean
+.PHONY: all sdist wheel sign upload docs clean
 
 
-all: clean sdist wheel
+all: clean sdist wheel docs
 
 sdist:
 	python setup.py sdist
@@ -14,10 +14,14 @@ sign: sdist wheel
 	    gpg --detach-sign --armor $$f; \
 	done
 
-upload:
+upload: sign
 	twine upload dist/*
+
+docs:
+	$(MAKE) -C docs html zip
 
 clean:
 	-rm -r build
 	-rm -r dist
 	-rm -r *.egg-info
+	-$(MAKE) -C docs clean

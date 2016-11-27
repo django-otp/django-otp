@@ -1,3 +1,13 @@
+v0.3.8 - November 27, 2016 - Forward compatbility for Django 2.0
+----------------------------------------------------------------
+
+- Treat :attr:`~django.contrib.auth.models.User.is_authenticated` and
+  :attr:`~django.contrib.auth.models.User.is_anonymous` as properties in Django
+  1.10 and later.
+
+- Add explict on_delete behavior for all foreign keys.
+
+
 v0.3.7 - September 24, 2016 - Convenience API
 ---------------------------------------------
 
