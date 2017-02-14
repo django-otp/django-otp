@@ -30,7 +30,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('token', models.CharField(max_length=16, db_index=True)),
-                ('device', models.ForeignKey(related_name='token_set', to='otp_static.StaticDevice')),
+                ('device', models.ForeignKey(related_name='token_set', to='otp_static.StaticDevice', on_delete=models.CASCADE)),
             ],
             options={
             },
