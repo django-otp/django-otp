@@ -1,11 +1,14 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+from base64 import b32encode
 from binascii import unhexlify
 import time
 
 from django.conf import settings
 from django.db import models
 from django.utils.encoding import force_text
+from django.utils.six import string_types
+from django.utils.six.moves.urllib.parse import quote, urlencode
 
 from django_otp.models import Device
 from django_otp.oath import TOTP
@@ -106,3 +109,30 @@ class TOTPDevice(Device):
                 self.save()
 
         return verified
+
+    @property
+    def config_url(self):
+        """
+        A URL for configuring Google Authenticator or similar.
+
+        See https://github.com/google/google-authenticator/wiki/Key-Uri-Format.
+        The issuer is taken from :setting:`OTP_TOTP_ISSUER`, if available.
+
+        """
+        label = self.user.get_username()
+        params = {
+            'secret': b32encode(self.bin_key),
+            'algorithm': 'SHA1',
+            'digits': self.digits,
+            'period': self.step,
+        }
+
+        issuer = getattr(settings, 'OTP_TOTP_ISSUER', None)
+        if isinstance(issuer, string_types) and (issuer != ''):
+            issuer = issuer.replace(':', '')
+            params['issuer'] = issuer
+            label = '{}:{}'.format(issuer, label)
+
+        url = 'otpauth://totp/{}?{}'.format(quote(label), urlencode(params))
+
+        return url

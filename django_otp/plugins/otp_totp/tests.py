@@ -3,16 +3,8 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 from time import time
 
 from django.db import IntegrityError
-
-try:
-    from django.test.utils import override_settings
-except ImportError:
-    # Django < 1.4 doesn't have override_settings. Just skip the tests in that
-    # case.
-    from django.utils.unittest import skip
-
-    def override_settings(*args, **kwargs):
-        return skip
+from django.test.utils import override_settings
+from django.utils.six.moves.urllib.parse import urlsplit, parse_qs
 
 from django_otp.tests import TestCase
 
@@ -75,3 +67,29 @@ class TOTPTest(TestCase):
         self.assertEqual(self.device.last_t, 3)
         self.assertTrue(verified1)
         self.assertFalse(verified2)
+
+    def test_config_url(self):
+        with override_settings(OTP_TOTP_ISSUER=None):
+            url = self.device.config_url
+
+        parsed = urlsplit(url)
+        params = parse_qs(parsed.query)
+
+        self.assertEqual(parsed.scheme, 'otpauth')
+        self.assertEqual(parsed.netloc, 'totp')
+        self.assertEqual(parsed.path, '/alice')
+        self.assertIn('secret', params)
+        self.assertNotIn('issuer', params)
+
+    def test_config_url_issuer(self):
+        with override_settings(OTP_TOTP_ISSUER='example.com'):
+            url = self.device.config_url
+
+        parsed = urlsplit(url)
+        params = parse_qs(parsed.query)
+
+        self.assertEqual(parsed.scheme, 'otpauth')
+        self.assertEqual(parsed.netloc, 'totp')
+        self.assertEqual(parsed.path, '/example.com%3Aalice')
+        self.assertIn('secret', params)
+        self.assertIn('issuer', params)

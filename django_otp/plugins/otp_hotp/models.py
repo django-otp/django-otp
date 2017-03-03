@@ -1,8 +1,12 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+from base64 import b32encode
 from binascii import unhexlify
 
+from django.conf import settings
 from django.db import models
+from django.utils.six import string_types
+from django.utils.six.moves.urllib.parse import quote, urlencode
 
 from django_otp.models import Device
 from django_otp.oath import hotp
@@ -76,3 +80,30 @@ class HOTPDevice(Device):
                 verified = False
 
         return verified
+
+    @property
+    def config_url(self):
+        """
+        A URL for configuring Google Authenticator or similar.
+
+        See https://github.com/google/google-authenticator/wiki/Key-Uri-Format.
+        The issuer is taken from :setting:`OTP_HOTP_ISSUER`, if available.
+
+        """
+        label = self.user.get_username()
+        params = {
+            'secret': b32encode(self.bin_key),
+            'algorithm': 'SHA1',
+            'digits': self.digits,
+            'counter': self.counter,
+        }
+
+        issuer = getattr(settings, 'OTP_HOTP_ISSUER', None)
+        if isinstance(issuer, string_types) and (issuer != ''):
+            issuer = issuer.replace(':', '')
+            params['issuer'] = issuer
+            label = '{}:{}'.format(issuer, label)
+
+        url = 'otpauth://hotp/{}?{}'.format(quote(label), urlencode(params))
+
+        return url

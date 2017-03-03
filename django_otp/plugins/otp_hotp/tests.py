@@ -1,6 +1,8 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 from django.db import IntegrityError
+from django.test.utils import override_settings
+from django.utils.six.moves.urllib.parse import urlsplit, parse_qs
 
 from django_otp.tests import TestCase
 
@@ -43,3 +45,29 @@ class HOTPTest(TestCase):
 
         self.assertTrue(not ok)
         self.assertEqual(self.device.counter, 0)
+
+    def test_config_url_no_issuer(self):
+        with override_settings(OTP_HOTP_ISSUER=None):
+            url = self.device.config_url
+
+        parsed = urlsplit(url)
+        params = parse_qs(parsed.query)
+
+        self.assertEqual(parsed.scheme, 'otpauth')
+        self.assertEqual(parsed.netloc, 'hotp')
+        self.assertEqual(parsed.path, '/alice')
+        self.assertIn('secret', params)
+        self.assertNotIn('issuer', params)
+
+    def test_config_url_issuer(self):
+        with override_settings(OTP_HOTP_ISSUER='example.com'):
+            url = self.device.config_url
+
+        parsed = urlsplit(url)
+        params = parse_qs(parsed.query)
+
+        self.assertEqual(parsed.scheme, 'otpauth')
+        self.assertEqual(parsed.netloc, 'hotp')
+        self.assertEqual(parsed.path, '/example.com%3Aalice')
+        self.assertIn('secret', params)
+        self.assertIn('issuer', params)
