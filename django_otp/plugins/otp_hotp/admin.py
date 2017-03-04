@@ -28,8 +28,12 @@ class HOTPDeviceAdmin(admin.ModelAdmin):
         ('State', {
             'fields': ['counter'],
         }),
+        (None, {
+            'fields': ['qrcode_link'],
+        }),
     ]
     raw_id_fields = ['user']
+    readonly_fields = ['qrcode_link']
     radio_fields = {'digits': admin.HORIZONTAL}
 
     def get_queryset(self, request):
@@ -43,11 +47,14 @@ class HOTPDeviceAdmin(admin.ModelAdmin):
     #
 
     def qrcode_link(self, device):
-        href = reverse('admin:otp_hotp_hotpdevice_config', kwargs={'pk': device.pk})
-        link = format_html('<a href="{}">qrcode</a>', href)
+        if device is not None:
+            href = reverse('admin:otp_hotp_hotpdevice_config', kwargs={'pk': device.pk})
+            link = format_html('<a href="{}">qrcode</a>', href)
+        else:
+            link = ''
 
         return link
-    qrcode_link.short_description = ""
+    qrcode_link.short_description = "QR Code"
 
     #
     # Custom views
@@ -64,10 +71,13 @@ class HOTPDeviceAdmin(admin.ModelAdmin):
     def config_view(self, request, pk):
         device = HOTPDevice.objects.get(pk=pk)
 
-        context = dict(
-            self.admin_site.each_context(request),
-            device=device,
-        )
+        try:
+            context = dict(
+                self.admin_site.each_context(request),
+                device=device,
+            )
+        except AttributeError:  # Older versions don't have each_context().
+            context = {'device': device}
 
         return TemplateResponse(request, 'otp_hotp/admin/config.html', context)
 
