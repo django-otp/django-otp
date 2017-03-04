@@ -4,4 +4,6 @@ recursive-include docs *.rst *.py Makefile
 prune docs/build
 
 recursive-include django_otp/plugins/otp_email/templates *
+recursive-include django_otp/plugins/otp_hotp/templates *
+recursive-include django_otp/plugins/otp_totp/templates *
 recursive-include django_otp/templates *
