@@ -7,3 +7,5 @@ recursive-include django_otp/plugins/otp_email/templates *
 recursive-include django_otp/plugins/otp_hotp/templates *
 recursive-include django_otp/plugins/otp_totp/templates *
 recursive-include django_otp/templates *
+
+global-exclude .DS_Store
