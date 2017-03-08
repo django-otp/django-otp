@@ -1,8 +1,9 @@
-v0.3.10 - March 4, 2017 - Built-in QR Code support
+v0.3.11 - March 8, 2017 - Built-in QR Code support
 --------------------------------------------------
 
-- `#20`_: Generate HOTP and TOTP otpauth URLs and corresponding QR Codes. You
-  need the `qrcode`_ package installed for this feature.
+- `#20`_: Generate HOTP and TOTP otpauth URLs and corresponding QR Codes. To
+  enable this feature, install ``django_otp[qrcode]`` or just install the
+  `qrcode`_ package.
 
 - Support for Python 2.6 and Django 1.4 were dropped in this version (long
   overdue).
