@@ -47,10 +47,10 @@ class TOTPDeviceAdmin(admin.ModelAdmin):
     #
 
     def qrcode_link(self, device):
-        if device is not None:
+        try:
             href = reverse('admin:otp_totp_totpdevice_config', kwargs={'pk': device.pk})
             link = format_html('<a href="{}">qrcode</a>', href)
-        else:
+        except Exception:
             link = ''
 
         return link

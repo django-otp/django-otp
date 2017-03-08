@@ -5,11 +5,11 @@ from setuptools import setup, find_packages
 
 setup(
     name='django-otp',
-    version='0.3.10',
+    version='0.3.11',
     description='A pluggable framework for adding two-factor authentication to Django using one-time passwords.',
     long_description=open('README.rst').read(),
     author='Peter Sagerson',
-    author_email='psagersDjwublJf@ignorare.net',
+    author_email='psagers@ignorare.net',
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False,
@@ -18,6 +18,9 @@ setup(
     install_requires=[
         'django >= 1.5.12'
     ],
+    extras_require={
+        'qrcode': ['qrcode'],
+    },
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Framework :: Django",

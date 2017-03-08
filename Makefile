@@ -11,7 +11,7 @@ wheel:
 
 sign: sdist wheel
 	for f in dist/*.gz dist/*.whl; do \
-	    gpg --detach-sign --armor $$f; \
+	    gpg2 --detach-sign --armor $$f; \
 	done
 
 upload: sign
