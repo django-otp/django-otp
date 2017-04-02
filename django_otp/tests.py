@@ -45,13 +45,10 @@ class TestCase(django.test.TestCase):
 
     def create_user(self, username, password):
         """
-        Try to create a user, honoring the custom user model, if any. This may
-        raise an exception if the user model is too exotic for our purposes.
-        """
-        try:
-            user = self.User.objects.create_user(username, password=password)
-        except TypeError:
-            # Django < 1.4
-            user = self.User.objects.create_user(username, email='user@example.com', password=password)
+        Try to create a user, honoring the custom user model, if any.
 
-        return user
+        This may raise an exception if the user model is too exotic for our
+        purposes.
+
+        """
+        return self.User.objects.create_user(username, password=password)
