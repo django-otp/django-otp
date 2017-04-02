@@ -3,10 +3,14 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 from django.conf.urls import url
 from django.contrib import admin
 from django.contrib.admin.sites import AlreadyRegistered
-from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 from django.template.response import TemplateResponse
 from django.utils.html import format_html
+
+try:
+    from django.urls import reverse
+except ImportError:
+    from django.core.urlresolvers import reverse
 
 from .models import HOTPDevice
 
