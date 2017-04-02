@@ -1,3 +1,9 @@
+v0.3.12 - April 2, 2017 - Forward compatibility
+-----------------------------------------------
+
+- Minor fixes for Django 1.11 and 2.0.
+
+
 v0.3.11 - March 8, 2017 - Built-in QR Code support
 --------------------------------------------------
 
