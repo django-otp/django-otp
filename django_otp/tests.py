@@ -4,6 +4,7 @@ import pickle
 from doctest import DocTestSuite
 
 import django
+from django.db import IntegrityError
 import django.test
 
 from django_otp import oath
@@ -56,27 +57,63 @@ class TestCase(django.test.TestCase):
         return self.User.objects.create_user(username, password=password)
 
 
-
 class OTPMiddlewareTestCase(TestCase):
     def setUp(self):
         self.factory = django.test.RequestFactory()
         try:
-            user = self.create_user('alice', 'password')
+            self.alice = self.create_user('alice', 'password')
+            self.bob = self.create_user('bob', 'password')
         except IntegrityError:
             self.skipTest("Unable to create a test user.")
         else:
-            device = user.staticdevice_set.create(id=1)
-            device.token_set.create(token='alice1')
+            for user in [self.alice, self.bob]:
+                device = user.staticdevice_set.create()
+                device.token_set.create(token=user.get_username())
 
-    def test_pickling(self):
-        middleware = OTPMiddleware()
+        self.middleware = OTPMiddleware()
+
+    def test_verified(self):
         request = self.factory.get('/')
-        request.user = user = self.User.objects.first()
-        device = user.staticdevice_set.first()
+        request.user = self.alice
+        device = self.alice.staticdevice_set.get()
         request.session = {
             DEVICE_ID_SESSION_KEY: device.persistent_id
         }
-        middleware.process_request(request)
 
+        self.middleware.process_request(request)
+
+        self.assertTrue(request.user.is_verified())
+
+    def test_unverified(self):
+        request = self.factory.get('/')
+        request.user = self.alice
+        request.session = {}
+
+        self.middleware.process_request(request)
+
+        self.assertFalse(request.user.is_verified())
+
+    def test_wrong_user(self):
+        request = self.factory.get('/')
+        request.user = self.alice
+        device = self.bob.staticdevice_set.get()
+        request.session = {
+            DEVICE_ID_SESSION_KEY: device.persistent_id
+        }
+
+        self.middleware.process_request(request)
+
+        self.assertFalse(request.user.is_verified())
+
+    def test_pickling(self):
+        request = self.factory.get('/')
+        request.user = self.alice
+        device = self.alice.staticdevice_set.get()
+        request.session = {
+            DEVICE_ID_SESSION_KEY: device.persistent_id
+        }
+
+        self.middleware.process_request(request)
+
+        # Should not raise an exception.
         pickle.dumps(request.user)
-
