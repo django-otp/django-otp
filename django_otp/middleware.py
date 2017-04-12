@@ -1,5 +1,7 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+import functools
+
 try:
     from django.utils.deprecation import MiddlewareMixin
 except ImportError:
@@ -9,6 +11,10 @@ from django.utils.functional import SimpleLazyObject
 
 from django_otp import DEVICE_ID_SESSION_KEY, _user_is_authenticated
 from django_otp.models import Device
+
+
+def is_verified(user):
+    return user.otp_device is not None
 
 
 class OTPMiddleware(MiddlewareMixin):
@@ -25,7 +31,8 @@ class OTPMiddleware(MiddlewareMixin):
     def process_request(self, request):
         user = getattr(request, 'user', None)
         if user is not None:
-            request.user = SimpleLazyObject(lambda: self._verify_user(request, user))
+            # Using simple lambda function prevents user object from getting pickled for example in celery
+            request.user = SimpleLazyObject(functools.partial(self._verify_user, request, user))
 
         return None
 
@@ -33,8 +40,10 @@ class OTPMiddleware(MiddlewareMixin):
         """
         Sets OTP-related fields on an authenticated user.
         """
+
         user.otp_device = None
-        user.is_verified = lambda: user.otp_device is not None
+        # Using simple lambda function prevents user object from getting pickled for example in celery
+        user.is_verified = functools.partial(is_verified, user)
 
         if _user_is_authenticated(user):
             device_id = request.session.get(DEVICE_ID_SESSION_KEY)
