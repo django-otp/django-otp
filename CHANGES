@@ -1,3 +1,9 @@
+v0.3.13 - April 11, 2017 - Pickle compatibility
+-----------------------------------------------
+
+- Allow verified users to be pickled.
+
+
 v0.3.12 - April 2, 2017 - Forward compatibility
 -----------------------------------------------
 
