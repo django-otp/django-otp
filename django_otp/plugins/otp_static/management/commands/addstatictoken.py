@@ -9,7 +9,7 @@ from django_otp.plugins.otp_static.lib import get_user_model, add_static_token
 
 
 class Command(BaseCommand):
-    option_list = BaseCommand.option_list + (
+    option_list = getattr(BaseCommand, 'option_list', ()) + (
         make_option('-t', '--token', dest='token', help='The token to add. If omitted, one will be randomly generated.'),
     )
     args = '<username>'
