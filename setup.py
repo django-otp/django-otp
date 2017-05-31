@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='django-otp',
-    version='0.3.13',
+    version='0.3.14',
     description='A pluggable framework for adding two-factor authentication to Django using one-time passwords.',
     long_description=open('README.rst').read(),
     author='Peter Sagerson',
@@ -32,6 +32,7 @@ setup(
         "Programming Language :: Python :: 3.3",
         "Programming Language :: Python :: 3.4",
         "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 3.6",
         "Topic :: Security",
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],

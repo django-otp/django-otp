@@ -1,3 +1,9 @@
+v0.3.14 - May 30, 2017 - addstatictoken fix
+-------------------------------------------
+
+- Update addstatictoken command for current Django versions.
+
+
 v0.3.13 - April 11, 2017 - Pickle compatibility
 -----------------------------------------------
 
