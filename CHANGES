@@ -1,3 +1,11 @@
+v0.4.0 - July 19, 2017 - Update support matrix
+----------------------------------------------
+
+- Fix addstatictoken on Django 1.10+.
+
+- Drop support for versions of Django that are past EOL.
+
+
 v0.3.14 - May 30, 2017 - addstatictoken fix
 -------------------------------------------
 
