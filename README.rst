@@ -1,3 +1,5 @@
+`Package Documentation <http://django-otp-official.readthedocs.io/>`_
+
 This project makes it easy to add support for `one-time passwords
 <http://en.wikipedia.org/wiki/One-time_password>`_ (OTPs) to Django. It can be
 integrated at various levels, depending on how much customization is required.
