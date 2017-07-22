@@ -1,7 +1,7 @@
-.PHONY: all sdist wheel sign upload docs clean
+.PHONY: all sdist wheel sign upload clean
 
 
-all: clean sdist wheel docs
+all: clean sdist wheel
 
 sdist:
 	python setup.py sdist
@@ -17,11 +17,7 @@ sign: sdist wheel
 upload: sign
 	twine upload dist/*
 
-docs:
-	$(MAKE) -C docs html zip
-
 clean:
 	-rm -r build
 	-rm -r dist
 	-rm -r *.egg-info
-	-$(MAKE) -C docs clean
