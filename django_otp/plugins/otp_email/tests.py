@@ -29,7 +29,7 @@ class AuthFormTest(TestCase):
         data = {
             'username': 'alice',
             'password': 'password',
-            'otp_device': 'django_otp.plugins.otp_email.models.EmailDevice/1',
+            'otp_device': 'otp_email.emaildevice/1',
             'otp_token': '',
             'otp_challenge': '1',
         }

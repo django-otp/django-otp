@@ -1,5 +1,6 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+from django.apps import apps
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
@@ -92,28 +93,37 @@ class Device(models.Model):
 
     @property
     def persistent_id(self):
-        return '{0}/{1}'.format(self.import_path, self.id)
-
-    @property
-    def import_path(self):
-        return '{0}.{1}'.format(self.__module__, self.__class__.__name__)
+        return '{0}/{1}'.format(self.model_label(), self.id)
 
     @classmethod
-    def from_persistent_id(cls, path):
+    def model_label(cls):
+        """
+        Returns an identifier for this Django model class.
+
+        This is just the standard "<app_label>.<model_name>" form.
+
+        """
+        return '{0}.{1}'.format(cls._meta.app_label, cls._meta.model_name)
+
+    @classmethod
+    def from_persistent_id(cls, persistent_id):
         """
         Loads a device from its persistent id::
 
             device == Device.from_persistent_id(device.persistent_id)
+
         """
-        from . import import_class
+        device = None
 
         try:
-            device_type, device_id = path.rsplit('/', 1)
+            model_label, device_id = persistent_id.rsplit('/', 1)
+            app_label, model_name = model_label.split('.')
 
-            device_cls = import_class(device_type)
-            device = device_cls.objects.get(id=device_id)
-        except Exception:
-            device = None
+            device_cls = apps.get_model(app_label, model_name)
+            if issubclass(device_cls, Device):
+                device = device_cls.objects.filter(id=int(device_id)).first()
+        except (ValueError, LookupError):
+            pass
 
         return device
 
