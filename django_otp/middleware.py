@@ -43,8 +43,8 @@ class OTPMiddleware(MiddlewareMixin):
         user.is_verified = functools.partial(is_verified, user)
 
         if _user_is_authenticated(user):
-            device_id = request.session.get(DEVICE_ID_SESSION_KEY)
-            device = Device.from_persistent_id(device_id) if device_id else None
+            persistent_id = request.session.get(DEVICE_ID_SESSION_KEY)
+            device = self._device_from_persistent_id(persistent_id) if persistent_id else None
 
             if (device is not None) and (device.user_id != user.id):
                 device = None
@@ -55,3 +55,16 @@ class OTPMiddleware(MiddlewareMixin):
             user.otp_device = device
 
         return user
+
+    def _device_from_persistent_id(self, persistent_id):
+        # Convert legacy persistent_id values (these used to be full import
+        # paths). This won't work for apps with models in sub-modules, but that
+        # should be pretty rare. And the worst that happens is the user has to
+        # log in again.
+        if persistent_id.count('.') > 1:
+            parts = persistent_id.split('.')
+            persistent_id = '.'.join((parts[-3], parts[-1]))
+
+        device = Device.from_persistent_id(persistent_id)
+
+        return device

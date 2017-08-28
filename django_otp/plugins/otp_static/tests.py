@@ -127,7 +127,7 @@ class AuthFormTest(TestCase):
         data = {
             'username': 'alice',
             'password': 'password',
-            'otp_device': 'django_otp.plugins.otp_static.models.StaticDevice/2',
+            'otp_device': 'otp_static.staticdevice/2',
             'otp_token': 'bob1',
         }
         form = OTPAuthenticationForm(None, data)
@@ -141,7 +141,7 @@ class AuthFormTest(TestCase):
         data = {
             'username': 'alice',
             'password': 'password',
-            'otp_device': 'django_otp.plugins.otp_email.models.StaticDevice/1',
+            'otp_device': 'otp_email.staticdevice/1',
             'otp_token': 'bogus',
         }
         form = OTPAuthenticationForm(None, data)
@@ -155,7 +155,7 @@ class AuthFormTest(TestCase):
         data = {
             'username': 'alice',
             'password': 'password',
-            'otp_device': 'django_otp.plugins.otp_static.models.StaticDevice/1',
+            'otp_device': 'otp_static.staticdevice/1',
             'otp_token': 'alice1',
         }
         form = OTPAuthenticationForm(None, data)

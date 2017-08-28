@@ -1,5 +1,3 @@
-import sys
-
 import django
 from django.contrib.auth.signals import user_logged_in
 
@@ -37,6 +35,7 @@ def _handle_auth_login(sender, request, user, **kwargs):
     """
     if hasattr(user, 'otp_device'):
         login(request, user.otp_device)
+
 
 user_logged_in.connect(_handle_auth_login)
 
@@ -135,19 +134,6 @@ def _device_classes_legacy():
         for model in get_models(app):
             if issubclass(model, Device):
                 yield model
-
-
-def import_class(path):
-    """
-    Imports a class based on a full Python path ('pkg.pkg.mod.Class'). This
-    does not trap any exceptions if the path is not valid.
-    """
-    module, name = path.rsplit('.', 1)
-    __import__(module)
-    mod = sys.modules[module]
-    cls = getattr(mod, name)
-
-    return cls
 
 
 def _user_is_authenticated(user):

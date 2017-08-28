@@ -84,10 +84,46 @@ class OTPMiddlewareTestCase(TestCase):
 
         self.assertTrue(request.user.is_verified())
 
+    def test_verified_legacy_device_id(self):
+        request = self.factory.get('/')
+        request.user = self.alice
+        device = self.alice.staticdevice_set.get()
+        request.session = {
+            DEVICE_ID_SESSION_KEY: '{}.{}/{}'.format(
+                device.__module__, device.__class__.__name__, device.id
+            )
+        }
+
+        self.middleware.process_request(request)
+
+        self.assertTrue(request.user.is_verified())
+
     def test_unverified(self):
         request = self.factory.get('/')
         request.user = self.alice
         request.session = {}
+
+        self.middleware.process_request(request)
+
+        self.assertFalse(request.user.is_verified())
+
+    def test_no_device(self):
+        request = self.factory.get('/')
+        request.user = self.alice
+        request.session = {
+            DEVICE_ID_SESSION_KEY: 'otp_static.staticdevice/0',
+        }
+
+        self.middleware.process_request(request)
+
+        self.assertFalse(request.user.is_verified())
+
+    def test_no_model(self):
+        request = self.factory.get('/')
+        request.user = self.alice
+        request.session = {
+            DEVICE_ID_SESSION_KEY: 'otp_bogus.bogusdevice/0',
+        }
 
         self.middleware.process_request(request)
 
