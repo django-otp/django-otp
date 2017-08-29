@@ -5,6 +5,7 @@ from binascii import unhexlify
 from django.core.mail import send_mail
 from django.db import models
 from django.template.loader import render_to_string
+from django.utils.encoding import force_text
 
 from django_otp.models import Device
 from django_otp.oath import totp
@@ -14,7 +15,7 @@ from .conf import settings
 
 
 def default_key():
-    return random_hex(20)
+    return force_text(random_hex(20))
 
 
 def key_validator(value):

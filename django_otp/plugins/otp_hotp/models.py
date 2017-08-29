@@ -5,6 +5,7 @@ from binascii import unhexlify
 
 from django.conf import settings
 from django.db import models
+from django.utils.encoding import force_text
 from django.utils.six import string_types
 from django.utils.six.moves.urllib.parse import quote, urlencode
 
@@ -14,7 +15,7 @@ from django_otp.util import random_hex, hex_validator
 
 
 def default_key():
-    return random_hex(20)
+    return force_text(random_hex(20))
 
 
 def key_validator(value):
