@@ -80,7 +80,7 @@ The recommended procedure is:
     2. Upgrade Django to 1.7 or later.
     3. Upgrade django-otp to the latest version.
 
-django-otp 0.4 will drop support for Django < 1.7.
+django-otp 0.4 dropped support for Django < 1.7.
 
 
 Upgrading from 0.2.3 or Earlier
