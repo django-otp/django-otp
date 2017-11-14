@@ -401,5 +401,5 @@ Glossary
 
 .. _django-agent-trust: http://pypi.python.org/pypi/django-agent-trust
 .. _django-otp-agents: http://pypi.python.org/pypi/django-otp-agents
-.. _django-otp-yubikey: http://pypi.python.org/pypi/django-otp-yubikey
-.. _django-otp-twilio: http://pypi.python.org/pypi/django-otp-twilio
+.. _django-otp-yubikey: https://django-otp-yubikey.readthedocs.io
+.. _django-otp-twilio: https://django-otp-twilio.readthedocs.io
