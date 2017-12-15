@@ -37,13 +37,13 @@ class HOTPTest(TestCase):
     def test_excessive_drift(self):
         ok = self.device.verify_token(self.tokens[2])
 
-        self.assertTrue(not ok)
+        self.assertFalse(ok)
         self.assertEqual(self.device.counter, 0)
 
     def test_bad_value(self):
         ok = self.device.verify_token(123456)
 
-        self.assertTrue(not ok)
+        self.assertFalse(ok)
         self.assertEqual(self.device.counter, 0)
 
     def test_config_url_no_issuer(self):

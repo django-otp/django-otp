@@ -37,8 +37,8 @@ class AuthFormTest(TestCase):
 
         self.assertFalse(form.is_valid())
         alice = form.get_user()
-        self.assertTrue(alice.get_username() == 'alice')
-        self.assertTrue(alice.otp_device is None)
+        self.assertEqual(alice.get_username(), 'alice')
+        self.assertIsNone(alice.otp_device)
         self.assertEqual(len(mail.outbox), 1)
 
         data['otp_token'] = mail.outbox[0].body
@@ -46,4 +46,4 @@ class AuthFormTest(TestCase):
         form = OTPAuthenticationForm(None, data)
 
         self.assertTrue(form.is_valid())
-        self.assertTrue(isinstance(form.get_user().otp_device, EmailDevice))
+        self.assertIsInstance(form.get_user().otp_device, EmailDevice)
