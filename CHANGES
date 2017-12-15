@@ -1,3 +1,9 @@
+v0.4.2 - December 15, 2017 - addstatictoken fix
+-----------------------------------------------
+
+- Fix addstatictoken string handling under Python 3.
+
+
 v0.4.1 - August 29, 2017 - Misc fixes
 -------------------------------------
 
