@@ -85,7 +85,7 @@ class AuthFormTest(TestCase):
         data = {}
         form = OTPAuthenticationForm(None, data)
 
-        self.assertTrue(not form.is_valid())
+        self.assertFalse(form.is_valid())
         self.assertEqual(form.get_user(), None)
 
     def test_bad_password(self):
@@ -95,8 +95,7 @@ class AuthFormTest(TestCase):
         }
         form = OTPAuthenticationForm(None, data)
 
-        self.assertTrue(not form.is_valid())
-        self.assertTrue(form.get_user() is None)
+        self.assertFalse(form.is_valid())
         self.assertEqual(list(form.errors.keys()), ['__all__'])
 
     def test_no_token(self):
@@ -106,8 +105,8 @@ class AuthFormTest(TestCase):
         }
         form = OTPAuthenticationForm(None, data)
 
-        self.assertTrue(not form.is_valid())
-        self.assertTrue(form.get_user().get_username() == 'alice')
+        self.assertFalse(form.is_valid())
+        self.assertEqual(form.get_user().get_username(), 'alice')
 
     def test_passive_token(self):
         data = {
@@ -119,8 +118,8 @@ class AuthFormTest(TestCase):
 
         self.assertTrue(form.is_valid())
         alice = form.get_user()
-        self.assertTrue(alice.get_username() == 'alice')
-        self.assertTrue(isinstance(alice.otp_device, StaticDevice))
+        self.assertEqual(alice.get_username(), 'alice')
+        self.assertIsInstance(alice.otp_device, StaticDevice)
         self.assertEqual(alice.otp_device.token_set.count(), 2)
 
     def test_spoofed_device(self):
@@ -132,10 +131,10 @@ class AuthFormTest(TestCase):
         }
         form = OTPAuthenticationForm(None, data)
 
-        self.assertTrue(not form.is_valid())
+        self.assertFalse(form.is_valid())
         alice = form.get_user()
-        self.assertTrue(alice.get_username() == 'alice')
-        self.assertTrue(alice.otp_device is None)
+        self.assertEqual(alice.get_username(), 'alice')
+        self.assertIsNone(alice.otp_device)
 
     def test_specific_device_fail(self):
         data = {
@@ -146,10 +145,10 @@ class AuthFormTest(TestCase):
         }
         form = OTPAuthenticationForm(None, data)
 
-        self.assertTrue(not form.is_valid())
+        self.assertFalse(form.is_valid())
         alice = form.get_user()
-        self.assertTrue(alice.get_username() == 'alice')
-        self.assertTrue(alice.otp_device is None)
+        self.assertEqual(alice.get_username(), 'alice')
+        self.assertIsNone(alice.otp_device)
 
     def test_specific_device(self):
         data = {
@@ -162,5 +161,5 @@ class AuthFormTest(TestCase):
 
         self.assertTrue(form.is_valid())
         alice = form.get_user()
-        self.assertTrue(alice.get_username() == 'alice')
-        self.assertTrue(alice.otp_device is not None)
+        self.assertEqual(alice.get_username(), 'alice')
+        self.assertIsNotNone(alice.otp_device)
