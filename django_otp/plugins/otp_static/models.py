@@ -55,4 +55,4 @@ class StaticToken(models.Model):
 
         :rtype: str
         """
-        return b32encode(urandom(5)).lower()
+        return b32encode(urandom(5)).decode('utf-8').lower()
