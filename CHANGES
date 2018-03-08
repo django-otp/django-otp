@@ -1,3 +1,10 @@
+v0.4.3 - March 8, 2018 - Minor static token fix
+-----------------------------------------------
+
+- Fix return type of
+  :meth:`~django_otp.plugins.otp_static.models.StaticToken.random_token`.
+
+
 v0.4.2 - December 15, 2017 - addstatictoken fix
 -----------------------------------------------
 
