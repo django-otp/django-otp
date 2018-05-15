@@ -102,6 +102,13 @@ risk::
     for model_cls, model_admin in admin.site._registry.iteritems():
         otp_admin_site.register(model_cls, model_admin.__class__)
 
+.. note::
+
+    If you you switch to OTPAdminSite before setting up your first device,
+    you'll find yourself with a bit of a chicken-egg problem. Remember that you
+    can always use the :ref:`addstatictoken` management command to bootstrap
+    yourself in.
+
 
 The Token Form
 ~~~~~~~~~~~~~~
