@@ -307,6 +307,11 @@ Static Devices
 
 .. autoclass:: django_otp.plugins.otp_static.admin.StaticDeviceAdmin
 
+.. _addstatictoken:
+
+addstatictoken
+''''''''''''''
+
 The static plugin also includes a management command called ``addstatictoken``,
 which will add a single static token to any account. This is useful for
 bootstrapping and emergency access. Run ``manage.py addstatictoken -h`` for
