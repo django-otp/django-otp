@@ -57,6 +57,7 @@ def random_hex(length=20):
     :param int length: The number of (decoded) bytes to return.
 
     :returns: A string of hex digits.
-    :rtype: str
+    :rtype: bytes
+
     """
     return hexlify(urandom(length))
