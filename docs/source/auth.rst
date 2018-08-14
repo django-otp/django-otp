@@ -27,7 +27,7 @@ policies.
 The Easy Way
 ~~~~~~~~~~~~
 
-.. autofunction:: django_otp.views.LoginView
+.. autoclass:: django_otp.views.LoginView
 
 
 The Authentication Form
