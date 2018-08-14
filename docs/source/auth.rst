@@ -27,7 +27,7 @@ policies.
 The Easy Way
 ~~~~~~~~~~~~
 
-.. autofunction:: django_otp.views.login
+.. autofunction:: django_otp.views.LoginView
 
 
 The Authentication Form
@@ -39,10 +39,11 @@ you how to turn it into a two-factor login view.
 
 In Django, user authentication actually takes place not in a view, but in an
 :class:`~django.contrib.auth.forms.AuthenticationForm` or a subclass. If you're
-using Django's :func:`built-in login view <django.contrib.auth.views.login>`,
-you're already using the default AuthenticationForm. This form performs
-authentication as part of its validation; validation only succeeds if the
-supplied credentials pass :func:`django.contrib.auth.authenticate`.
+using Django's :class:`built-in login view
+<django.contrib.auth.views.LoginView>`, you're already using the default
+AuthenticationForm. This form performs authentication as part of its
+validation; validation only succeeds if the supplied credentials pass
+:func:`django.contrib.auth.authenticate`.
 
 If you want to require two-factor authentication in the default login view, the
 easiest way is to use :class:`django_otp.forms.OTPAuthenticationForm` instead.
@@ -50,13 +51,14 @@ This form includes additional fields and behavior to solicit an OTP token from
 the user and verify it against their registered devices. This form's validation
 only succeeds if it is able to both authenticate the user with the username and
 password and also verify them with an OTP token. The form can be used with
-:func:`django.contrib.auth.views.login` simply by passing it in the
+:class:`django.contrib.auth.views.LoginView` simply by passing it in the
 ``authentication_form`` keyword parameter::
 
+    from django.contrib.auth.views import LoginView
     from django_otp.forms import OTPAuthenticationForm
 
-    urlpatterns = patterns('django.contrib.auth.views',
-        url(r'^accounts/login/$', 'login', kwargs={'authentication_form': OTPAuthenticationForm}),
+    urlpatterns = [
+        url(r'^accounts/login/$', LoginView.as_view(authentication_form=OTPAuthenticationForm)),
     )
 
 .. autoclass:: django_otp.forms.OTPAuthenticationForm

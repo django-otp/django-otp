@@ -2,16 +2,16 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 from functools import partial
 
-from django.contrib.auth import BACKEND_SESSION_KEY
-from django.contrib.auth.views import login as auth_login
+from django.contrib.auth import views as auth_views
+from django.utils.functional import cached_property
 
 from django_otp import _user_is_anonymous
 from django_otp.forms import OTPAuthenticationForm, OTPTokenForm
 
 
-def login(request, **kwargs):
+class LoginView(auth_views.LoginView):
     """
-    This is a replacement for :func:`django.contrib.auth.views.login` that
+    This is a replacement for :class:`django.contrib.auth.views.LoginView` that
     requires two-factor authentication. It's slightly clever: if the user is
     already authenticated but not verified, it will only ask the user for their
     OTP token. If the user is anonymous or is already verified by an OTP
@@ -21,19 +21,20 @@ def login(request, **kwargs):
     :class:`~django_otp.forms.OTPTokenForm`. This is a good view for
     :setting:`OTP_LOGIN_URL`.
 
-    Parameters are the same as :func:`~django.contrib.auth.views.login` except
-    that this view always overrides ``authentication_form``.
     """
-    user = request.user
+    otp_authentication_form = OTPAuthenticationForm
+    otp_token_form = OTPTokenForm
 
-    if _user_is_anonymous(user) or user.is_verified():
-        form = OTPAuthenticationForm
-    else:
-        form = partial(OTPTokenForm, user)
+    @cached_property
+    def authentication_form(self):
+        user = self.request.user
+        if _user_is_anonymous(user) or user.is_verified():
+            form = self.otp_authentication_form
+        else:
+            form = partial(self.otp_token_form, user)
 
-        # A minor hack to make django.contrib.auth.login happy
-        user.backend = request.session[BACKEND_SESSION_KEY]
+        return form
 
-    kwargs['authentication_form'] = form
 
-    return auth_login(request, **kwargs)
+# Backwards compatibility.
+login = LoginView.as_view()

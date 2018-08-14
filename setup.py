@@ -16,7 +16,7 @@ setup(
     url='https://bitbucket.org/psagers/django-otp',
     license='BSD',
     install_requires=[
-        'django >= 1.8'
+        'django >= 1.11'
     ],
     extras_require={
         'qrcode': ['qrcode'],
@@ -27,11 +27,7 @@ setup(
         "Intended Audience :: Developers",
         "License :: OSI Approved :: BSD License",
         "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.4",
-        "Programming Language :: Python :: 3.5",
-        "Programming Language :: Python :: 3.6",
         "Topic :: Security",
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
