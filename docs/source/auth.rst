@@ -121,6 +121,15 @@ token to verify, you can use :class:`django_otp.forms.OTPTokenForm`.
 .. autoclass:: django_otp.forms.OTPTokenForm
 
 
+Custom Forms
+~~~~~~~~~~~~
+
+Most of the functionality of :class:`~django_otp.forms.OTPAuthenticationForm`
+and :class:`~django_otp.forms.OTPTokenForm` is implemented in a mixin class:
+
+.. autoclass:: django_otp.forms.OTPAuthenticationFormMixin
+
+
 .. _Low-Level API:
 
 The Low-Level API

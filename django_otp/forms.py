@@ -38,11 +38,31 @@ class OTPAuthenticationFormMixin(object):
            example.
 
     You will most likely be able to use :class:`OTPAuthenticationForm`,
-    :class:`django_otp.admin.OTPAdminAuthenticationForm`, or
+    :class:`~django_otp.admin.OTPAdminAuthenticationForm`, or
     :class:`OTPTokenForm` directly. If these do not suit your needs--for
     instance if your primary authentication is not by password--they should
     serve as useful examples.
+
+    This mixin defines some error messages in
+    :attr:`OTPAuthenticationFormMixin.otp_error_messages`, which can be
+    overridden in subclasses (refer to the source for message codes). For
+    example::
+
+        class CustomAuthForm(OTPAuthenticationFormMixin, AuthenticationForm):
+            otp_error_messages = dict(OTPAuthenticationFormMixin.otp_error_messages,
+                token_required=_('Please enter your authentication code.'),
+                invalid_token=_('Incorrect authentication code. Please try again.'),
+            )
+
     """
+    otp_error_messages = {
+        'token_required': _('Please enter your OTP token.'),
+        'challenge_exception': _('Error generating challenge: {0}'),
+        'not_interactive': _('The selected OTP device is not interactive'),
+        'challenge_message': _('OTP Challenge: {0}'),
+        'invalid_token': _('Invalid token. Please make sure you have entered it correctly.'),
+    }
+
     def clean_otp(self, user):
         """
         Processes the ``otp_*`` fields.
@@ -67,7 +87,7 @@ class OTPAuthenticationFormMixin(object):
             elif token:
                 user.otp_device = self._verify_token(user, token, device)
             else:
-                raise forms.ValidationError(_('Please enter your OTP token.'), code='required')
+                raise forms.ValidationError(self.otp_error_messages['token_required'], code='token_required')
         finally:
             if user.otp_device is None:
                 self._update_form(user)
@@ -93,12 +113,16 @@ class OTPAuthenticationFormMixin(object):
         try:
             challenge = device.generate_challenge() if (device is not None) else None
         except Exception as e:
-            raise forms.ValidationError(_('Error generating challenge: {0}'.format(e)))
+            raise forms.ValidationError(
+                self.otp_error_messages['challenge_exception'].format(e), code='challenge_exception'
+            )
         else:
             if challenge is None:
-                raise forms.ValidationError(_('The selected OTP device is not interactive'))
+                raise forms.ValidationError(self.otp_error_messages['not_interactive'], code='not_interactive')
             else:
-                raise forms.ValidationError(_('OTP Challenge: {0}').format(challenge))
+                raise forms.ValidationError(
+                    self.otp_error_messages['challenge_message'].format(challenge), code='challenge_message'
+                )
 
     def _verify_token(self, user, token, device=None):
         if device is not None:
@@ -107,7 +131,7 @@ class OTPAuthenticationFormMixin(object):
             device = match_token(user, token)
 
         if device is None:
-            raise forms.ValidationError(_('Invalid token. Please make sure you have entered it correctly.'), code='invalid')
+            raise forms.ValidationError(self.otp_error_messages['invalid_token'], code='invalid_token')
 
         return device
 
@@ -182,6 +206,10 @@ class OTPAuthenticationForm(OTPAuthenticationFormMixin, AuthenticationForm):
           username and password as always and then verify the OTP token against
           the chosen device. When that succeeds, authentication and
           verification are successful and the user is logged in.
+
+    Error messages can be customized in subclasses; see
+    :class:`OTPAuthenticationFormMixin`.
+
     """
     otp_device = forms.CharField(required=False, widget=forms.Select)
     otp_token = forms.CharField(required=False)
@@ -223,11 +251,15 @@ class OTPTokenForm(OTPAuthenticationFormMixin, forms.Form):
     :class:`~django_otp.forms.OTPAuthenticationForm` for details on writing a
     compatible template (leaving out the username and password, of course).
 
+    Error messages can be customized in subclasses; see
+    :class:`OTPAuthenticationFormMixin`.
+
     :param user: An authenticated user.
     :type user: :class:`~django.contrib.auth.models.User`
 
     :param request: The current request.
     :type request: :class:`~django.http.HttpRequest`
+
     """
     otp_device = forms.ChoiceField(choices=[])
     otp_token = forms.CharField(required=False)
