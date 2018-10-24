@@ -1,3 +1,10 @@
+v0.5.1 - October 24, 2018 - Customizable error messages
+-------------------------------------------------------
+
+- Error messages in :class:`~django_otp.forms.OTPAuthenticationForm` and
+  :class:`~django_otp.forms.OTPTokenForm` can be customized.
+
+
 v0.5.0 - August 14, 2018 - Django 2.1 support
 ---------------------------------------------
 
