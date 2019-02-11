@@ -93,3 +93,18 @@ class TOTPTest(TestCase):
         self.assertEqual(parsed.path, '/example.com%3Aalice')
         self.assertIn('secret', params)
         self.assertIn('issuer', params)
+        self.assertEqual(params['issuer'][0], 'example.com')
+
+    def test_config_url_issuer_spaces(self):
+        with override_settings(OTP_TOTP_ISSUER='Very Trustworthy Source'):
+            url = self.device.config_url
+
+        parsed = urlsplit(url)
+        params = parse_qs(parsed.query)
+
+        self.assertEqual(parsed.scheme, 'otpauth')
+        self.assertEqual(parsed.netloc, 'totp')
+        self.assertEqual(parsed.path, '/Very%20Trustworthy%20Source%3Aalice')
+        self.assertIn('secret', params)
+        self.assertIn('issuer', params)
+        self.assertEqual(params['issuer'][0], 'Very Trustworthy Source')
