@@ -1,3 +1,11 @@
+v0.5.2 - February 11 - 2019 - Fix URL encoding
+----------------------------------------------
+
+- `PR 39`_: Fix encoding of otpauth:// URL parameters.
+
+.. _PR 39: https://bitbucket.org/psagers/django-otp/pull-requests/39
+
+
 v0.5.1 - October 24, 2018 - Customizable error messages
 -------------------------------------------------------
 
