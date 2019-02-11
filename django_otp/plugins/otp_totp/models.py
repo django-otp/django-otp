@@ -126,13 +126,14 @@ class TOTPDevice(Device):
             'digits': self.digits,
             'period': self.step,
         }
+        urlencoded_params = urlencode(params)
 
         issuer = getattr(settings, 'OTP_TOTP_ISSUER', None)
         if isinstance(issuer, string_types) and (issuer != ''):
             issuer = issuer.replace(':', '')
-            params['issuer'] = issuer
             label = '{}:{}'.format(issuer, label)
+            urlencoded_params += '&issuer={}'.format(quote(issuer))  # encode issuer as per RFC 3986, not quote_plus
 
-        url = 'otpauth://totp/{}?{}'.format(quote(label), urlencode(params))
+        url = 'otpauth://totp/{}?{}'.format(quote(label), urlencoded_params)
 
         return url
