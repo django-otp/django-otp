@@ -144,10 +144,12 @@ The Low-Level API
 .. autofunction:: django_otp.login
 
 .. autoclass:: django_otp.models.Device
-    :members: is_interactive, generate_challenge, verify_token
+    :members: is_interactive, generate_challenge, verify_token, verify_is_allowed
 
 .. autoclass:: django_otp.models.DeviceManager
     :members: devices_for_user
+
+.. autoclass:: django_otp.models.VerifyNotAllowed
 
 
 Authorizing Users

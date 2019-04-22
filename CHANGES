@@ -1,3 +1,15 @@
+Unreleased
+----------
+
+- Exponential throttling for HOTP and TOTP devices.
+
+- New settings :setting:`OTP_HOTP_THROTTLE_FACTOR` and
+  :setting:`OTP_TOTP_THROTTLE_FACTOR` to control new throttling behaviour.
+
+- :class:`~django_otp.models.Device` gained :meth:`~django_otp.models.Device.verify_is_allowed` method.
+
+
+
 v0.5.2 - February 11 - 2019 - Fix URL encoding
 ----------------------------------------------
 

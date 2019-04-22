@@ -32,6 +32,9 @@ class TOTPDeviceAdmin(admin.ModelAdmin):
         ('State', {
             'fields': ['drift'],
         }),
+        ('Throttling', {
+            'fields': ['throttling_failure_timestamp', 'throttling_failure_count'],
+        }),
         (None, {
             'fields': ['qrcode_link'],
         }),

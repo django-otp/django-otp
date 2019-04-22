@@ -1,11 +1,14 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 from time import time
+from datetime import timedelta
 
 from django.db import IntegrityError
 from django.test.utils import override_settings
 from django.utils.six.moves.urllib.parse import urlsplit, parse_qs
+from freezegun import freeze_time
 
+from django_otp.models import VerifyNotAllowed
 from django_otp.tests import TestCase
 
 
@@ -34,17 +37,20 @@ class TOTPTest(TestCase):
         # Make sure we can decode the key.
         device.bin_key
 
+    @override_settings(OTP_TOTP_THROTTLE_FACTOR=0)
     def test_single(self):
         results = [self.device.verify_token(token) for token in self.tokens]
 
         self.assertEqual(results, [False] * 3 + [True] + [False] * 6)
 
+    @override_settings(OTP_TOTP_THROTTLE_FACTOR=0)
     def test_tolerance(self):
         self.device.tolerance = 1
         results = [self.device.verify_token(token) for token in self.tokens]
 
         self.assertEqual(results, [False] * 2 + [True] * 3 + [False] * 5)
 
+    @override_settings(OTP_TOTP_THROTTLE_FACTOR=0)
     def test_drift(self):
         self.device.tolerance = 1
         self.device.drift = -1
@@ -67,6 +73,51 @@ class TOTPTest(TestCase):
         self.assertEqual(self.device.last_t, 3)
         self.assertTrue(verified1)
         self.assertFalse(verified2)
+
+    def test_delay_imposed_after_fail(self):
+        verified1 = self.device.verify_token(0)
+        self.assertFalse(verified1)
+        verified2 = self.device.verify_token(self.tokens[3])
+        self.assertFalse(verified2)
+
+    def test_delay_after_fail_expires(self):
+        verified1 = self.device.verify_token(0)
+        self.assertFalse(verified1)
+        with freeze_time() as frozen_time:
+            # With default settings initial delay is 1 second
+            frozen_time.tick(delta=timedelta(seconds=1.1))
+            verified2 = self.device.verify_token(self.tokens[3])
+            self.assertTrue(verified2)
+
+    def test_throttling_failure_count(self):
+        self.assertEqual(self.device.throttling_failure_count, 0)
+        for i in range(0, 5):
+            self.device.verify_token(0)
+            # Only the first attempt will increase throttling_failure_count,
+            # the others will all be within 1 second of first
+            # and therefore not count as attempts.
+            self.assertEqual(self.device.throttling_failure_count, 1)
+
+    def test_verify_is_allowed(self):
+        # Initially should be allowed
+        verify_is_allowed1, data1 = self.device.verify_is_allowed()
+        self.assertEqual(verify_is_allowed1, True)
+        self.assertEqual(data1, None)
+
+        # After failure, verify is not allowed
+        self.device.verify_token(0)
+        verify_is_allowed2, data2 = self.device.verify_is_allowed()
+        self.assertEqual(verify_is_allowed2, False)
+        self.assertEqual(data2, {'reason': VerifyNotAllowed.N_FAILED_ATTEMPTS,
+                                 'failure_count': 1})
+
+        # After a successful attempt, should be allowed again
+        with freeze_time() as frozen_time:
+            frozen_time.tick(delta=timedelta(seconds=1.1))
+            self.device.verify_token(self.tokens[3])
+            verify_is_allowed3, data3 = self.device.verify_is_allowed()
+            self.assertEqual(verify_is_allowed3, True)
+            self.assertEqual(data3, None)
 
     def test_config_url(self):
         with override_settings(OTP_TOTP_ISSUER=None):

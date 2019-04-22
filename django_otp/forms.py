@@ -1,11 +1,11 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 from django import forms
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _, ungettext_lazy
 from django.contrib.auth.forms import AuthenticationForm
 
 from . import match_token, devices_for_user
-from .models import Device
+from .models import Device, VerifyNotAllowed
 
 
 class OTPAuthenticationFormMixin(object):
@@ -61,6 +61,11 @@ class OTPAuthenticationFormMixin(object):
         'not_interactive': _('The selected OTP device is not interactive'),
         'challenge_message': _('OTP Challenge: {0}'),
         'invalid_token': _('Invalid token. Please make sure you have entered it correctly.'),
+        'n_failed_attempts': ungettext_lazy(
+            "Verification temporarily disabled because of %(failure_count)d failed attempt, please try again soon.",
+            "Verification temporarily disabled because of %(failure_count)d failed attempts, please try again soon.",
+            "failure_count"),
+        'verification_not_allowed': _("Verification of the token is currently disabled"),
     }
 
     def clean_otp(self, user):
@@ -126,6 +131,16 @@ class OTPAuthenticationFormMixin(object):
 
     def _verify_token(self, user, token, device=None):
         if device is not None:
+            verify_is_allowed, extra = device.verify_is_allowed()
+            if not verify_is_allowed:
+                # Try to match specific conditions we know about.
+                if ('reason' in extra and extra['reason'] == VerifyNotAllowed.N_FAILED_ATTEMPTS):
+                    raise forms.ValidationError(self.otp_error_messages['n_failed_attempts'] % extra)
+                if 'error_message' in extra:
+                    raise forms.ValidationError(extra['error_message'])
+                # Fallback to generic message otherwise.
+                raise forms.ValidationError(self.otp_error_messages['verification_not_allowed'])
+
             device = device if device.verify_token(token) else None
         else:
             device = match_token(user, token)

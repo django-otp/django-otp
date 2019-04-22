@@ -10,7 +10,7 @@ from django.utils.encoding import force_text
 from django.utils.six import string_types
 from django.utils.six.moves.urllib.parse import quote, urlencode
 
-from django_otp.models import Device
+from django_otp.models import Device, ThrottlingMixin
 from django_otp.oath import TOTP
 from django_otp.util import random_hex, hex_validator
 
@@ -23,7 +23,7 @@ def key_validator(value):
     return hex_validator()(value)
 
 
-class TOTPDevice(Device):
+class TOTPDevice(ThrottlingMixin, Device):
     """
     A generic TOTP :class:`~django_otp.models.Device`. The model fields mostly
     correspond to the arguments to :func:`django_otp.oath.totp`. They all have
@@ -91,6 +91,10 @@ class TOTPDevice(Device):
     def verify_token(self, token):
         OTP_TOTP_SYNC = getattr(settings, 'OTP_TOTP_SYNC', True)
 
+        verify_allowed, _ = self.verify_is_allowed()
+        if not verify_allowed:
+            return False
+
         try:
             token = int(token)
         except Exception:
@@ -106,9 +110,16 @@ class TOTPDevice(Device):
                 self.last_t = totp.t()
                 if OTP_TOTP_SYNC:
                     self.drift = totp.drift
+                self.throttle_reset(commit=False)
                 self.save()
 
+        if not verified:
+            self.throttle_increment(commit=True)
+
         return verified
+
+    def get_throttle_factor(self):
+        return getattr(settings, 'OTP_TOTP_THROTTLE_FACTOR', 1)
 
     @property
     def config_url(self):
