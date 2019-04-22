@@ -1,13 +1,13 @@
-Unreleased
-----------
+v0.6.0 - April 22, 2019 - Failure throttling
+--------------------------------------------
 
-- Exponential throttling for HOTP and TOTP devices.
+- Built-in :ref:`HOTP <hotp-devices>` and :ref:`TOTP <totp-devices>` devices are
+  now rate-limited, enforcing exponentially increasing delays between successive
+  failures. See the device documentation for information on presenting more
+  useful error messages when this happens, as well as for tuning (or disabling)
+  this behavior.
 
-- New settings :setting:`OTP_HOTP_THROTTLE_FACTOR` and
-  :setting:`OTP_TOTP_THROTTLE_FACTOR` to control new throttling behaviour.
-
-- :class:`~django_otp.models.Device` gained :meth:`~django_otp.models.Device.verify_is_allowed` method.
-
+  Thanks to Luke Plant for the idea and implementation.
 
 
 v0.5.2 - February 11 - 2019 - Fix URL encoding
