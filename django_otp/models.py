@@ -162,21 +162,21 @@ class Device(models.Model):
 
     def verify_is_allowed(self):
         """
-        Checks whether it is permissible to call ``verify_token``. If it is
+        Checks whether it is permissible to call :meth:`verify_token`. If it is
         allowed, returns ``(True, None)``. Otherwise returns ``(False,
         data_dict)``, where ``data_dict`` contains extra information, defined
         by the implementation.
 
         This method can be used to implement throttling or locking, for
         example. Client code should check this method before calling
-        ``verify_token`` and report problems to the user.
+        :meth:`verify_token` and report problems to the user.
 
         To report specific problems, the data dictionary can return include a
         ``'reason'`` member with a value from the constants in
-        ``VerifyNotAllowed``. Otherwise, an ``'error_message'`` member should
-        be provided with an error message.
+        :class:`VerifyNotAllowed`. Otherwise, an ``'error_message'`` member
+        should be provided with an error message.
 
-        ``verify_token`` should also call this method and return False if
+        :meth:`verify_token` should also call this method and return False if
         verification is not allowed.
 
         :rtype: (bool, dict or ``None``)
@@ -199,7 +199,7 @@ class VerifyNotAllowed:
     """
     Constants that may be returned in the ``reason`` member of the extra
     information dictionary returned by
-    :meth:`django_otp.models.Device.verify_is_allowed`
+    :meth:`~django_otp.models.Device.verify_is_allowed`
 
     .. data:: N_FAILED_ATTEMPTS
 
