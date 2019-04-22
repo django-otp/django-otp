@@ -9,7 +9,7 @@ from django.utils.encoding import force_text
 from django.utils.six import string_types
 from django.utils.six.moves.urllib.parse import quote, urlencode
 
-from django_otp.models import Device
+from django_otp.models import Device, ThrottlingMixin
 from django_otp.oath import hotp
 from django_otp.util import random_hex, hex_validator
 
@@ -22,7 +22,7 @@ def key_validator(value):
     return hex_validator()(value)
 
 
-class HOTPDevice(Device):
+class HOTPDevice(ThrottlingMixin, Device):
     """
     A generic HOTP :class:`~django_otp.models.Device`. The model fields mostly
     correspond to the arguments to :func:`django_otp.oath.hotp`. They all have
@@ -64,6 +64,10 @@ class HOTPDevice(Device):
         return unhexlify(self.key.encode())
 
     def verify_token(self, token):
+        verify_allowed, _ = self.verify_is_allowed()
+        if not verify_allowed:
+            return False
+
         try:
             token = int(token)
         except Exception:
@@ -75,12 +79,19 @@ class HOTPDevice(Device):
                 if hotp(key, counter, self.digits) == token:
                     verified = True
                     self.counter = counter + 1
+                    self.throttle_reset(commit=False)
                     self.save()
                     break
             else:
                 verified = False
 
+        if not verified:
+            self.throttle_increment(commit=True)
+
         return verified
+
+    def get_throttle_factor(self):
+        return getattr(settings, 'OTP_HOTP_THROTTLE_FACTOR', 1)
 
     @property
     def config_url(self):

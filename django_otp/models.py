@@ -5,6 +5,8 @@ from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.utils import six
+from django.utils import timezone
+from django.utils.functional import cached_property
 
 
 class DeviceManager(models.Manager):
@@ -158,6 +160,30 @@ class Device(models.Model):
         return None
     generate_challenge.stub = True
 
+    def verify_is_allowed(self):
+        """
+        Checks whether it is permissible to call ``verify_token``. If it is
+        allowed, returns ``(True, None)``. Otherwise returns ``(False,
+        data_dict)``, where ``data_dict`` contains extra information, defined
+        by the implementation.
+
+        This method can be used to implement throttling or locking, for
+        example. Client code should check this method before calling
+        ``verify_token`` and report problems to the user.
+
+        To report specific problems, the data dictionary can return include a
+        ``'reason'`` member with a value from the constants in
+        ``VerifyNotAllowed``. Otherwise, an ``'error_message'`` member should
+        be provided with an error message.
+
+        ``verify_token`` should also call this method and return False if
+        verification is not allowed.
+
+        :rtype: (bool, dict or ``None``)
+
+        """
+        return (True, None)
+
     def verify_token(self, token):
         """
         Verifies a token. As a rule, the token should no longer be valid if
@@ -167,3 +193,102 @@ class Device(models.Model):
         :rtype: bool
         """
         return False
+
+
+class VerifyNotAllowed:
+    """
+    Constants that may be returned in the ``reason`` member of the extra
+    information dictionary returned by
+    :meth:`django_otp.models.Device.verify_is_allowed`
+
+    .. data:: N_FAILED_ATTEMPTS
+
+       Indicates that verification is disallowed because of ``n`` successive
+       failed attempts. The data dictionary should include the value of ``n``
+       in member ``failure_count``
+
+    """
+    N_FAILED_ATTEMPTS = 'N_FAILED_ATTEMPTS'
+
+
+class ThrottlingMixin(models.Model):
+    """
+    Mixin class for models that need throttling behaviour. Implements
+    exponential back-off.
+    """
+    # This mixin is not publicly documented, but is used internally to avoid
+    # code duplication. Subclasses must implement get_throttle_factor(), and
+    # must use the verify_is_allowed(), throttle_reset() and
+    # throttle_increment() methods from within their verify_token() method.
+    throttling_failure_timestamp = models.DateTimeField(
+        null=True, blank=True, default=None,
+        help_text="A timestamp of the last failed verification attempt. Null if last attempt succeeded."
+    )
+    throttling_failure_count = models.PositiveIntegerField(
+        default=0, help_text="Number of successive failed attempts."
+    )
+
+    def verify_is_allowed(self):
+        """
+        If verification is allowed, returns ``(True, None)``.
+        Otherwise, returns ``(False, data_dict)``.
+
+        ``data_dict`` contains further information. Currently it can be::
+
+            {'reason': VerifyNotAllowed.N_FAILED_ATTEMPTS,
+             'failure_count': n
+            }
+
+        where ``n`` is the number of successive failures. See
+        :class:`~django_otp.models.VerifyNotAllowed`.
+        """
+        if (self.throttling_enabled and
+                self.throttling_failure_count > 0 and
+                self.throttling_failure_timestamp is not None):
+            now = timezone.now()
+            delay = (now - self.throttling_failure_timestamp).total_seconds()
+            # Required delays should be 1, 2, 4, 8 ...
+            delay_required = self.get_throttle_factor() * (2 ** (self.throttling_failure_count - 1))
+            if delay < delay_required:
+                return (False,
+                        {'reason': VerifyNotAllowed.N_FAILED_ATTEMPTS,
+                         'failure_count': self.throttling_failure_count,
+                         })
+
+        return super(ThrottlingMixin, self).verify_is_allowed()
+
+    def throttle_reset(self, commit=True):
+        """
+        Call this method to reset throttling (normally when a verify attempt
+        succeeded).
+
+        Pass 'commit=False' to avoid calling self.save().
+
+        """
+        self.throttling_failure_timestamp = None
+        self.throttling_failure_count = 0
+        if commit:
+            self.save()
+
+    def throttle_increment(self, commit=True):
+        """
+        Call this method to increase throttling (normally when a verify attempt
+        failed).
+
+        Pass 'commit=False' to avoid calling self.save().
+
+        """
+        self.throttling_failure_timestamp = timezone.now()
+        self.throttling_failure_count += 1
+        if commit:
+            self.save()
+
+    @cached_property
+    def throttling_enabled(self):
+        return self.get_throttle_factor() > 0
+
+    def get_throttle_factor(self):
+        raise NotImplementedError()
+
+    class Meta:
+        abstract = True
