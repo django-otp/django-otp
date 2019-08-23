@@ -201,10 +201,11 @@ class AuthFormTest(TestCase):
             'otp_token': '123456',
             'otp_device': self.device.persistent_id,
         }
-        form1 = OTPAuthenticationForm(None, bad_data)
-        self.assertFalse(form1.is_valid())
 
         with freeze_time() as frozen_time:
+            form1 = OTPAuthenticationForm(None, bad_data)
+            self.assertFalse(form1.is_valid())
+
             # Should fail even with good data:
             form2 = OTPAuthenticationForm(None, good_data)
             self.assertFalse(form2.is_valid())

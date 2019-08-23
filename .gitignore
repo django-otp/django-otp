@@ -1,0 +1,6 @@
+# setuptools
+/MANIFEST
+/build/
+/dist/
+/docs/build/
+*.egg-info/

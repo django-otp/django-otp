@@ -1,7 +1,7 @@
-.PHONY: all sdist wheel sign upload clean
+.PHONY: full sdist wheel upload clean
 
 
-all: clean sdist wheel
+full: clean sdist wheel
 
 sdist:
 	python setup.py sdist
@@ -9,15 +9,10 @@ sdist:
 wheel:
 	python setup.py bdist_wheel
 
-sign: sdist wheel
-	for f in dist/*.gz dist/*.whl; do \
-	    gpg2 --detach-sign --armor $$f; \
-	done
-
-upload: sign
+upload:
 	twine upload dist/*
 
 clean:
 	-rm -r build
 	-rm -r dist
-	-rm -r *.egg-info
+	-rm -r src/django_otp.egg-info
