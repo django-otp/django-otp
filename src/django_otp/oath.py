@@ -7,6 +7,7 @@ from time import time
 
 from django.utils import six
 
+
 if six.PY3:
     iterbytes = iter
 else:

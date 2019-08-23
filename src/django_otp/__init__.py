@@ -1,4 +1,3 @@
-import django
 from django.contrib.auth.signals import user_logged_in
 
 
@@ -74,7 +73,7 @@ def devices_for_user(user, confirmed=True):
 
     :rtype: iterable
     """
-    if _user_is_anonymous(user):
+    if user.is_anonymous:
         return
 
     for model in device_classes():
@@ -110,41 +109,9 @@ def device_classes():
     Returns an iterable of all loaded device models.
     """
     from django_otp.models import Device
+    from django.apps import apps
 
-    try:
-        from django.apps import apps
-    except ImportError:
-        for model in _device_classes_legacy():
-            yield model
-    else:
-        for config in apps.get_app_configs():
-            for model in config.get_models():
-                if issubclass(model, Device):
-                    yield model
-
-
-def _device_classes_legacy():
-    """
-    Find device models in Django < 1.7.
-    """
-    from django.db.models import get_apps, get_models
-    from django_otp.models import Device
-
-    for app in get_apps():
-        for model in get_models(app):
+    for config in apps.get_app_configs():
+        for model in config.get_models():
             if issubclass(model, Device):
                 yield model
-
-
-def _user_is_authenticated(user):
-    """
-    Wraps django's user.is_authenticated to support both Django 2 and pre-1.10.
-    """
-    return user.is_authenticated if (django.VERSION >= (1, 10)) else user.is_authenticated()
-
-
-def _user_is_anonymous(user):
-    """
-    Wraps django's user.is_anonymous to support both Django 2 and pre-1.10.
-    """
-    return user.is_anonymous if (django.VERSION >= (1, 10)) else user.is_anonymous()

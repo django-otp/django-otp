@@ -12,7 +12,7 @@ from django.utils.six.moves.urllib.parse import quote, urlencode
 
 from django_otp.models import Device, ThrottlingMixin
 from django_otp.oath import TOTP
-from django_otp.util import random_hex, hex_validator
+from django_otp.util import hex_validator, random_hex
 
 
 def default_key():

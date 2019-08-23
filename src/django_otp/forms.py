@@ -1,10 +1,11 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 from django import forms
-from django.utils.translation import ugettext_lazy as _, ungettext_lazy
 from django.contrib.auth.forms import AuthenticationForm
+from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ungettext_lazy
 
-from . import match_token, devices_for_user
+from . import devices_for_user, match_token
 from .models import Device, VerifyNotAllowed
 
 

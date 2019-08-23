@@ -1,12 +1,13 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from time import time
 from datetime import timedelta
+from time import time
+
+from freezegun import freeze_time
 
 from django.db import IntegrityError
 from django.test.utils import override_settings
-from django.utils.six.moves.urllib.parse import urlsplit, parse_qs
-from freezegun import freeze_time
+from django.utils.six.moves.urllib.parse import parse_qs, urlsplit
 
 from django_otp.models import VerifyNotAllowed
 from django_otp.tests import TestCase

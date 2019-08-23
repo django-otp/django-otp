@@ -1,21 +1,15 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-import pickle
 from doctest import DocTestSuite
+import pickle
+import unittest
 
 import django
 from django.db import IntegrityError
 import django.test
 
-from django_otp import oath
-from django_otp import util
-from django_otp import DEVICE_ID_SESSION_KEY
+from django_otp import DEVICE_ID_SESSION_KEY, oath, util
 from django_otp.middleware import OTPMiddleware
-
-if django.VERSION < (1, 7):
-    from django.utils import unittest
-else:
-    import unittest
 
 
 def load_tests(loader, tests, pattern):
@@ -70,7 +64,7 @@ class OTPMiddlewareTestCase(TestCase):
                 device = user.staticdevice_set.create()
                 device.token_set.create(token=user.get_username())
 
-        self.middleware = OTPMiddleware()
+        self.middleware = OTPMiddleware(lambda r: None)
 
     def test_verified(self):
         request = self.factory.get('/')
@@ -80,7 +74,7 @@ class OTPMiddlewareTestCase(TestCase):
             DEVICE_ID_SESSION_KEY: device.persistent_id
         }
 
-        self.middleware.process_request(request)
+        self.middleware(request)
 
         self.assertTrue(request.user.is_verified())
 
@@ -94,7 +88,7 @@ class OTPMiddlewareTestCase(TestCase):
             )
         }
 
-        self.middleware.process_request(request)
+        self.middleware(request)
 
         self.assertTrue(request.user.is_verified())
 
@@ -103,7 +97,7 @@ class OTPMiddlewareTestCase(TestCase):
         request.user = self.alice
         request.session = {}
 
-        self.middleware.process_request(request)
+        self.middleware(request)
 
         self.assertFalse(request.user.is_verified())
 
@@ -114,7 +108,7 @@ class OTPMiddlewareTestCase(TestCase):
             DEVICE_ID_SESSION_KEY: 'otp_static.staticdevice/0',
         }
 
-        self.middleware.process_request(request)
+        self.middleware(request)
 
         self.assertFalse(request.user.is_verified())
 
@@ -125,7 +119,7 @@ class OTPMiddlewareTestCase(TestCase):
             DEVICE_ID_SESSION_KEY: 'otp_bogus.bogusdevice/0',
         }
 
-        self.middleware.process_request(request)
+        self.middleware(request)
 
         self.assertFalse(request.user.is_verified())
 
@@ -137,7 +131,7 @@ class OTPMiddlewareTestCase(TestCase):
             DEVICE_ID_SESSION_KEY: device.persistent_id
         }
 
-        self.middleware.process_request(request)
+        self.middleware(request)
 
         self.assertFalse(request.user.is_verified())
 
@@ -149,7 +143,7 @@ class OTPMiddlewareTestCase(TestCase):
             DEVICE_ID_SESSION_KEY: device.persistent_id
         }
 
-        self.middleware.process_request(request)
+        self.middleware(request)
 
         # Should not raise an exception.
         pickle.dumps(request.user)

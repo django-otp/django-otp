@@ -1,12 +1,11 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from optparse import make_option
 from textwrap import fill
 
 from django.core.management.base import BaseCommand, CommandError
 from django.utils.encoding import force_text
 
-from django_otp.plugins.otp_static.lib import get_user_model, add_static_token
+from django_otp.plugins.otp_static.lib import add_static_token, get_user_model
 
 
 class Command(BaseCommand):

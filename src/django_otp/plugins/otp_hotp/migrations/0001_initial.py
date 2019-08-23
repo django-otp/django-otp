@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db import models, migrations
-import django_otp.plugins.otp_hotp.models
 from django.conf import settings
+from django.db import migrations, models
+
+import django_otp.plugins.otp_hotp.models
 
 
 class Migration(migrations.Migration):

@@ -5,12 +5,8 @@ from django.contrib import admin
 from django.contrib.admin.sites import AlreadyRegistered
 from django.http import HttpResponse
 from django.template.response import TemplateResponse
+from django.urls import reverse
 from django.utils.html import format_html
-
-try:
-    from django.urls import reverse
-except ImportError:
-    from django.core.urlresolvers import reverse
 
 from .models import TOTPDevice
 

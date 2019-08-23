@@ -6,6 +6,7 @@ from django.test.utils import override_settings
 
 from django_otp.forms import OTPAuthenticationForm
 from django_otp.tests import TestCase
+
 from .models import EmailDevice
 
 

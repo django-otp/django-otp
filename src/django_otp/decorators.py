@@ -2,7 +2,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 from django.contrib.auth.decorators import user_passes_test
 
-from django_otp import user_has_device, _user_is_authenticated
+from django_otp import user_has_device
 from django_otp.conf import settings
 
 
@@ -20,7 +20,7 @@ def otp_required(view=None, redirect_field_name='next', login_url=None, if_confi
         login_url = settings.OTP_LOGIN_URL
 
     def test(user):
-        return user.is_verified() or (if_configured and _user_is_authenticated(user) and not user_has_device(user))
+        return user.is_verified() or (if_configured and user.is_authenticated and not user_has_device(user))
 
     decorator = user_passes_test(test, login_url=login_url, redirect_field_name=redirect_field_name)
 

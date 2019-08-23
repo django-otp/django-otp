@@ -5,7 +5,6 @@ from functools import partial
 from django.contrib.auth import views as auth_views
 from django.utils.functional import cached_property
 
-from django_otp import _user_is_anonymous
 from django_otp.forms import OTPAuthenticationForm, OTPTokenForm
 
 
@@ -28,7 +27,7 @@ class LoginView(auth_views.LoginView):
     @cached_property
     def authentication_form(self):
         user = self.request.user
-        if _user_is_anonymous(user) or user.is_verified():
+        if user.is_anonymous or user.is_verified():
             form = self.otp_authentication_form
         else:
             form = partial(self.otp_token_form, user)
