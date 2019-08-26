@@ -1,3 +1,10 @@
+v0.7.0 - August 26, 2019 - Housekeeping
+---------------------------------------
+
+Removed obsolete compatibility shims. The testing and support matrix is
+unchanged from 0.6.0, so there should be no impact.
+
+
 v0.6.0 - April 22, 2019 - Failure throttling
 --------------------------------------------
 
