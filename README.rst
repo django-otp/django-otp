@@ -22,10 +22,4 @@ separately. This package also includes an implementation of OATH `HOTP
 <http://tools.ietf.org/html/rfc6238>`_ for convenience, as these are standard
 OTP algorithms used by multiple plugins.
 
-* Repository: https://github.com/django-otp/django-otp
-* Documentation: https://django-otp-official.readthedocs.io/
-* Mailing list: https://groups.google.com/forum/#!forum/django-otp
-
-This version is supported on Python 2.7 and 3.4+; and Django 1.8 and 1.10+.
-
 .. _upgrade notes: https://django-otp-official.readthedocs.io/#upgrading
