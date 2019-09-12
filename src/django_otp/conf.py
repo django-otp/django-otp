@@ -1,8 +1,8 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-import django.conf
-
 from six import iteritems
+
+import django.conf
 
 
 class Settings(object):

@@ -2,6 +2,8 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 from datetime import timedelta
 
+from six.moves.urllib.parse import parse_qs, urlsplit
+
 from freezegun import freeze_time
 
 from django.db import IntegrityError
@@ -10,7 +12,6 @@ from django.test.utils import override_settings
 from django_otp.forms import OTPAuthenticationForm
 from django_otp.models import VerifyNotAllowed
 from django_otp.tests import TestCase
-from six.moves.urllib.parse import parse_qs, urlsplit
 
 
 class HOTPTest(TestCase):

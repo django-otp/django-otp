@@ -3,9 +3,9 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 from binascii import hexlify, unhexlify
 from os import urandom
 
-from django.core.exceptions import ValidationError
-
 import six
+
+from django.core.exceptions import ValidationError
 
 
 def hex_validator(length=0):
