@@ -1,9 +1,7 @@
-v0.7.1 - September 12, 2019 - Switch to standalone `six` library
-----------------------------------------------------------------
+v0.7.1 - September 12, 2019 - Preliminary Django 3.0 support
+------------------------------------------------------------
 
-Django is removing deprecated `django.utils.six` and recommends
-either removing it from your codebase or switching to `six` so
-we switch to `six` because we still support Python 2
+Removed dependencies on Python 2 compatibility shims in Django < 3.0.
 
 
 v0.7.0 - August 26, 2019 - Housekeeping
