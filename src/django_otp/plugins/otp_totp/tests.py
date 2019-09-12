@@ -7,7 +7,7 @@ from freezegun import freeze_time
 
 from django.db import IntegrityError
 from django.test.utils import override_settings
-from django.utils.six.moves.urllib.parse import parse_qs, urlsplit
+from six.moves.urllib.parse import parse_qs, urlsplit
 
 from django_otp.models import VerifyNotAllowed
 from django_otp.tests import TestCase

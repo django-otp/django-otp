@@ -7,8 +7,8 @@ import time
 from django.conf import settings
 from django.db import models
 from django.utils.encoding import force_text
-from django.utils.six import string_types
-from django.utils.six.moves.urllib.parse import quote, urlencode
+from six import string_types
+from six.moves.urllib.parse import quote, urlencode
 
 from django_otp.models import Device, ThrottlingMixin
 from django_otp.oath import TOTP
