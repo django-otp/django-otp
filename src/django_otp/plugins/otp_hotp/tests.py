@@ -6,11 +6,11 @@ from freezegun import freeze_time
 
 from django.db import IntegrityError
 from django.test.utils import override_settings
-from six.moves.urllib.parse import parse_qs, urlsplit
 
 from django_otp.forms import OTPAuthenticationForm
 from django_otp.models import VerifyNotAllowed
 from django_otp.tests import TestCase
+from six.moves.urllib.parse import parse_qs, urlsplit
 
 
 class HOTPTest(TestCase):

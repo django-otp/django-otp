@@ -4,7 +4,7 @@ import os
 import os.path
 import re
 
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 
 def gen_package_data(pkg_root, paths, prune=[]):
