@@ -4,7 +4,7 @@ from binascii import hexlify, unhexlify
 from os import urandom
 
 from django.core.exceptions import ValidationError
-from django.utils import six
+import six
 
 
 def hex_validator(length=0):

@@ -5,7 +5,7 @@ import hmac
 from struct import pack
 from time import time
 
-from django.utils import six
+import six
 
 
 if six.PY3:

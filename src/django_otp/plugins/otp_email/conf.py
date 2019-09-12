@@ -1,7 +1,7 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import django.conf
-from django.utils.six import iteritems
+from six import iteritems
 
 
 class OTPEmailSettings(object):
