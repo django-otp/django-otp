@@ -7,12 +7,12 @@ import time
 from django.conf import settings
 from django.db import models
 from django.utils.encoding import force_text
-from six import string_types
-from six.moves.urllib.parse import quote, urlencode
 
 from django_otp.models import Device, ThrottlingMixin
 from django_otp.oath import TOTP
 from django_otp.util import hex_validator, random_hex
+from six import string_types
+from six.moves.urllib.parse import quote, urlencode
 
 
 def default_key():
