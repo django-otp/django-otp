@@ -1,4 +1,4 @@
-# django-agent-trust test project
+# django-otp test project
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
@@ -38,9 +38,14 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django_agent_trust.middleware.AgentMiddleware',
+    'django_otp.middleware.OTPMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'test_project.backends.DummyBackend',
 ]
 
 TEMPLATES = [

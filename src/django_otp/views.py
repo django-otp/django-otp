@@ -2,6 +2,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 from functools import partial
 
+from django.contrib.auth import BACKEND_SESSION_KEY
 from django.contrib.auth import views as auth_views
 from django.utils.functional import cached_property
 
@@ -33,6 +34,15 @@ class LoginView(auth_views.LoginView):
             form = partial(self.otp_token_form, user)
 
         return form
+
+    def form_valid(self, form):
+        # OTPTokenForm does not call authenticate(), so we may need to populate
+        # user.backend ourselves to keep login() happy.
+        user = form.get_user()
+        if not hasattr(user, 'backend'):
+            user.backend = self.request.session[BACKEND_SESSION_KEY]
+
+        return super(LoginView, self).form_valid(form)
 
 
 # Backwards compatibility.

@@ -5,6 +5,7 @@ import pickle
 import unittest
 
 import django
+from django.contrib.auth import get_user_model
 from django.db import IntegrityError
 import django.test
 
@@ -30,16 +31,8 @@ class TestCase(django.test.TestCase):
     def setUpClass(cls):
         super(TestCase, cls).setUpClass()
 
-        try:
-            from django.contrib.auth import get_user_model
-        except ImportError:
-            from django.contrib.auth.models import User
-            cls.User = User
-            cls.User.get_username = lambda self: self.username
-            cls.USERNAME_FIELD = 'username'
-        else:
-            cls.User = get_user_model()
-            cls.USERNAME_FIELD = cls.User.USERNAME_FIELD
+        cls.User = get_user_model()
+        cls.USERNAME_FIELD = cls.User.USERNAME_FIELD
 
     def create_user(self, username, password):
         """
@@ -147,3 +140,52 @@ class OTPMiddlewareTestCase(TestCase):
 
         # Should not raise an exception.
         pickle.dumps(request.user)
+
+
+class LoginViewTestCase(TestCase):
+    def setUp(self):
+        try:
+            self.alice = self.create_user('alice', 'password')
+            self.bob = self.create_user('bob', 'password')
+        except IntegrityError:
+            self.skipTest("Unable to create a test user.")
+        else:
+            for user in [self.alice, self.bob]:
+                device = user.staticdevice_set.create()
+                device.token_set.create(token=user.get_username())
+
+    def test_authenticate(self):
+        device = self.alice.staticdevice_set.get()
+        token = device.token_set.get()
+
+        params = {
+            'username': self.alice.get_username(),
+            'password': 'password',
+            'otp_device': device.persistent_id,
+            'otp_token': token.token,
+            'next': '/',
+        }
+
+        response = self.client.post('/login/', params)
+        self.assertRedirects(response, '/')
+
+        response = self.client.get('/')
+        self.assertContains(response, self.alice.get_username())
+
+    def test_verify(self):
+        device = self.alice.staticdevice_set.get()
+        token = device.token_set.get()
+
+        params = {
+            'otp_device': device.persistent_id,
+            'otp_token': token.token,
+            'next': '/',
+        }
+
+        self.client.login(username=self.alice.get_username(), password='password')
+
+        response = self.client.post('/login/', params)
+        self.assertRedirects(response, '/')
+
+        response = self.client.get('/')
+        self.assertContains(response, self.alice.get_username())
