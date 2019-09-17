@@ -1,3 +1,12 @@
+v0.7.2 - September 17, 2019 - LoginView fix
+-------------------------------------------
+
+- `#2`_: Fix LoginView for already-authenticated users, with multiple auth
+  backends configured.
+
+.. _#2: https://github.com/django-otp/django-otp/issues/2
+
+
 v0.7.1 - September 12, 2019 - Preliminary Django 3.0 support
 ------------------------------------------------------------
 
@@ -291,6 +300,3 @@ v0.1.0 - August 20, 2012 - Initial Release
 ------------------------------------------
 
 Initial release.
-
-
-.. vim: ft=rst nospell tw=80

@@ -39,7 +39,7 @@ def find_package_data(*args, **kwargs):
 
 setup(
     name='django-otp',
-    version='0.7.1',
+    version='0.7.2',
     description="A pluggable framework for adding two-factor authentication to Django using one-time passwords.",
     license='BSD',
     author="Peter Sagerson",
