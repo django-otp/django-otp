@@ -16,7 +16,7 @@ class OTPMiddleware(object):
     """
     This must be installed after
     :class:`~django.contrib.auth.middleware.AuthenticationMiddleware` and
-    performs an analagous function. Just as AuthenticationMiddleware populates
+    performs an analogous function. Just as AuthenticationMiddleware populates
     ``request.user`` based on session data, OTPMiddleware populates
     ``request.user.otp_device`` to the :class:`~django_otp.models.Device`
     object that has verified the user, or ``None`` if the user has not been

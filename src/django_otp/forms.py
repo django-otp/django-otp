@@ -76,7 +76,7 @@ class OTPAuthenticationFormMixin(object):
         :param user: A user that has been authenticated by the first factor
             (such as a password).
         :type user: :class:`~django.contrib.auth.models.User`
-        :rasies: :exc:`~django.core.exceptions.ValidationError` if the user is
+        :raises: :exc:`~django.core.exceptions.ValidationError` if the user is
             not fully authenticated by an OTP token.
         """
         if user is None:
