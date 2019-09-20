@@ -148,7 +148,7 @@ class Device(models.Model):
         This method is permitted to have side effects, such as transmitting
         information to the user through some other channel (email or SMS,
         perhaps). And, of course, some devices may need to commit the
-        challenge to the databse.
+        challenge to the database.
 
         :returns: A message to the user. This should be a string that fits
             comfortably in the template ``'OTP Challenge: {0}'``. This may
