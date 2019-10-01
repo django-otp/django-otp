@@ -13,7 +13,8 @@ class OTPEmailSettings(object):
     """
     defaults = {
         'OTP_EMAIL_SENDER': '',
-        'OTP_EMAIL_SUBJECT': 'OTP token'
+        'OTP_EMAIL_SUBJECT': 'OTP token',
+        'OTP_STEP_TIME': 900,
     }
 
     def __init__(self):

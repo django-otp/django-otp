@@ -44,7 +44,7 @@ class EmailDevice(Device):
         return unhexlify(self.key.encode())
 
     def generate_challenge(self):
-        token = totp(self.bin_key)
+        token = totp(self.bin_key, step=settings.OTP_STEP_TIME)
         body = render_to_string('otp/email/token.txt', {'token': token})
 
         send_mail(settings.OTP_EMAIL_SUBJECT,
@@ -62,6 +62,6 @@ class EmailDevice(Device):
         except Exception:
             verified = False
         else:
-            verified = any(totp(self.bin_key, drift=drift) == token for drift in [0, -1])
+            verified = any(totp(self.bin_key, step=settings.OTP_STEP_TIME, drift=drift) == token for drift in [0, -1])
 
         return verified

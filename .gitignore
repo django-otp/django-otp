@@ -4,3 +4,4 @@
 /dist/
 /docs/build/
 *.egg-info/
+.idea/
