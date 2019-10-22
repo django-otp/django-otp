@@ -19,7 +19,7 @@ class OTPAuthenticationFormMixin(object):
         #. Define three additional form fields::
 
             otp_device = forms.CharField(required=False, widget=forms.Select)
-            otp_token = forms.CharField(required=False)
+            otp_token = forms.CharField(required=False, widget=forms.TextInput(attrs={'autocomplete': 'off'}))
             otp_challenge = forms.CharField(required=False)
 
            - ``otp_device`` will be a select widget with all of the user's
@@ -228,7 +228,7 @@ class OTPAuthenticationForm(OTPAuthenticationFormMixin, AuthenticationForm):
 
     """
     otp_device = forms.CharField(required=False, widget=forms.Select)
-    otp_token = forms.CharField(required=False)
+    otp_token = forms.CharField(required=False, widget=forms.TextInput(attrs={'autocomplete': 'off'}))
 
     # This is a placeholder field that allows us to detect when the user clicks
     # the otp_challenge submit button.
@@ -278,7 +278,7 @@ class OTPTokenForm(OTPAuthenticationFormMixin, forms.Form):
 
     """
     otp_device = forms.ChoiceField(choices=[])
-    otp_token = forms.CharField(required=False)
+    otp_token = forms.CharField(required=False, widget=forms.TextInput(attrs={'autocomplete': 'off'}))
     otp_challenge = forms.CharField(required=False)
 
     def __init__(self, user, request=None, *args, **kwargs):
