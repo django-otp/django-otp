@@ -1,3 +1,11 @@
+v0.7.3 - October 22, 2019 - Minor improvements
+----------------------------------------------
+
+- Built-in forms have autocomplete disabled for token widgets.
+
+- Fixed miscellaneous typos.
+
+
 v0.7.2 - September 17, 2019 - LoginView fix
 -------------------------------------------
 
