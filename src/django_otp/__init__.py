@@ -22,7 +22,7 @@ def login(request, device):
     """
     user = getattr(request, 'user', None)
 
-    if (user is not None) and (device is not None) and (device.user_id == user.id):
+    if (user is not None) and (device is not None) and (device.user_id == user.pk):
         request.session[DEVICE_ID_SESSION_KEY] = device.persistent_id
         request.user.otp_device = device
 
