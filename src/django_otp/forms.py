@@ -110,7 +110,7 @@ class OTPAuthenticationFormMixin(object):
         # have the list of choices until we authenticate the user. Without the
         # following, an attacker could authenticate using some other user's OTP
         # device.
-        if (device is not None) and (device.user_id != user.id):
+        if (device is not None) and (device.user_id != user.pk):
             device = None
 
         return device

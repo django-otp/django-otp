@@ -44,7 +44,7 @@ class OTPMiddleware(object):
             persistent_id = request.session.get(DEVICE_ID_SESSION_KEY)
             device = self._device_from_persistent_id(persistent_id) if persistent_id else None
 
-            if (device is not None) and (device.user_id != user.id):
+            if (device is not None) and (device.user_id != user.pk):
                 device = None
 
             if (device is None) and (DEVICE_ID_SESSION_KEY in request.session):
