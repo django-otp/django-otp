@@ -9,20 +9,15 @@ from .forms import OTPAuthenticationFormMixin
 
 
 def _admin_template_for_django_version():
-    minor_django_version = django.VERSION[:2]
+    """
+    Returns the most appropriate Django login template available.
 
-    if minor_django_version <= (1, 4):
-        return 'otp/admin14/login.html'
-    elif minor_django_version == (1, 5):
-        return 'otp/admin15/login.html'
-    elif minor_django_version == (1, 6):
-        return 'otp/admin16/login.html'
-    elif minor_django_version == (1, 7):
-        return 'otp/admin17/login.html'
-    elif minor_django_version == (1, 8):
-        return 'otp/admin18/login.html'
-    else:
-        return 'otp/admin19/login.html'
+    In the past, we've had more version-specific templates. Perhaps this will
+    be true again in the future. For now, the Django 1.9 version is the most
+    recent available.
+
+    """
+    return 'otp/admin19/login.html'
 
 
 class OTPAdminAuthenticationForm(AdminAuthenticationForm, OTPAuthenticationFormMixin):

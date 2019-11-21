@@ -1,3 +1,12 @@
+Unreleased - Cleanup
+-------------------------------------------------------
+
+- `#10`_: Remove old admin login templates that are confusing some unrelated
+  tools.
+
+.. _#10: https://github.com/django-otp/django-otp/issues/10
+
+
 v0.7.3 - October 22, 2019 - Minor improvements
 ----------------------------------------------
 

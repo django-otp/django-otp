@@ -111,6 +111,11 @@ risk::
     can always use the :ref:`addstatictoken` management command to bootstrap
     yourself in.
 
+As a convenience, :class:`~django_otp.admin.OTPAdminSite` will override the
+admin login template. The template is a bit of a moving target, so this may get
+broken by new Django versions. Users will probably have a better and more
+consistent experience if you send them through your own login UI instead.
+
 
 The Token Form
 ~~~~~~~~~~~~~~
