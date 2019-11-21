@@ -1,4 +1,4 @@
-Unreleased - Cleanup
+v0.7.4 - November 21, 2019 - Cleanup
 --------------------------------------------------------------------------------
 
 - `#10`_: Remove old admin login templates that are confusing some unrelated
