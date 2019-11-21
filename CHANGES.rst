@@ -1,5 +1,5 @@
 Unreleased - Cleanup
--------------------------------------------------------
+--------------------------------------------------------------------------------
 
 - `#10`_: Remove old admin login templates that are confusing some unrelated
   tools.

@@ -15,6 +15,7 @@ django-otp = {editable = true,path = "."}
 freezegun = "*"
 coverage = "*"
 tox = "*"
+bumpversion = "*"
 
 [packages]
 
