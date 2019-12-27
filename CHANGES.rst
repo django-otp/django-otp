@@ -1,4 +1,4 @@
-Unreleased - Django 3.0 support
+v0.7.5 - December 27, 2019 - Django 3.0 support
 --------------------------------------------------------------------------------
 
 - `#15`_: Add admin template for Django 3.0.
