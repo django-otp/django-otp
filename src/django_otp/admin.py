@@ -13,8 +13,8 @@ def _admin_template_for_django_version():
     Returns the most appropriate Django login template available.
 
     In the past, we've had more version-specific templates. Perhaps this will
-    be true again in the future. For now, the Django 1.9 and 3.0 version are the most
-    recent available.
+    be true again in the future. For now, the Django 1.9 and 3.0 version are
+    the most recent available.
     """
     if django.VERSION[0] >= 3:
         return 'otp/admin30/login.html'
