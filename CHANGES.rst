@@ -1,3 +1,11 @@
+Unreleased - Django 3.0 support
+--------------------------------------------------------------------------------
+
+- `#15`_: Add admin template for Django 3.0.
+
+.. _#15: https://github.com/django-otp/django-otp/issues/15
+
+
 v0.7.4 - November 21, 2019 - Cleanup
 --------------------------------------------------------------------------------
 
