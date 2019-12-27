@@ -17,9 +17,9 @@ def _admin_template_for_django_version():
     recent available.
     """
     if django.VERSION[0] >= 3:
-        return 'otp/admin19/login.html'
-    else:
         return 'otp/admin30/login.html'
+    else:
+        return 'otp/admin19/login.html'
 
 
 class OTPAdminAuthenticationForm(AdminAuthenticationForm, OTPAuthenticationFormMixin):
