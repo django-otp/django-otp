@@ -2,8 +2,8 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
-from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import ungettext_lazy
+from django.utils.translation import gettext_lazy as _
+from django.utils.translation import ngettext_lazy
 
 from . import devices_for_user, match_token
 from .models import Device, VerifyNotAllowed
@@ -62,7 +62,7 @@ class OTPAuthenticationFormMixin(object):
         'not_interactive': _('The selected OTP device is not interactive'),
         'challenge_message': _('OTP Challenge: {0}'),
         'invalid_token': _('Invalid token. Please make sure you have entered it correctly.'),
-        'n_failed_attempts': ungettext_lazy(
+        'n_failed_attempts': ngettext_lazy(
             "Verification temporarily disabled because of %(failure_count)d failed attempt, please try again soon.",
             "Verification temporarily disabled because of %(failure_count)d failed attempts, please try again soon.",
             "failure_count"),
