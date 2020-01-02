@@ -1,3 +1,14 @@
+Unreleased - Drop Python 2 support
+--------------------------------------------------------------------------------
+
+- `#17`_: Drop Python 2 support.
+
+- `#18`_: Back to a single login template for now.
+
+.. _#17: https://github.com/django-otp/django-otp/pulls/17
+.. _#18: https://github.com/django-otp/django-otp/pulls/18
+
+
 v0.7.5 - December 27, 2019 - Django 3.0 support
 --------------------------------------------------------------------------------
 
@@ -60,9 +71,7 @@ v0.6.0 - April 22, 2019 - Failure throttling
 v0.5.2 - February 11 - 2019 - Fix URL encoding
 ----------------------------------------------
 
-- `PR 39`_: Fix encoding of otpauth:// URL parameters.
-
-.. _PR 39: https://bitbucket.org/psagers/django-otp/pull-requests/39
+- Fix encoding of otpauth:// URL parameters.
 
 
 v0.5.1 - October 24, 2018 - Customizable error messages
@@ -98,9 +107,7 @@ v0.4.1 - August 29, 2017 - Misc fixes
 
 - Improved handling of device persistent identifiers.
 
-- Fix `#25`_: make sure default keys are unicode values.
-
-.. _#25: https://bitbucket.org/psagers/django-otp/issues/25/attributeerror-bytes-object-has-no
+- Make sure default keys are unicode values.
 
 
 v0.4.0 - July 19, 2017 - Update support matrix
@@ -132,14 +139,12 @@ v0.3.12 - April 2, 2017 - Forward compatibility
 v0.3.11 - March 8, 2017 - Built-in QR Code support
 --------------------------------------------------
 
-- `#20`_: Generate HOTP and TOTP otpauth URLs and corresponding QR Codes. To
-  enable this feature, install ``django-otp[qrcode]`` or just install the
-  `qrcode`_ package.
+- Generate HOTP and TOTP otpauth URLs and corresponding QR Codes. To enable this
+  feature, install ``django-otp[qrcode]`` or just install the `qrcode`_ package.
 
 - Support for Python 2.6 and Django 1.4 were dropped in this version (long
   overdue).
 
-.. _#20: https://bitbucket.org/psagers/django-otp/issues/20/how-to-pair-from-the-admin
 .. _qrcode: https://pypi.python.org/pypi/qrcode/
 
 
@@ -163,15 +168,11 @@ v0.3.7 - September 24, 2016 - Convenience API
 v0.3.6 - September 4, 2016 - Django 1.10
 ----------------------------------------
 
-- `#11`_: Don't break the laziness of ``request.user``.
+- Don't break the laziness of ``request.user``.
 
-- `#16`_: Improved error message for invalid tokens.
+- Improved error message for invalid tokens.
 
-- `#17`_: Support the new middleware API in Django 1.10.
-
-.. _#11: https://bitbucket.org/psagers/django-otp/issues/11/wasteful-queries-on-every-request
-.. _#16: https://bitbucket.org/psagers/django-otp/issues/16/inappropriate-error-when-_verify_token
-.. _#17: https://bitbucket.org/psagers/django-otp/issues/17/django-110-new-style-middleware
+- Support the new middleware API in Django 1.10.
 
 
 v0.3.5 - April 13, 2016 - Fix default TOTP key

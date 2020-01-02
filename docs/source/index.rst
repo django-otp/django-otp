@@ -1,7 +1,8 @@
-django-otp
-==========
-
 .. include:: ../../README.rst
+   :end-before: end-of-doc-include
+
+Contents
+--------
 
 .. toctree::
     :maxdepth: 3

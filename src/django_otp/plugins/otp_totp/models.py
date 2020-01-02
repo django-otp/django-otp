@@ -1,7 +1,7 @@
 from base64 import b32encode
 from binascii import unhexlify
-from urllib.parse import quote, urlencode
 import time
+from urllib.parse import quote, urlencode
 
 from django.conf import settings
 from django.db import models

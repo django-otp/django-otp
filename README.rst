@@ -1,3 +1,6 @@
+django-otp
+==========
+
 .. image:: https://img.shields.io/pypi/v/django-otp?color=blue
    :target: https://pypi.org/project/django-otp/
    :alt: PyPI
@@ -16,10 +19,36 @@ authentication backend. The primary target is developers wishing to incorporate
 OTPs into their Django projects as a form of `two-factor authentication
 <http://en.wikipedia.org/wiki/Two-factor_authentication>`_.
 
-This project includes several simple OTP plugins and more are available
-separately. This package also includes an implementation of OATH `HOTP
+Several simple OTP plugins are included and more are available separately. This
+package also includes an implementation of OATH `HOTP
 <http://tools.ietf.org/html/rfc4226>`_ and `TOTP
 <http://tools.ietf.org/html/rfc6238>`_ for convenience, as these are standard
 OTP algorithms used by multiple plugins.
 
-.. _upgrade notes: https://django-otp-official.readthedocs.io/#upgrading
+If you're looking for a higher-level or more opinionated solution, you might be
+interested in `django-two-factor-auth
+<https://github.com/Bouke/django-two-factor-auth>`_.
+
+Status
+------
+
+This project is stable and maintained, but is no longer actively used by the
+author. Well-formed pull requests are welcome. Anyone interested in taking over
+aspects of the project should `contact me <https://github.com/psagers>`_.
+
+.. end-of-doc-include
+
+Development
+-----------
+
+Development dependencies are defined in the Pipfile; use `pipenv`_ to set up a
+suitable shell.
+
+The tests in tox.ini cover a representative sample of supported Python and
+Django versions, as well as running `flake8`_ and `isort`_ for linting and style
+consistency. Please run `tox` before checking in and sending a pull request.
+
+
+.. _pipenv: https://pipenv.readthedocs.io/en/latest/
+.. _flake8: https://pypi.org/project/flake8/
+.. _isort: https://pypi.org/project/isort/

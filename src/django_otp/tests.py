@@ -4,7 +4,8 @@ import unittest
 
 from django.contrib.auth import get_user_model
 from django.db import IntegrityError
-from django.test import RequestFactory, TestCase as DjangoTestCase
+from django.test import RequestFactory
+from django.test import TestCase as DjangoTestCase
 from django.urls import reverse
 
 from django_otp import DEVICE_ID_SESSION_KEY, oath, util
@@ -160,7 +161,7 @@ class LoginViewTestCase(TestCase):
         self.assertNotContains(response, 'OTP Token:')
         response = self.client.post(reverse('admin:login'), data={
             'username': self.bob.get_username(),
-            'password': 'password',            
+            'password': 'password',
         })
         self.assertContains(response, 'Username:')
         self.assertContains(response, 'Password:')
@@ -171,7 +172,7 @@ class LoginViewTestCase(TestCase):
         token = device.token_set.get()
         response = self.client.post(reverse('admin:login'), data={
             'username': self.bob.get_username(),
-            'password': 'password',            
+            'password': 'password',
             'otp_device': device.persistent_id,
             'otp_token': token.token,
             'next': '/',
