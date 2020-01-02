@@ -70,11 +70,11 @@
   <div class="form-row">
       <label for="id_otp_device">{% trans 'OTP Device:' %}</label> {{ form.otp_device }}
   </div>
-  {% endif %}
   <div class="form-row">
     {% if not form.this_is_the_login_form.errors %}{{ form.otp_token.errors }}{% endif %}
     <label for="id_otp_token" class="required">{% trans 'OTP Token:' %}</label> {{ form.otp_token }}
   </div>
+  {% endif %}
   {% url 'admin_password_reset' as password_reset_url %}
   {% if password_reset_url %}
   <div class="password-reset-link">
@@ -84,7 +84,7 @@
   <div class="submit-row">
     <label>&nbsp;</label><input type="submit" value="{% trans 'Log in' %}" />
     {% if form.get_user %}
-    <label>&nbsp;</label><input type=submit name="otp_challenge" value="{% trans 'Get OTP Challenge' %}" />
+    <label>&nbsp;</label><input type="submit" name="otp_challenge" value="{% trans 'Get OTP Challenge' %}" />
     {% endif %}
   </div>
 </form>
