@@ -68,10 +68,11 @@
   </div>
   {% if form.get_user %}
   <div class="form-row">
-      <label for="id_otp_device">{% trans 'OTP Device:' %}</label> {{ form.otp_device }}
+    {{ form.otp_device.errors }}
+    <label for="id_otp_device">{% trans 'OTP Device:' %}</label> {{ form.otp_device }}
   </div>
   <div class="form-row">
-    {% if not form.this_is_the_login_form.errors %}{{ form.otp_token.errors }}{% endif %}
+    {{ form.otp_token.errors }}
     <label for="id_otp_token" class="required">{% trans 'OTP Token:' %}</label> {{ form.otp_token }}
   </div>
   {% endif %}
