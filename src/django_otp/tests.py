@@ -1,13 +1,10 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 from doctest import DocTestSuite
 import pickle
 import unittest
 
-import django
 from django.contrib.auth import get_user_model
 from django.db import IntegrityError
-import django.test
+from django.test import RequestFactory, TestCase as DjangoTestCase
 
 from django_otp import DEVICE_ID_SESSION_KEY, oath, util
 from django_otp.middleware import OTPMiddleware
@@ -23,13 +20,13 @@ def load_tests(loader, tests, pattern):
     return suite
 
 
-class TestCase(django.test.TestCase):
+class TestCase(DjangoTestCase):
     """
     Utilities for dealing with custom user models.
     """
     @classmethod
     def setUpClass(cls):
-        super(TestCase, cls).setUpClass()
+        super().setUpClass()
 
         cls.User = get_user_model()
         cls.USERNAME_FIELD = cls.User.USERNAME_FIELD
@@ -46,7 +43,7 @@ class TestCase(django.test.TestCase):
 
 class OTPMiddlewareTestCase(TestCase):
     def setUp(self):
-        self.factory = django.test.RequestFactory()
+        self.factory = RequestFactory()
         try:
             self.alice = self.create_user('alice', 'password')
             self.bob = self.create_user('bob', 'password')

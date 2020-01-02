@@ -1,7 +1,3 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
-
-import six
-
 from django.apps import apps
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
@@ -77,16 +73,10 @@ class Device(models.Model):
 
     objects = DeviceManager()
 
-    class Meta(object):
+    class Meta:
         abstract = True
 
     def __str__(self):
-        if six.PY3:
-            return self.__unicode__()
-        else:
-            return self.__unicode__().encode('utf-8')
-
-    def __unicode__(self):
         try:
             user = self.user
         except ObjectDoesNotExist:
@@ -256,7 +246,7 @@ class ThrottlingMixin(models.Model):
                          'failure_count': self.throttling_failure_count,
                          })
 
-        return super(ThrottlingMixin, self).verify_is_allowed()
+        return super().verify_is_allowed()
 
     def throttle_reset(self, commit=True):
         """

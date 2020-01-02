@@ -1,11 +1,7 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
-
-from six import iteritems
-
 import django.conf
 
 
-class Settings(object):
+class Settings:
     """
     This is a simple class to take the place of the global settings object. An
     instance will contain all of our settings as attributes, with default values
@@ -20,7 +16,7 @@ class Settings(object):
         Loads our settings from django.conf.settings, applying defaults for any
         that are omitted.
         """
-        for name, default in iteritems(self.defaults):
+        for name, default in self.defaults.items():
             value = getattr(django.conf.settings, name, default)
             setattr(self, name, value)
 

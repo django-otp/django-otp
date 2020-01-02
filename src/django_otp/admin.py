@@ -1,5 +1,3 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import django
 from django import forms
 from django.contrib.admin.forms import AdminAuthenticationForm
@@ -35,17 +33,8 @@ class OTPAdminAuthenticationForm(AdminAuthenticationForm, OTPAuthenticationFormM
     # the otp_challenge submit button.
     otp_challenge = forms.CharField(required=False)
 
-    def __init__(self, *args, **kwargs):
-        super(OTPAdminAuthenticationForm, self).__init__(*args, **kwargs)
-
-        # A litle extra cheese to make it prettier.
-        minor_django_version = django.VERSION[:2]
-
-        if minor_django_version < (1, 6):
-            self.fields['otp_token'].widget.attrs['style'] = 'width: 14em;'
-
     def clean(self):
-        self.cleaned_data = super(OTPAdminAuthenticationForm, self).clean()
+        self.cleaned_data = super().clean()
         self.clean_otp(self.get_user())
 
         return self.cleaned_data
@@ -72,11 +61,11 @@ class OTPAdminSite(AdminSite):
     login_template = _admin_template_for_django_version()
 
     def __init__(self, name='otpadmin'):
-        super(OTPAdminSite, self).__init__(name)
+        super().__init__(name)
 
     def has_permission(self, request):
         """
         In addition to the default requirements, this only allows access to
         users who have been verified by a registered OTP device.
         """
-        return super(OTPAdminSite, self).has_permission(request) and request.user.is_verified()
+        return super().has_permission(request) and request.user.is_verified()

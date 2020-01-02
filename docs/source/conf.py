@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # django-otp documentation build configuration file, created by
 # sphinx-quickstart on Fri Jul 13 09:48:33 2012.
 #
@@ -81,8 +79,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'django-otp'
-copyright = u'2012, Peter Sagerson'
+project = 'django-otp'
+copyright = '2012, Peter Sagerson'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -225,7 +223,7 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-    ('index', 'django-otp.tex', u'django-otp Documentation',
+    ('index', 'django-otp.tex', 'django-otp Documentation',
      'Peter Sagerson', 'manual'),
 ]
 
@@ -255,7 +253,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'django-otp', u'django-otp Documentation',
+    ('index', 'django-otp', 'django-otp Documentation',
      ['Peter Sagerson'], 1)
 ]
 
@@ -269,7 +267,7 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    ('index', 'django-otp', u'django-otp Documentation',
+    ('index', 'django-otp', 'django-otp Documentation',
      'Peter Sagerson', 'django-otp', 'One line description of project.',
      'Miscellaneous'),
 ]
