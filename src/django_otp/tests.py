@@ -5,6 +5,7 @@ import unittest
 from django.contrib.auth import get_user_model
 from django.db import IntegrityError
 from django.test import RequestFactory, TestCase as DjangoTestCase
+from django.urls import reverse
 
 from django_otp import DEVICE_ID_SESSION_KEY, oath, util
 from django_otp.middleware import OTPMiddleware
@@ -31,14 +32,14 @@ class TestCase(DjangoTestCase):
         cls.User = get_user_model()
         cls.USERNAME_FIELD = cls.User.USERNAME_FIELD
 
-    def create_user(self, username, password):
+    def create_user(self, username, password, **kwargs):
         """
         Try to create a user, honoring the custom user model, if any.
 
         This may raise an exception if the user model is too exotic for our
         purposes.
         """
-        return self.User.objects.create_user(username, password=password)
+        return self.User.objects.create_user(username, password=password, **kwargs)
 
 
 class OTPMiddlewareTestCase(TestCase):
@@ -143,13 +144,39 @@ class LoginViewTestCase(TestCase):
     def setUp(self):
         try:
             self.alice = self.create_user('alice', 'password')
-            self.bob = self.create_user('bob', 'password')
+            self.bob = self.create_user('bob', 'password', is_staff=True)
         except IntegrityError:
             self.skipTest("Unable to create a test user.")
         else:
             for user in [self.alice, self.bob]:
                 device = user.staticdevice_set.create()
                 device.token_set.create(token=user.get_username())
+
+    def test_admin_login_template(self):
+        response = self.client.get(reverse('admin:login'))
+        self.assertContains(response, 'Username:')
+        self.assertContains(response, 'Password:')
+        self.assertNotContains(response, 'OTP Device:')
+        self.assertNotContains(response, 'OTP Token:')
+        response = self.client.post(reverse('admin:login'), data={
+            'username': self.bob.get_username(),
+            'password': 'password',            
+        })
+        self.assertContains(response, 'Username:')
+        self.assertContains(response, 'Password:')
+        self.assertContains(response, 'OTP Device:')
+        self.assertContains(response, 'OTP Token:')
+
+        device = self.bob.staticdevice_set.get()
+        token = device.token_set.get()
+        response = self.client.post(reverse('admin:login'), data={
+            'username': self.bob.get_username(),
+            'password': 'password',            
+            'otp_device': device.persistent_id,
+            'otp_token': token.token,
+            'next': '/',
+        })
+        self.assertRedirects(response, '/')
 
     def test_authenticate(self):
         device = self.alice.staticdevice_set.get()
