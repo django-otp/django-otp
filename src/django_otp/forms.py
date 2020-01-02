@@ -1,15 +1,13 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
-from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import ungettext_lazy
+from django.utils.translation import gettext_lazy as _
+from django.utils.translation import ngettext_lazy
 
 from . import devices_for_user, match_token
 from .models import Device, VerifyNotAllowed
 
 
-class OTPAuthenticationFormMixin(object):
+class OTPAuthenticationFormMixin:
     """
     Shared functionality for
     :class:`~django.contrib.auth.forms.AuthenticationForm` subclasses that wish
@@ -62,7 +60,7 @@ class OTPAuthenticationFormMixin(object):
         'not_interactive': _('The selected OTP device is not interactive'),
         'challenge_message': _('OTP Challenge: {0}'),
         'invalid_token': _('Invalid token. Please make sure you have entered it correctly.'),
-        'n_failed_attempts': ungettext_lazy(
+        'n_failed_attempts': ngettext_lazy(
             "Verification temporarily disabled because of %(failure_count)d failed attempt, please try again soon.",
             "Verification temporarily disabled because of %(failure_count)d failed attempts, please try again soon.",
             "failure_count"),
@@ -235,7 +233,7 @@ class OTPAuthenticationForm(OTPAuthenticationFormMixin, AuthenticationForm):
     otp_challenge = forms.CharField(required=False)
 
     def clean(self):
-        self.cleaned_data = super(OTPAuthenticationForm, self).clean()
+        self.cleaned_data = super().clean()
         self.clean_otp(self.get_user())
 
         return self.cleaned_data
@@ -282,13 +280,13 @@ class OTPTokenForm(OTPAuthenticationFormMixin, forms.Form):
     otp_challenge = forms.CharField(required=False)
 
     def __init__(self, user, request=None, *args, **kwargs):
-        super(OTPTokenForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self.user = user
         self.fields['otp_device'].choices = self.device_choices(user)
 
     def clean(self):
-        super(OTPTokenForm, self).clean()
+        super().clean()
 
         self.clean_otp(self.user)
 

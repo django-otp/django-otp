@@ -1,15 +1,10 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 from base64 import b32encode
 from binascii import unhexlify
+from urllib.parse import quote, urlencode
 import time
-
-from six import string_types
-from six.moves.urllib.parse import quote, urlencode
 
 from django.conf import settings
 from django.db import models
-from django.utils.encoding import force_text
 
 from django_otp.models import Device, ThrottlingMixin
 from django_otp.oath import TOTP
@@ -17,7 +12,7 @@ from django_otp.util import hex_validator, random_hex
 
 
 def default_key():
-    return force_text(random_hex(20))
+    return random_hex(20)
 
 
 def key_validator(value):
@@ -141,7 +136,7 @@ class TOTPDevice(ThrottlingMixin, Device):
         urlencoded_params = urlencode(params)
 
         issuer = getattr(settings, 'OTP_TOTP_ISSUER', None)
-        if isinstance(issuer, string_types) and (issuer != ''):
+        if isinstance(issuer, str) and (issuer != ''):
             issuer = issuer.replace(':', '')
             label = '{}:{}'.format(issuer, label)
             urlencoded_params += '&issuer={}'.format(quote(issuer))  # encode issuer as per RFC 3986, not quote_plus

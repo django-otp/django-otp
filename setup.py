@@ -54,8 +54,8 @@ setup(
         "Framework :: Django",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: BSD License",
-        "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3 :: Only",
         "Topic :: Security",
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
@@ -72,7 +72,6 @@ setup(
 
     install_requires=[
         'django >= 1.11',
-        'six >= 1.10.0'
     ],
     extras_require={
         'qrcode': ['qrcode'],

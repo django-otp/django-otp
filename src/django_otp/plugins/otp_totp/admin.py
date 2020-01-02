@@ -1,5 +1,3 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 from django.conf.urls import url
 from django.contrib import admin
 from django.contrib.admin.sites import AlreadyRegistered
@@ -40,7 +38,7 @@ class TOTPDeviceAdmin(admin.ModelAdmin):
     radio_fields = {'digits': admin.HORIZONTAL}
 
     def get_queryset(self, request):
-        queryset = super(TOTPDeviceAdmin, self).get_queryset(request)
+        queryset = super().get_queryset(request)
         queryset = queryset.select_related('user')
 
         return queryset
@@ -67,7 +65,7 @@ class TOTPDeviceAdmin(admin.ModelAdmin):
         urls = [
             url(r'^(?P<pk>\d+)/config/$', self.admin_site.admin_view(self.config_view), name='otp_totp_totpdevice_config'),
             url(r'^(?P<pk>\d+)/qrcode/$', self.admin_site.admin_view(self.qrcode_view), name='otp_totp_totpdevice_qrcode'),
-        ] + super(TOTPDeviceAdmin, self).get_urls()
+        ] + super().get_urls()
 
         return urls
 

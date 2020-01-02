@@ -1,9 +1,7 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 from textwrap import fill
 
 from django.core.management.base import BaseCommand, CommandError
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 
 from django_otp.plugins.otp_static.lib import add_static_token, get_user_model
 
@@ -25,4 +23,4 @@ class Command(BaseCommand):
         except get_user_model().DoesNotExist:
             raise CommandError('User "{0}" does not exist.'.format(username))
 
-        self.stdout.write(force_text(statictoken.token))
+        self.stdout.write(force_str(statictoken.token))

@@ -1,9 +1,5 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
-
-from binascii import hexlify, unhexlify
+from binascii import unhexlify
 from os import urandom
-
-import six
 
 from django.core.exceptions import ValidationError
 
@@ -16,7 +12,7 @@ def hex_validator(length=0):
         def key_validator(value):
             return hex_validator(20)(value)
 
-        key = models.CharField(max_length=40, validators=[key_validator], help_text=u'A hex-encoded 20-byte secret key')
+        key = models.CharField(max_length=40, validators=[key_validator], help_text='A hex-encoded 20-byte secret key')
 
     :param int length: If greater than 0, validation will fail unless the
         decoded value is exactly this number of bytes.
@@ -36,7 +32,7 @@ def hex_validator(length=0):
     """
     def _validator(value):
         try:
-            if isinstance(value, six.text_type):
+            if isinstance(value, str):
                 value = value.encode()
 
             unhexlify(value)
@@ -58,7 +54,7 @@ def random_hex(length=20):
     :param int length: The number of (decoded) bytes to return.
 
     :returns: A string of hex digits.
-    :rtype: bytes
+    :rtype: str
 
     """
-    return hexlify(urandom(length))
+    return urandom(length).hex()

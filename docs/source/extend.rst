@@ -31,7 +31,7 @@ interesting. Here's a simple implementation of a generic TOTP device::
         key = models.CharField(max_length=80,
                                validators=[hex_validator()],
                                default=lambda: random_hex(20),
-                               help_text=u'A hex-encoded secret key of up to 40 bytes.')
+                               help_text='A hex-encoded secret key of up to 40 bytes.')
 
         @property
         def bin_key(self):
