@@ -31,8 +31,7 @@ Basic installation has only two steps:
        usual way.
 
     #. Add :class:`django_otp.middleware.OTPMiddleware` to
-       :setting:`MIDDLEWARE` or :setting:`MIDDLEWARE_CLASSES`. It must be
-       installed *after*
+       :setting:`MIDDLEWARE`. It must be installed *after*
        :class:`~django.contrib.auth.middleware.AuthenticationMiddleware`.
 
 For example::
