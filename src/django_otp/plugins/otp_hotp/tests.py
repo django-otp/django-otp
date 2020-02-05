@@ -18,7 +18,8 @@ class HOTPTest(TestCase):
 
     def setUp(self):
         try:
-            alice = self.create_user('alice', 'password')
+            alice = self.create_user(
+                'alice', 'password', email='alice@example.com')
         except IntegrityError:
             self.skipTest("Unable to create test user.")
         else:
@@ -136,6 +137,20 @@ class HOTPTest(TestCase):
         self.assertIn('secret', params)
         self.assertIn('issuer', params)
         self.assertEqual(params['issuer'][0], 'Very Trustworthy Source')
+
+    def test_config_url_issuer_method(self):
+        with override_settings(OTP_HOTP_ISSUER=lambda d: d.user.email):
+            url = self.device.config_url
+
+        parsed = urlsplit(url)
+        params = parse_qs(parsed.query)
+
+        self.assertEqual(parsed.scheme, 'otpauth')
+        self.assertEqual(parsed.netloc, 'hotp')
+        self.assertEqual(parsed.path, '/alice%40example.com%3Aalice')
+        self.assertIn('secret', params)
+        self.assertIn('issuer', params)
+        self.assertEqual(params['issuer'][0], 'alice@example.com')
 
 
 class AuthFormTest(TestCase):

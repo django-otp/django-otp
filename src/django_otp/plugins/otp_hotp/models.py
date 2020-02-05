@@ -108,6 +108,8 @@ class HOTPDevice(ThrottlingMixin, Device):
         urlencoded_params = urlencode(params)
 
         issuer = getattr(settings, 'OTP_HOTP_ISSUER', None)
+        if callable(issuer):
+            issuer = issuer(self)
         if isinstance(issuer, str) and (issuer != ''):
             issuer = issuer.replace(':', '')
             label = '{}:{}'.format(issuer, label)
