@@ -21,7 +21,8 @@ class TOTPTest(TestCase):
         Create a device at the fourth time step. The current token is 154567.
         """
         try:
-            self.alice = self.create_user('alice', 'password')
+            self.alice = self.create_user(
+                'alice', 'password', email='alice@example.com')
         except IntegrityError:
             self.skipTest("Unable to create the test user.")
         else:
@@ -158,3 +159,17 @@ class TOTPTest(TestCase):
         self.assertIn('secret', params)
         self.assertIn('issuer', params)
         self.assertEqual(params['issuer'][0], 'Very Trustworthy Source')
+
+    def test_config_url_issuer_method(self):
+        with override_settings(OTP_TOTP_ISSUER=lambda d: d.user.email):
+            url = self.device.config_url
+
+        parsed = urlsplit(url)
+        params = parse_qs(parsed.query)
+
+        self.assertEqual(parsed.scheme, 'otpauth')
+        self.assertEqual(parsed.netloc, 'totp')
+        self.assertEqual(parsed.path, '/alice%40example.com%3Aalice')
+        self.assertIn('secret', params)
+        self.assertIn('issuer', params)
+        self.assertEqual(params['issuer'][0], 'alice@example.com')
