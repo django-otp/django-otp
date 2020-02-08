@@ -1,3 +1,10 @@
+Unreleased
+--------------------------------------------------------------------------------
+
+- `#26`_: Display OTP Token field on the login page even when user has not yet
+  authenticated.
+
+
 v0.8.0 - February 06, 2020 - Drop Python 2 support
 --------------------------------------------------------------------------------
 

@@ -71,11 +71,11 @@
     {{ form.otp_device.errors }}
     <label for="id_otp_device">{% trans 'OTP Device:' %}</label> {{ form.otp_device }}
   </div>
+  {% endif %}
   <div class="form-row">
     {{ form.otp_token.errors }}
     <label for="id_otp_token" class="required">{% trans 'OTP Token:' %}</label> {{ form.otp_token }}
   </div>
-  {% endif %}
   {% url 'admin_password_reset' as password_reset_url %}
   {% if password_reset_url %}
   <div class="password-reset-link">
