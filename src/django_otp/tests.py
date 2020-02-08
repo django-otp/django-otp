@@ -158,7 +158,7 @@ class LoginViewTestCase(TestCase):
         self.assertContains(response, 'Username:')
         self.assertContains(response, 'Password:')
         self.assertNotContains(response, 'OTP Device:')
-        self.assertNotContains(response, 'OTP Token:')
+        self.assertContains(response, 'OTP Token:')
         response = self.client.post(reverse('admin:login'), data={
             'username': self.bob.get_username(),
             'password': 'password',
