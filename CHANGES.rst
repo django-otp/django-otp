@@ -1,4 +1,4 @@
-Unreleased
+v0.8.1 - February 08, 2020 - Admin fix
 --------------------------------------------------------------------------------
 
 - `#26`_: Display OTP Token field on the login page even when user has not yet
