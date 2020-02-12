@@ -74,7 +74,7 @@ class AuthFormTest(TestCase):
             except IntegrityError:
                 self.skipTest("Unable to create a test user.")
             else:
-                device = user.staticdevice_set.create(id=device_id + 1)
+                device = user.staticdevice_set.create(pk=device_id + 1)
                 device.token_set.create(token=username + '1')
                 device.token_set.create(token=username + '1')
                 device.token_set.create(token=username + '2')
