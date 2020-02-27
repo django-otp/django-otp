@@ -22,6 +22,6 @@ class EmailDeviceAdmin(admin.ModelAdmin):
 
 # Somehow this is getting imported twice, triggering a useless exception.
 try:
-    admin.site.register(EmailDevice)
+    admin.site.register(EmailDevice, EmailDeviceAdmin)
 except AlreadyRegistered:
     pass
