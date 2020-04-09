@@ -1,5 +1,6 @@
 from binascii import unhexlify
 from os import urandom
+import random
 
 from django.core.exceptions import ValidationError
 
@@ -58,3 +59,18 @@ def random_hex(length=20):
 
     """
     return urandom(length).hex()
+
+
+def random_number_token(length=6):
+    """
+    Returns a string of random numbers encoded as string. This uses
+    :func:`os.urandom`, so it should be suitable for generating cryptographic
+    keys.
+
+    :param int length: The amount of numbers to return.
+
+    :returns: A string of numbers.
+    :rtype: str
+
+    """
+    return str(random.SystemRandom().randint(0, 10 ** length - 1)).zfill(length)
