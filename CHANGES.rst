@@ -4,6 +4,8 @@ v0.8.1 - February 08, 2020 - Admin fix
 - `#26`_: Display OTP Token field on the login page even when user has not yet
   authenticated.
 
+.. _#26: https://github.com/django-otp/django-otp/issues/26
+
 
 v0.8.0 - February 06, 2020 - Drop Python 2 support
 --------------------------------------------------------------------------------
@@ -15,9 +17,9 @@ v0.8.0 - February 06, 2020 - Drop Python 2 support
 - `#23`_: Allow :setting:`OTP_HOTP_ISSUER` and :setting:`OTP_TOTP_ISSUER` to be
   callable.
 
-.. _#17: https://github.com/django-otp/django-otp/pulls/17
-.. _#18: https://github.com/django-otp/django-otp/pulls/18
-.. _#23: https://github.com/django-otp/django-otp/pulls/23
+.. _#17: https://github.com/django-otp/django-otp/pull/17
+.. _#18: https://github.com/django-otp/django-otp/pull/18
+.. _#23: https://github.com/django-otp/django-otp/pull/23
 
 
 v0.7.5 - December 27, 2019 - Django 3.0 support
