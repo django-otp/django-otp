@@ -196,7 +196,7 @@ class SideChannelDevice(Device):
     This model implements token generation, verification and expiration, so
     the concrete devices only have to implement delivery.
     """
-    token = models.CharField(max_length=16)
+    token = models.CharField(max_length=16, blank=True, null=True)
     valid_until = models.DateTimeField(
         default=timezone.now,
         help_text="The timestamp of the moment of expiry of the saved token."
