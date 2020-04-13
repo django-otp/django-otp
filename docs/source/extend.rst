@@ -60,6 +60,15 @@ user interaction, it should implement an additional method:
 .. automethod:: django_otp.models.Device.generate_challenge
     :noindex:
 
+For devices that send a token via a separate channel, like the
+:class:`~django_otp.plugins.otp_email.models.EmailDevice` example, a generic
+:class:`~django_otp.models.SideChannelDevice` is provided. This abstract subclass of
+:class:`~django_otp.models.Device` provides
+:meth:`~django_otp.models.SideChannelDevice.generate_token` and implements
+:meth:`~django_otp.models.SideChannelDevice.verify_token` for concrete devices, which
+then only have to implement :meth:`~django_otp.models.Device.generate_challenge` to
+actually deliver the token to the user.
+
 
 .. _utilities:
 

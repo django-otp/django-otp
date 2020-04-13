@@ -210,8 +210,11 @@ class SideChannelDevice(Device):
         Generates a token of the specified length, then sets it on the model
         and sets the expiration of the token on the model.
 
+        Pass 'commit=False' to avoid calling self.save().
+
         :param int length: Length of the generated token.
         :param int valid_secs: Amount of seconds the token should be valid.
+        :param bool commit: Whether to autosave the generated token.
         """
         self.token = random_number_token(length)
         self.valid_until = timezone.now() + timedelta(seconds=valid_secs)

@@ -151,6 +151,9 @@ The Low-Level API
 .. autoclass:: django_otp.models.Device
     :members: is_interactive, generate_challenge, verify_token, verify_is_allowed
 
+.. autoclass:: django_otp.models.SideChannelDevice
+    :members: generate_token, verify_token
+
 .. autoclass:: django_otp.models.DeviceManager
     :members: devices_for_user
 
