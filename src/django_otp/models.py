@@ -226,7 +226,7 @@ class SideChannelDevice(Device):
         :param string token: The OTP token provided by the user.
         :rtype: bool
         """
-        if token == self.token and self.valid_until >= timezone.now():
+        if token == self.token and self.valid_until > timezone.now():
             self.valid_until = timezone.now()
             self.save()
             return True
