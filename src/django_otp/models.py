@@ -205,18 +205,18 @@ class SideChannelDevice(Device):
     class Meta:
         abstract = True
 
-    def generate_token(self, length=6, valid_secs=300):
+    def generate_token(self, length=6, valid_secs=300, commit=True):
         """
         Generates a token of the specified length, then sets it on the model
         and sets the expiration of the token on the model.
-
-        The concrete device should save the object after calling this method.
 
         :param int length: Length of the generated token.
         :param int valid_secs: Amount of seconds the token should be valid.
         """
         self.token = random_number_token(length)
         self.valid_until = timezone.now() + timedelta(seconds=valid_secs)
+        if commit:
+            self.save()
 
     def verify_token(self, token):
         """
