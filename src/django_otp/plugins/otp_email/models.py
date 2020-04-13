@@ -24,7 +24,7 @@ class EmailDevice(SideChannelDevice):
     """
 
     def generate_challenge(self):
-        self.generate_token()
+        self.generate_token(valid_secs=settings.OTP_EMAIL_TOKEN_VALID_SECS)
         body = render_to_string('otp/email/token.txt', {'token': self.token})
 
         send_mail(settings.OTP_EMAIL_SUBJECT,
