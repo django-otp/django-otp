@@ -1,3 +1,7 @@
+from datetime import timedelta
+
+from freezegun import freeze_time
+
 from django.core import mail
 from django.db import IntegrityError
 from django.test.utils import override_settings
@@ -46,3 +50,34 @@ class AuthFormTest(TestCase):
 
         self.assertTrue(form.is_valid())
         self.assertIsInstance(form.get_user().otp_device, EmailDevice)
+
+
+class EmailTest(TestCase):
+    def setUp(self):
+        try:
+            alice = self.create_user('alice', 'password')
+        except IntegrityError:
+            self.skipTest("Failed to create user.")
+        else:
+            self.device = alice.emaildevice_set.create()
+
+    def test_token_generator(self):
+        self.device.generate_token()
+        self.device.token.isnumeric()
+
+    def test_invalid_token(self):
+        self.device.generate_token()
+        self.assertFalse(self.device.verify_token(0))
+
+    def test_no_reuse(self):
+        self.device.generate_token()
+        token = self.device.token
+        self.assertTrue(self.device.verify_token(token))
+        self.assertFalse(self.device.verify_token(token))
+
+    def test_token_expiry(self):
+        self.device.generate_token()
+        token = self.device.token
+        with freeze_time() as frozen_time:
+            frozen_time.tick(delta=timedelta(seconds=301))
+            self.assertFalse(self.device.verify_token(token))
