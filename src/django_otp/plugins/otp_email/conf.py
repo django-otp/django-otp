@@ -10,7 +10,8 @@ class OTPEmailSettings:
     defaults = {
         'OTP_EMAIL_SENDER': '',
         'OTP_EMAIL_SUBJECT': 'OTP token',
-        'OTP_EMAIL_TOKEN_VALIDITY': 300
+        'OTP_EMAIL_TOKEN_VALIDITY': 300,
+        'OTP_EMAIL_TOKEN_TEMPLATE': None
     }
 
     def __init__(self):

@@ -1,5 +1,6 @@
 from django.core.mail import send_mail
 from django.db import models
+from django.template import Context, Template
 from django.template.loader import render_to_string
 
 from django_otp.models import SideChannelDevice
@@ -24,6 +25,9 @@ class EmailDevice(SideChannelDevice):
     The tokens are valid for :setting:`OTP_EMAIL_TOKEN_VALIDITY` seconds.
     Once a token has been accepted, it is no longer valid
 
+    It's possible to set a template for the body using :setting:`OTP_EMAIL_TOKEN_TEMPLATE`,
+    which, if set, overrides the template defined in 'otp/email/token.txt'.
+
     This is intended for demonstration purposes; if you allow users to reset their
     passwords via email, then this provides no security benefits.
 
@@ -38,7 +42,11 @@ class EmailDevice(SideChannelDevice):
 
     def generate_challenge(self):
         self.generate_token(valid_secs=settings.OTP_EMAIL_TOKEN_VALIDITY)
-        body = render_to_string('otp/email/token.txt', {'token': self.token})
+        if settings.OTP_EMAIL_TOKEN_TEMPLATE:
+            template = Template(settings.OTP_EMAIL_TOKEN_TEMPLATE)
+            body = template.render(Context({'token': self.token}))
+        else:
+            body = render_to_string('otp/email/token.txt', {'token': self.token})
 
         send_mail(settings.OTP_EMAIL_SUBJECT,
                   body,
