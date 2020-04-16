@@ -19,7 +19,7 @@ class AuthFormTest(TestCase):
         except IntegrityError:
             self.skipTest("Failed to create user.")
         else:
-            alice.emaildevice_set.create()
+            self.device = alice.emaildevice_set.create()
 
         if hasattr(alice, 'email'):
             alice.email = 'alice@example.com'
@@ -43,6 +43,7 @@ class AuthFormTest(TestCase):
         self.assertEqual(alice.get_username(), 'alice')
         self.assertIsNone(alice.otp_device)
         self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to, ['alice@example.com'])
 
         data['otp_token'] = mail.outbox[0].body
         del data['otp_challenge']
@@ -50,6 +51,26 @@ class AuthFormTest(TestCase):
 
         self.assertTrue(form.is_valid())
         self.assertIsInstance(form.get_user().otp_device, EmailDevice)
+
+    def test_alternative_email(self):
+        self.device.email = 'alice2@example.com'
+        self.device.save()
+
+        data = {
+            'username': 'alice',
+            'password': 'password',
+            'otp_device': 'otp_email.emaildevice/1',
+            'otp_token': '',
+            'otp_challenge': '1',
+        }
+        form = OTPAuthenticationForm(None, data)
+
+        self.assertFalse(form.is_valid())
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to, ['alice2@example.com'])
+
+        self.device.email = None
+        self.device.save()
 
 
 class EmailTest(TestCase):
