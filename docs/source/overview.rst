@@ -351,6 +351,18 @@ Static Devices
 
 .. autoclass:: django_otp.plugins.otp_static.admin.StaticDeviceAdmin
 
+Static Settings
+'''''''''''''''
+.. setting:: OTP_STATIC_THROTTLE_FACTOR
+
+**OTP_STATIC_THROTTLE_FACTOR**
+
+Default: ``1``
+
+This controls the rate of throttling. The sequence of 1, 2, 4, 8… seconds is
+multiplied by this factor to define the delay imposed after 1, 2, 3, 4…
+successive failures. Set to 0 to disable throttling completely.
+
 .. _addstatictoken:
 
 addstatictoken
@@ -372,6 +384,58 @@ Email Devices
 
 .. autoclass:: django_otp.plugins.otp_email.admin.EmailDeviceAdmin
 
+Email Settings
+''''''''''''''
+
+.. setting:: OTP_EMAIL_SENDER
+
+**OTP_EMAIL_SENDER**
+
+Default: ``''``
+
+The email address to use as the sender when we deliver tokens.
+
+
+.. setting:: OTP_EMAIL_SUBJECT
+
+**OTP_EMAIL_SUBJECT**
+
+Default: ``'OTP token'``
+
+The subject of the email. You probably want to customize this.
+
+
+.. setting:: OTP_EMAIL_TOKEN_TEMPLATE
+
+**OTP_EMAIL_TOKEN_TEMPLATE**
+
+Default: ``'otp/email/token.txt'``
+
+The Django template to render for the email body. The render context will
+include the generated token in the ``token`` key. You can set a different
+template name or simply override the default with your own version.
+
+
+.. setting:: OTP_EMAIL_TOKEN_VALIDITY
+
+**OTP_EMAIL_TOKEN_VALIDITY**
+
+Default: ``300``
+
+The maximum number of seconds a token is valid.
+
+
+.. setting:: OTP_EMAIL_THROTTLE_FACTOR
+
+**OTP_EMAIL_THROTTLE_FACTOR**
+
+Default: ``1``
+
+This controls the rate of throttling. The sequence of 1, 2, 4, 8… seconds is
+multiplied by this factor to define the delay imposed after 1, 2, 3, 4…
+successive failures. Set to 0 to disable throttling completely.
+
+
 
 .. _other-plugins:
 
@@ -382,7 +446,7 @@ The framework author also maintains a couple of other plugins for less common
 devices. Third-party plugins are not listed here.
 
     - `django-otp-yubikey`_ supports YubiKey USB devices.
-    - `django-otp-twilio`_ supports delivering OTPs via Twilio's SMS service.
+    - `django-otp-twilio`_ supports delivering tokens via Twilio's SMS service.
 
 
 Settings

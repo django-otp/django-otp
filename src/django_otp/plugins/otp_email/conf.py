@@ -3,15 +3,18 @@ import django.conf
 
 class OTPEmailSettings:
     """
-    This is a simple class to take the place of the global settings object. An
-    instance will contain all of our settings as attributes, with default values
-    if they are not specified by the configuration.
+    This is a simple class to take the place of the global settings object.
+
+    An instance will contain all of our settings as attributes, with default
+    values if they are not specified by the configuration.
+
     """
     defaults = {
         'OTP_EMAIL_SENDER': '',
         'OTP_EMAIL_SUBJECT': 'OTP token',
+        'OTP_EMAIL_TOKEN_TEMPLATE': 'otp/email/token.txt',
         'OTP_EMAIL_TOKEN_VALIDITY': 300,
-        'OTP_EMAIL_TOKEN_TEMPLATE': None
+        'OTP_EMAIL_THROTTLE_FACTOR': 1,
     }
 
     def __init__(self):

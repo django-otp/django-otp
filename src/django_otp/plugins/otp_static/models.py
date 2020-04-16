@@ -1,18 +1,20 @@
 from base64 import b32encode
 from os import urandom
 
+from django.conf import settings
 from django.db import models
 
-from django_otp.models import Device
+from django_otp.models import Device, ThrottlingMixin
 
 
-class StaticDevice(Device):
+class StaticDevice(ThrottlingMixin, Device):
     """
     A static :class:`~django_otp.models.Device` simply consists of random
-    tokens shared by the database and the user. These are frequently used as
-    emergency tokens in case a user's normal device is lost or unavailable.
-    They can be consumed in any order; each token will be removed from the
-    database as soon as it is used.
+    tokens shared by the database and the user.
+
+    These are frequently used as emergency tokens in case a user's normal
+    device is lost or unavailable. They can be consumed in any order; each
+    token will be removed from the database as soon as it is used.
 
     This model has no fields of its own, but serves as a container for
     :class:`StaticToken` objects.
@@ -20,12 +22,21 @@ class StaticDevice(Device):
     .. attribute:: token_set
 
         The RelatedManager for our tokens.
+
     """
+    def get_throttle_factor(self):
+        return getattr(settings, 'OTP_STATIC_THROTTLE_FACTOR', 1)
+
     def verify_token(self, token):
-        try:
-            match = next(self.token_set.filter(token=token).iterator())
-            match.delete()
-        except StopIteration:
+        verify_allowed, _ = self.verify_is_allowed()
+        if verify_allowed:
+            match = self.token_set.filter(token=token).first()
+            if match is not None:
+                match.delete()
+                self.throttle_reset()
+            else:
+                self.throttle_increment()
+        else:
             match = None
 
         return (match is not None)

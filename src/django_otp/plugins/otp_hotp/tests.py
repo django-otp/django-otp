@@ -7,11 +7,13 @@ from django.db import IntegrityError
 from django.test.utils import override_settings
 
 from django_otp.forms import OTPAuthenticationForm
-from django_otp.models import VerifyNotAllowed
-from django_otp.tests import TestCase
+from django_otp.tests import TestCase, ThrottlingTestMixin
 
 
-class HOTPTest(TestCase):
+class HOTPDeviceMixin:
+    """
+    A TestCase helper that gives us a HOTPDevice to work with.
+    """
     # The next three tokens
     tokens = [782373, 313268, 307722]
     key = 'd2e8a68036f68960b1c30532bb6c56da5934d879'
@@ -28,6 +30,11 @@ class HOTPTest(TestCase):
                 tolerance=1, counter=0
             )
 
+
+@override_settings(
+    OTP_HOTP_THROTTLE_FACTOR=0,
+)
+class HOTPTest(HOTPDeviceMixin, TestCase):
     def test_normal(self):
         ok = self.device.verify_token(self.tokens[0])
 
@@ -51,51 +58,6 @@ class HOTPTest(TestCase):
 
         self.assertFalse(ok)
         self.assertEqual(self.device.counter, 0)
-
-    def test_delay_imposed_after_fail(self):
-        ok1 = self.device.verify_token(123456)
-        self.assertFalse(ok1)
-        ok2 = self.device.verify_token(self.tokens[0])
-        self.assertFalse(ok2)
-
-    def test_delay_after_fail_expires(self):
-        ok1 = self.device.verify_token(123456)
-        self.assertFalse(ok1)
-        with freeze_time() as frozen_time:
-            # With default settings initial delay is 1 second
-            frozen_time.tick(delta=timedelta(seconds=1.1))
-            ok2 = self.device.verify_token(self.tokens[0])
-            self.assertTrue(ok2)
-
-    def test_throttling_failure_count(self):
-        self.assertEqual(self.device.throttling_failure_count, 0)
-        for i in range(0, 5):
-            self.device.verify_token(123456)
-            # Only the first attempt will increase throttling_failure_count,
-            # the others will all be within 1 second of first
-            # and therefore not count as attempts.
-            self.assertEqual(self.device.throttling_failure_count, 1)
-
-    def test_verify_is_allowed(self):
-        # Initially should be allowed
-        verify_is_allowed1, data1 = self.device.verify_is_allowed()
-        self.assertEqual(verify_is_allowed1, True)
-        self.assertEqual(data1, None)
-
-        # After failure, verify is not allowed
-        self.device.verify_token(123456)
-        verify_is_allowed2, data2 = self.device.verify_is_allowed()
-        self.assertEqual(verify_is_allowed2, False)
-        self.assertEqual(data2, {'reason': VerifyNotAllowed.N_FAILED_ATTEMPTS,
-                                 'failure_count': 1})
-
-        # After a successful attempt, should be allowed again
-        with freeze_time() as frozen_time:
-            frozen_time.tick(delta=timedelta(seconds=1.1))
-            self.device.verify_token(self.tokens[0])
-            verify_is_allowed3, data3 = self.device.verify_is_allowed()
-            self.assertEqual(verify_is_allowed3, True)
-            self.assertEqual(data3, None)
 
     def test_config_url_no_issuer(self):
         with override_settings(OTP_HOTP_ISSUER=None):
@@ -240,3 +202,14 @@ class AuthFormTest(TestCase):
             frozen_time.tick(timedelta(seconds=2.1))
             form5 = OTPAuthenticationForm(None, good_data)
             self.assertTrue(form5.is_valid())
+
+
+@override_settings(
+    OTP_HOTP_THROTTLE_FACTOR=1,
+)
+class ThrottlingTestCase(HOTPDeviceMixin, ThrottlingTestMixin, TestCase):
+    def valid_token(self):
+        return self.tokens[0]
+
+    def invalid_token(self):
+        return -1

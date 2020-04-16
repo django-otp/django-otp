@@ -193,8 +193,10 @@ class Device(models.Model):
 class SideChannelDevice(Device):
     """
     Abstract base model for a side-channel :term:`device` attached to a user.
-    This model implements token generation, verification and expiration, so
-    the concrete devices only have to implement delivery.
+
+    This model implements token generation, verification and expiration, so the
+    concrete devices only have to implement delivery.
+
     """
     token = models.CharField(max_length=16, blank=True, null=True)
     valid_until = models.DateTimeField(
@@ -212,9 +214,10 @@ class SideChannelDevice(Device):
 
         Pass 'commit=False' to avoid calling self.save().
 
-        :param int length: Length of the generated token.
+        :param int length: Number of decimal digits in the generated token.
         :param int valid_secs: Amount of seconds the token should be valid.
         :param bool commit: Whether to autosave the generated token.
+
         """
         self.token = random_number_token(length)
         self.valid_until = timezone.now() + timedelta(seconds=valid_secs)
@@ -223,17 +226,24 @@ class SideChannelDevice(Device):
 
     def verify_token(self, token):
         """
-        Verifies a token by content and expiry. When valid, the expiry time
-        is updated to the current time, to counter token reuse attacks.
+        Verifies a token by content and expiry.
+
+        On success, the token is cleared and the device saved.
 
         :param string token: The OTP token provided by the user.
         :rtype: bool
+
         """
-        if token == self.token and self.valid_until > timezone.now():
-            self.valid_until = timezone.now()
+        _now = timezone.now()
+
+        if (self.token is not None) and (token == self.token) and (_now < self.valid_until):
+            self.token = None
+            self.valid_until = _now
             self.save()
+
             return True
-        return False
+        else:
+            return False
 
 
 class VerifyNotAllowed:
@@ -328,7 +338,7 @@ class ThrottlingMixin(models.Model):
     def throttling_enabled(self):
         return self.get_throttle_factor() > 0
 
-    def get_throttle_factor(self):
+    def get_throttle_factor(self):  # pragma: no cover
         raise NotImplementedError()
 
     class Meta:

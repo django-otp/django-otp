@@ -1,6 +1,7 @@
 from binascii import unhexlify
 from os import urandom
 import random
+import string
 
 from django.core.exceptions import ValidationError
 
@@ -48,9 +49,10 @@ def hex_validator(length=0):
 
 def random_hex(length=20):
     """
-    Returns a string of random bytes encoded as hex. This uses
-    :func:`os.urandom`, so it should be suitable for generating cryptographic
-    keys.
+    Returns a string of random bytes encoded as hex.
+
+    This uses :func:`os.urandom`, so it should be suitable for generating
+    cryptographic keys.
 
     :param int length: The number of (decoded) bytes to return.
 
@@ -63,14 +65,19 @@ def random_hex(length=20):
 
 def random_number_token(length=6):
     """
-    Returns a string of random numbers encoded as string. This uses
-    :func:`os.urandom`, so it should be suitable for generating cryptographic
-    keys.
+    Returns a string of random digits encoded as string.
 
-    :param int length: The amount of numbers to return.
+    :param int length: The number of digits to return.
 
-    :returns: A string of numbers.
+    :returns: A string of decimal digits.
     :rtype: str
 
     """
-    return str(random.SystemRandom().randint(0, 10 ** length - 1)).zfill(length)
+    rand = random.SystemRandom()
+
+    if hasattr(rand, 'choices'):
+        digits = rand.choices(string.digits, k=length)
+    else:
+        digits = (rand.choice(string.digits) for i in range(length))
+
+    return ''.join(digits)

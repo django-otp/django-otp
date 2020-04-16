@@ -7,12 +7,12 @@ from django.db import IntegrityError
 from django.test.utils import override_settings
 
 from django_otp.forms import OTPAuthenticationForm
-from django_otp.tests import TestCase
+from django_otp.tests import TestCase, ThrottlingTestMixin
 
 from .models import EmailDevice
 
 
-class AuthFormTest(TestCase):
+class EmailDeviceMixin:
     def setUp(self):
         try:
             alice = self.create_user('alice', 'password')
@@ -27,6 +27,8 @@ class AuthFormTest(TestCase):
         else:
             self.skipTest("User model has no email.")
 
+
+class AuthFormTest(EmailDeviceMixin, TestCase):
     @override_settings(OTP_EMAIL_SENDER='test@example.com')
     def test_email_interaction(self):
         data = {
@@ -73,6 +75,9 @@ class AuthFormTest(TestCase):
         self.device.save()
 
 
+@override_settings(
+    OTP_EMAIL_THROTTLE_FACTOR=0,
+)
 class EmailTest(TestCase):
     def setUp(self):
         try:
@@ -102,3 +107,17 @@ class EmailTest(TestCase):
         with freeze_time() as frozen_time:
             frozen_time.tick(delta=timedelta(seconds=301))
             self.assertFalse(self.device.verify_token(token))
+
+
+@override_settings(
+    OTP_EMAIL_THROTTLE_FACTOR=1,
+)
+class ThrottlingTestCase(EmailDeviceMixin, ThrottlingTestMixin, TestCase):
+    def valid_token(self):
+        if self.device.token is None:
+            self.device.generate_token()
+
+        return self.device.token
+
+    def invalid_token(self):
+        return -1

@@ -61,9 +61,9 @@ django.conf.settings.configure(
 django.setup()
 
 intersphinx_mapping = {
-    'python': ('http://docs.python.org/3/', None),
-    'django': ('https://docs.djangoproject.com/en/1.11/',
-               'https://docs.djangoproject.com/en/1.11/_objects/'),
+    'python': ('https://docs.python.org/3/', None),
+    'django': ('https://docs.djangoproject.com/en/2.2/',
+               'https://docs.djangoproject.com/en/2.2/_objects/'),
 }
 
 # Add any paths that contain templates here, relative to this directory.

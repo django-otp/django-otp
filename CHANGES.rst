@@ -1,3 +1,25 @@
+Unreleased - Improved email device
+--------------------------------------------------------------------------------
+
+:class:`~django_otp.models.SideChannelDevice` is a new abstract device class to
+simplify writing devices that deliver tokens to the user by other channels
+(email, SMS, etc.).
+
+- `#33`_, `#34`_ (`arjan-s`_): Implement
+  :class:`~django_otp.models.SideChannelDevice`, reimplement
+  :class:`~django_otp.plugins.otp_email.models.EmailDevice` on top of it, and
+  add a few settings for customization.
+
+- Add rate limiting to
+  :class:`~django_otp.plugins.otp_email.models.EmailDevice` and
+  :class:`~django_otp.plugins.otp_static.models.StaticDevice`.
+
+
+.. _#33: https://github.com/django-otp/django-otp/pull/33
+.. _#34: https://github.com/django-otp/django-otp/pull/34
+.. _arjan-s: https://github.com/arjan-s
+
+
 v0.8.1 - February 08, 2020 - Admin fix
 --------------------------------------------------------------------------------
 

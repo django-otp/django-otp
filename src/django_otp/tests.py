@@ -1,6 +1,9 @@
+from datetime import timedelta
 from doctest import DocTestSuite
 import pickle
 import unittest
+
+from freezegun import freeze_time
 
 from django.contrib.auth import get_user_model
 from django.db import IntegrityError
@@ -10,6 +13,7 @@ from django.urls import reverse
 
 from django_otp import DEVICE_ID_SESSION_KEY, oath, util
 from django_otp.middleware import OTPMiddleware
+from django_otp.models import VerifyNotAllowed
 
 
 def load_tests(loader, tests, pattern):
@@ -41,6 +45,80 @@ class TestCase(DjangoTestCase):
         purposes.
         """
         return self.User.objects.create_user(username, password=password, **kwargs)
+
+
+class ThrottlingTestMixin:
+    """
+    Generic tests for throttled devices.
+
+    Any concrete device implementation that uses throttling should define a
+    TestCase subclass that includes this as a base class. This will help verify
+    a correct integration of ThrottlingMixin.
+
+    Subclasses are responsible for populating self.device with a device to test
+    as well as implementing methods to generate tokens to test with.
+
+    """
+    def setUp(self):
+        self.device = None
+
+    def valid_token(self):
+        """ Returns a valid token to pass to our device under test. """
+        raise NotImplementedError()
+
+    def invalid_token(self):
+        """ Returns an invalid token to pass to our device under test. """
+        raise NotImplementedError()
+
+    #
+    # Tests
+    #
+
+    def test_delay_imposed_after_fail(self):
+        verified1 = self.device.verify_token(self.invalid_token())
+        self.assertFalse(verified1)
+        verified2 = self.device.verify_token(self.valid_token())
+        self.assertFalse(verified2)
+
+    def test_delay_after_fail_expires(self):
+        verified1 = self.device.verify_token(self.invalid_token())
+        self.assertFalse(verified1)
+        with freeze_time() as frozen_time:
+            # With default settings initial delay is 1 second
+            frozen_time.tick(delta=timedelta(seconds=1.1))
+            verified2 = self.device.verify_token(self.valid_token())
+            self.assertTrue(verified2)
+
+    def test_throttling_failure_count(self):
+        self.assertEqual(self.device.throttling_failure_count, 0)
+        for i in range(0, 5):
+            self.device.verify_token(self.invalid_token())
+            # Only the first attempt will increase throttling_failure_count,
+            # the others will all be within 1 second of first
+            # and therefore not count as attempts.
+            self.assertEqual(self.device.throttling_failure_count, 1)
+
+    def test_verify_is_allowed(self):
+        # Initially should be allowed
+        verify_is_allowed1, data1 = self.device.verify_is_allowed()
+        self.assertEqual(verify_is_allowed1, True)
+        self.assertEqual(data1, None)
+
+        # After failure, verify is not allowed
+        self.device.verify_token(self.invalid_token())
+        verify_is_allowed2, data2 = self.device.verify_is_allowed()
+        self.assertEqual(verify_is_allowed2, False)
+        self.assertEqual(data2, {'reason': VerifyNotAllowed.N_FAILED_ATTEMPTS,
+                                 'failure_count': 1})
+
+        # After a successful attempt, should be allowed again
+        with freeze_time() as frozen_time:
+            frozen_time.tick(delta=timedelta(seconds=1.1))
+            self.device.verify_token(self.valid_token())
+
+            verify_is_allowed3, data3 = self.device.verify_is_allowed()
+            self.assertEqual(verify_is_allowed3, True)
+            self.assertEqual(data3, None)
 
 
 class OTPMiddlewareTestCase(TestCase):

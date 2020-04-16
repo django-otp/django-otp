@@ -1,52 +1,59 @@
 from django.core.mail import send_mail
 from django.db import models
-from django.template import Context, Template
 from django.template.loader import render_to_string
 
-from django_otp.models import SideChannelDevice
+from django_otp.models import SideChannelDevice, ThrottlingMixin
 from django_otp.util import hex_validator, random_hex
 
 from .conf import settings
 
 
-def default_key():
+def default_key():  # pragma: no cover
+    """ Obsolete code here for migrations. """
     return random_hex(20)
 
 
-def key_validator(value):
+def key_validator(value):  # pragma: no cover
+    """ Obsolete code here for migrations. """
     return hex_validator()(value)
 
 
-class EmailDevice(SideChannelDevice):
+class EmailDevice(ThrottlingMixin, SideChannelDevice):
     """
-    A :class:`~django_otp.models.SideChannelDevice` that delivers a token to the email
-    address saved in this object or alternatively to the user's registered email
-    address (``user.email``).
-    The tokens are valid for :setting:`OTP_EMAIL_TOKEN_VALIDITY` seconds.
-    Once a token has been accepted, it is no longer valid
+    A :class:`~django_otp.models.SideChannelDevice` that delivers a token to
+    the email address saved in this object or alternatively to the user's
+    registered email address (``user.email``).
 
-    It's possible to set a template for the body using :setting:`OTP_EMAIL_TOKEN_TEMPLATE`,
-    which, if set, overrides the template defined in 'otp/email/token.txt'.
+    The tokens are valid for :setting:`OTP_EMAIL_TOKEN_VALIDITY` seconds. Once
+    a token has been accepted, it is no longer valid.
 
-    This is intended for demonstration purposes; if you allow users to reset their
-    passwords via email, then this provides no security benefits.
+    Note that if you allow users to reset their passwords by email, this may
+    provide little additional account security. It may still be useful for,
+    e.g., requiring the user to re-verify their email address on new devices.
 
     .. attribute:: email
 
         *EmailField*: An alternative email address to send the tokens to.
+
     """
-    email = models.EmailField(max_length=254,
-                              blank=True,
-                              null=True,
-                              help_text='Optional alternative email address to send tokens to')
+    email = models.EmailField(
+        max_length=254,
+        blank=True,
+        null=True,
+        help_text='Optional alternative email address to send tokens to'
+    )
+
+    def get_throttle_factor(self):
+        return settings.OTP_EMAIL_THROTTLE_FACTOR
 
     def generate_challenge(self):
+        """
+        Generates a random token and emails it to the user.
+        """
         self.generate_token(valid_secs=settings.OTP_EMAIL_TOKEN_VALIDITY)
-        if settings.OTP_EMAIL_TOKEN_TEMPLATE:
-            template = Template(settings.OTP_EMAIL_TOKEN_TEMPLATE)
-            body = template.render(Context({'token': self.token}))
-        else:
-            body = render_to_string('otp/email/token.txt', {'token': self.token})
+
+        body = render_to_string(settings.OTP_EMAIL_TOKEN_TEMPLATE,
+                                {'token': self.token})
 
         send_mail(settings.OTP_EMAIL_SUBJECT,
                   body,
@@ -56,3 +63,17 @@ class EmailDevice(SideChannelDevice):
         message = "sent by email"
 
         return message
+
+    def verify_token(self, token):
+        verify_allowed, _ = self.verify_is_allowed()
+        if verify_allowed:
+            verified = super().verify_token(token)
+
+            if verified:
+                self.throttle_reset()
+            else:
+                self.throttle_increment()
+        else:
+            verified = False
+
+        return verified
