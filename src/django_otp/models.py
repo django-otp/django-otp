@@ -1,9 +1,13 @@
+from datetime import timedelta
+
 from django.apps import apps
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.utils import timezone
 from django.utils.functional import cached_property
+
+from .util import random_number_token
 
 
 class DeviceManager(models.Manager):
@@ -183,6 +187,52 @@ class Device(models.Model):
         :param string token: The OTP token provided by the user.
         :rtype: bool
         """
+        return False
+
+
+class SideChannelDevice(Device):
+    """
+    Abstract base model for a side-channel :term:`device` attached to a user.
+    This model implements token generation, verification and expiration, so
+    the concrete devices only have to implement delivery.
+    """
+    token = models.CharField(max_length=16, blank=True, null=True)
+    valid_until = models.DateTimeField(
+        default=timezone.now,
+        help_text="The timestamp of the moment of expiry of the saved token."
+    )
+
+    class Meta:
+        abstract = True
+
+    def generate_token(self, length=6, valid_secs=300, commit=True):
+        """
+        Generates a token of the specified length, then sets it on the model
+        and sets the expiration of the token on the model.
+
+        Pass 'commit=False' to avoid calling self.save().
+
+        :param int length: Length of the generated token.
+        :param int valid_secs: Amount of seconds the token should be valid.
+        :param bool commit: Whether to autosave the generated token.
+        """
+        self.token = random_number_token(length)
+        self.valid_until = timezone.now() + timedelta(seconds=valid_secs)
+        if commit:
+            self.save()
+
+    def verify_token(self, token):
+        """
+        Verifies a token by content and expiry. When valid, the expiry time
+        is updated to the current time, to counter token reuse attacks.
+
+        :param string token: The OTP token provided by the user.
+        :rtype: bool
+        """
+        if token == self.token and self.valid_until > timezone.now():
+            self.valid_until = timezone.now()
+            self.save()
+            return True
         return False
 
 
