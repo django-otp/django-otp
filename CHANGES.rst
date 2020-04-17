@@ -1,4 +1,4 @@
-Unreleased - Improved email device
+v0.9.0 - April 17, 2020 - Improved email device
 --------------------------------------------------------------------------------
 
 :class:`~django_otp.models.SideChannelDevice` is a new abstract device class to
