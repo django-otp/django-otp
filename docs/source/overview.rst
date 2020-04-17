@@ -391,9 +391,10 @@ Email Settings
 
 **OTP_EMAIL_SENDER**
 
-Default: ``''``
+Default: ``None``
 
-The email address to use as the sender when we deliver tokens.
+The email address to use as the sender when we deliver tokens. If not set, this
+will automatically use :setting:`DEFAULT_FROM_EMAIL`.
 
 
 .. setting:: OTP_EMAIL_SUBJECT
@@ -407,13 +408,15 @@ The subject of the email. You probably want to customize this.
 
 .. setting:: OTP_EMAIL_TOKEN_TEMPLATE
 
-**OTP_EMAIL_TOKEN_TEMPLATE**
+**OTP_EMAIL_BODY_TEMPLATE**
 
-Default: ``'otp/email/token.txt'``
+Default: ``None``
 
-The Django template to render for the email body. The render context will
-include the generated token in the ``token`` key. You can set a different
-template name or simply override the default with your own version.
+A raw template string to use for the email body. The render context will
+include the generated token in the ``token`` key.
+
+If this is not set, we'll render the template 'otp/email/token.txt', which
+you'll most likely want to override.
 
 
 .. setting:: OTP_EMAIL_TOKEN_VALIDITY

@@ -10,21 +10,18 @@ class OTPEmailSettings:
 
     """
     defaults = {
-        'OTP_EMAIL_SENDER': '',
+        'OTP_EMAIL_SENDER': None,
         'OTP_EMAIL_SUBJECT': 'OTP token',
-        'OTP_EMAIL_TOKEN_TEMPLATE': 'otp/email/token.txt',
+        'OTP_EMAIL_BODY_TEMPLATE': None,
         'OTP_EMAIL_TOKEN_VALIDITY': 300,
         'OTP_EMAIL_THROTTLE_FACTOR': 1,
     }
 
-    def __init__(self):
-        """
-        Loads our settings from django.conf.settings, applying defaults for any
-        that are omitted.
-        """
-        for name, default in self.defaults.items():
-            value = getattr(django.conf.settings, name, default)
-            setattr(self, name, value)
+    def __getattr__(self, name):
+        if name in self.defaults:
+            return getattr(django.conf.settings, name, self.defaults[name])
+        else:
+            return getattr(django.conf.settings, name)
 
 
 settings = OTPEmailSettings()

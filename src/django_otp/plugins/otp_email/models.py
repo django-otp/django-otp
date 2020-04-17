@@ -1,6 +1,7 @@
 from django.core.mail import send_mail
 from django.db import models
-from django.template.loader import render_to_string
+from django.template import Context, Template
+from django.template.loader import get_template
 
 from django_otp.models import SideChannelDevice, ThrottlingMixin
 from django_otp.util import hex_validator, random_hex
@@ -52,8 +53,11 @@ class EmailDevice(ThrottlingMixin, SideChannelDevice):
         """
         self.generate_token(valid_secs=settings.OTP_EMAIL_TOKEN_VALIDITY)
 
-        body = render_to_string(settings.OTP_EMAIL_TOKEN_TEMPLATE,
-                                {'token': self.token})
+        context = {'token': self.token}
+        if settings.OTP_EMAIL_BODY_TEMPLATE:
+            body = Template(settings.OTP_EMAIL_BODY_TEMPLATE).render(Context(context))
+        else:
+            body = get_template('otp/email/token.txt').render(context)
 
         send_mail(settings.OTP_EMAIL_SUBJECT,
                   body,

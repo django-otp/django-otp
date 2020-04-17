@@ -47,46 +47,20 @@ class AuthFormTest(EmailDeviceMixin, TestCase):
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].to, ['alice@example.com'])
 
-        data['otp_token'] = mail.outbox[0].body
+        self.device.refresh_from_db()
+        data['otp_token'] = self.device.token
         del data['otp_challenge']
         form = OTPAuthenticationForm(None, data)
 
         self.assertTrue(form.is_valid())
         self.assertIsInstance(form.get_user().otp_device, EmailDevice)
 
-    def test_alternative_email(self):
-        self.device.email = 'alice2@example.com'
-        self.device.save()
-
-        data = {
-            'username': 'alice',
-            'password': 'password',
-            'otp_device': 'otp_email.emaildevice/1',
-            'otp_token': '',
-            'otp_challenge': '1',
-        }
-        form = OTPAuthenticationForm(None, data)
-
-        self.assertFalse(form.is_valid())
-        self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].to, ['alice2@example.com'])
-
-        self.device.email = None
-        self.device.save()
-
 
 @override_settings(
+    DEFAULT_FROM_EMAIL="root@localhost",
     OTP_EMAIL_THROTTLE_FACTOR=0,
 )
-class EmailTest(TestCase):
-    def setUp(self):
-        try:
-            alice = self.create_user('alice', 'password')
-        except IntegrityError:
-            self.skipTest("Failed to create user.")
-        else:
-            self.device = alice.emaildevice_set.create()
-
+class EmailTest(EmailDeviceMixin, TestCase):
     def test_token_generator(self):
         self.device.generate_token()
         self.device.token.isnumeric()
@@ -107,6 +81,46 @@ class EmailTest(TestCase):
         with freeze_time() as frozen_time:
             frozen_time.tick(delta=timedelta(seconds=301))
             self.assertFalse(self.device.verify_token(token))
+
+    def test_defaults(self):
+        self.device.generate_challenge()
+
+        self.assertEqual(len(mail.outbox), 1)
+
+        msg = mail.outbox[0]
+
+        with self.subTest(field='from_email'):
+            self.assertEqual(msg.from_email, "root@localhost")
+        with self.subTest(field='body'):
+            self.assertEqual(msg.body, "Test template 1: {}\n".format(self.device.token))
+
+    @override_settings(
+        OTP_EMAIL_SENDER="webmaster@example.com",
+        OTP_EMAIL_SUBJECT="Test subject",
+        OTP_EMAIL_BODY_TEMPLATE="Test template 2: {{token}}",
+    )
+    def test_settings(self):
+        self.device.generate_challenge()
+
+        self.assertEqual(len(mail.outbox), 1)
+
+        msg = mail.outbox[0]
+
+        with self.subTest(field='from_email'):
+            self.assertEqual(msg.from_email, "webmaster@example.com")
+        with self.subTest(field='subject'):
+            self.assertEqual(msg.subject, "Test subject")
+        with self.subTest(field='body'):
+            self.assertEqual(msg.body, "Test template 2: {}".format(self.device.token))
+
+    def test_alternative_email(self):
+        self.device.email = 'alice2@example.com'
+        self.device.save()
+
+        self.device.generate_challenge()
+
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to, ['alice2@example.com'])
 
 
 @override_settings(
