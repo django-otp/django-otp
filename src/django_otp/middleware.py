@@ -26,7 +26,7 @@ class OTPMiddleware:
 
     def __call__(self, request):
         user = getattr(request, 'user', None)
-        if user is not None:
+        if user is not None and not isinstance(user, SimpleLazyObject):
             request.user = SimpleLazyObject(functools.partial(self._verify_user, request, user))
 
         return self.get_response(request)
