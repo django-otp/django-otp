@@ -25,7 +25,7 @@ class OTPMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        user = getattr(request, "user", None)
+        user = getattr(request, 'user', None)
         if user is not None:
             if isinstance(user, SimpleLazyObject):
                 user._setup()
