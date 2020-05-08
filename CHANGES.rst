@@ -1,3 +1,12 @@
+v0.9.1 - May 08, 2020 - Admin fix
+--------------------------------------------------------------------------------
+
+- `#38`_: Update admin fields for
+  :class:`~django_otp.plugins.otp_email.models.EmailDevice`.
+
+.. _#38: https://github.com/django-otp/django-otp/pull/38
+
+
 v0.9.0 - April 17, 2020 - Improved email device
 --------------------------------------------------------------------------------
 
