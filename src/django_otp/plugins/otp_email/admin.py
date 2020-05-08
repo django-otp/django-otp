@@ -14,7 +14,7 @@ class EmailDeviceAdmin(admin.ModelAdmin):
             'fields': ['user', 'name', 'confirmed'],
         }),
         ('Configuration', {
-            'fields': ['key'],
+            'fields': ['email'],
         }),
     ]
     raw_id_fields = ['user']
