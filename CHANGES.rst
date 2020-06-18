@@ -1,4 +1,4 @@
-Unreleased - Admin fix
+v0.9.2 - June 18, 2020 - Admin fix
 --------------------------------------------------------------------------------
 
 - Stricter authorization checks for qrcodes in the admin interface.
