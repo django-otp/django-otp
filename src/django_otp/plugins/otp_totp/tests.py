@@ -1,10 +1,16 @@
 from time import time
 from urllib.parse import parse_qs, urlsplit
 
+import django
+from django.contrib.auth.models import Permission
+from django.contrib.contenttypes.models import ContentType
 from django.db import IntegrityError
 from django.test.utils import override_settings
+from django.urls import reverse
 
 from django_otp.tests import TestCase, ThrottlingTestMixin
+
+from .models import TOTPDevice
 
 
 class TOTPDeviceMixin:
@@ -129,6 +135,78 @@ class TOTPTest(TOTPDeviceMixin, TestCase):
         self.assertIn('secret', params)
         self.assertIn('issuer', params)
         self.assertEqual(params['issuer'][0], 'alice@example.com')
+
+
+class TOTPAdminTest(TestCase):
+    def setUp(self):
+        """
+        Create a device at the fourth time step. The current token is 154567.
+        """
+        try:
+            self.admin = self.create_user(
+                'admin', 'password', email='admin@example.com',
+                is_staff=True
+            )
+        except IntegrityError:
+            self.skipTest("Unable to create the test user.")
+        else:
+            self.device = self.admin.totpdevice_set.create(
+                key='2a2bbba1092ffdd25a328ad1a0a5f5d61d7aacc4', step=30,
+                t0=int(time() - (30 * 3)), digits=6, tolerance=0, drift=0
+            )
+
+    def test_anonymous(self):
+        for suffix in ['config', 'qrcode']:
+            with self.subTest(view=suffix):
+                url = reverse('admin:otp_totp_totpdevice_' + suffix, kwargs={'pk': self.device.pk})
+                response = self.client.get(url)
+                self.assertEqual(response.status_code, 302)
+
+    def test_unauthorized(self):
+        self.client.login(username='admin', password='password')
+
+        for suffix in ['config', 'qrcode']:
+            with self.subTest(view=suffix):
+                url = reverse('admin:otp_totp_totpdevice_' + suffix, kwargs={'pk': self.device.pk})
+                response = self.client.get(url)
+                self.assertEqual(response.status_code, 403)
+
+    def test_view_perm(self):
+        if django.VERSION[0] < 2:
+            raise self.skipTest("Requires Django>=2.0")
+
+        self._add_device_perms('view_totpdevice')
+        self.client.login(username='admin', password='password')
+
+        for suffix in ['config', 'qrcode']:
+            with self.subTest(view=suffix):
+                url = reverse('admin:otp_totp_totpdevice_' + suffix, kwargs={'pk': self.device.pk})
+                response = self.client.get(url)
+                self.assertEqual(response.status_code, 200)
+
+    def test_change_perm(self):
+        self._add_device_perms('change_totpdevice')
+        self.client.login(username='admin', password='password')
+
+        for suffix in ['config', 'qrcode']:
+            with self.subTest(view=suffix):
+                url = reverse('admin:otp_totp_totpdevice_' + suffix, kwargs={'pk': self.device.pk})
+                response = self.client.get(url)
+                self.assertEqual(response.status_code, 200)
+
+    #
+    # Helpers
+    #
+
+    def _add_device_perms(self, *codenames):
+        ct = ContentType.objects.get_for_model(TOTPDevice)
+
+        perms = [
+            Permission.objects.get(content_type=ct, codename=codename)
+            for codename in codenames
+        ]
+
+        self.admin.user_permissions.add(*perms)
 
 
 @override_settings(

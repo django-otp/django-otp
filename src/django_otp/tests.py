@@ -232,12 +232,12 @@ class LoginViewTestCase(TestCase):
                 device.token_set.create(token=user.get_username())
 
     def test_admin_login_template(self):
-        response = self.client.get(reverse('admin:login'))
+        response = self.client.get(reverse('otpadmin:login'))
         self.assertContains(response, 'Username:')
         self.assertContains(response, 'Password:')
         self.assertNotContains(response, 'OTP Device:')
         self.assertContains(response, 'OTP Token:')
-        response = self.client.post(reverse('admin:login'), data={
+        response = self.client.post(reverse('otpadmin:login'), data={
             'username': self.bob.get_username(),
             'password': 'password',
         })
@@ -248,7 +248,7 @@ class LoginViewTestCase(TestCase):
 
         device = self.bob.staticdevice_set.get()
         token = device.token_set.get()
-        response = self.client.post(reverse('admin:login'), data={
+        response = self.client.post(reverse('otpadmin:login'), data={
             'username': self.bob.get_username(),
             'password': 'password',
             'otp_device': device.persistent_id,

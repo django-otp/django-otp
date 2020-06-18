@@ -16,6 +16,7 @@ freezegun = "*"
 coverage = "*"
 tox = "*"
 bumpversion = "*"
+qrcode = "*"
 
 [packages]
 

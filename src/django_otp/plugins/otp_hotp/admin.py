@@ -1,6 +1,7 @@
 from django.conf.urls import url
 from django.contrib import admin
 from django.contrib.admin.sites import AlreadyRegistered
+from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse
 from django.template.response import TemplateResponse
 from django.urls import reverse
@@ -71,19 +72,20 @@ class HOTPDeviceAdmin(admin.ModelAdmin):
 
     def config_view(self, request, pk):
         device = HOTPDevice.objects.get(pk=pk)
+        if not self.has_view_or_change_permission(request, device):
+            raise PermissionDenied()
 
-        try:
-            context = dict(
-                self.admin_site.each_context(request),
-                device=device,
-            )
-        except AttributeError:  # Older versions don't have each_context().
-            context = {'device': device}
+        context = dict(
+            self.admin_site.each_context(request),
+            device=device,
+        )
 
         return TemplateResponse(request, 'otp_hotp/admin/config.html', context)
 
     def qrcode_view(self, request, pk):
         device = HOTPDevice.objects.get(pk=pk)
+        if not self.has_view_or_change_permission(request, device):
+            raise PermissionDenied()
 
         try:
             import qrcode
@@ -96,6 +98,13 @@ class HOTPDeviceAdmin(admin.ModelAdmin):
             response = HttpResponse('', status=503)
 
         return response
+
+    def has_view_or_change_permission(self, request, obj=None):
+        """ Django 1.11 compatibility. """
+        if hasattr(super(), 'has_view_or_change_permission'):
+            return super().has_view_or_change_permission(request, obj)
+        else:
+            return self.has_change_permission(request, obj)
 
 
 try:

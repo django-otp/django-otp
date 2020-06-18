@@ -20,7 +20,10 @@ class HomeView(View):
 
 urlpatterns = [
     url(r'^$', HomeView.as_view()),
+
     url(r'^login/$', django_otp.views.LoginView.as_view()),
     url(r'^logout/$', django.contrib.auth.views.LogoutView.as_view()),
-    url(r'^admin/', otp_admin_site.urls),
+
+    url(r'^admin/', admin.site.urls),
+    url(r'^otpadmin/', otp_admin_site.urls),
 ]
