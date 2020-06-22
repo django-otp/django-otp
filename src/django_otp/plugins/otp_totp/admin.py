@@ -7,6 +7,8 @@ from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.utils.html import format_html
 
+from django_otp.conf import settings
+
 from .models import TOTPDevice
 
 
@@ -15,28 +17,48 @@ class TOTPDeviceAdmin(admin.ModelAdmin):
     :class:`~django.contrib.admin.ModelAdmin` for
     :class:`~django_otp.plugins.otp_totp.models.TOTPDevice`.
     """
-    list_display = ['user', 'name', 'confirmed', 'qrcode_link']
+    list_display = ['user', 'name', 'confirmed']
 
-    fieldsets = [
-        ('Identity', {
-            'fields': ['user', 'name', 'confirmed'],
-        }),
-        ('Configuration', {
-            'fields': ['key', 'step', 't0', 'digits', 'tolerance'],
-        }),
-        ('State', {
-            'fields': ['drift'],
-        }),
-        ('Throttling', {
-            'fields': ['throttling_failure_timestamp', 'throttling_failure_count'],
-        }),
-        (None, {
-            'fields': ['qrcode_link'],
-        }),
-    ]
     raw_id_fields = ['user']
     readonly_fields = ['qrcode_link']
     radio_fields = {'digits': admin.HORIZONTAL}
+
+    def get_list_display(self, request):
+        list_display = super().get_list_display(request)
+        if not settings.OTP_ADMIN_HIDE_SENSITIVE_DATA:
+            list_display = [*list_display, 'qrcode_link']
+        return list_display
+
+    def get_fieldsets(self, request, obj=None):
+        # Show the key value only for adding new objects or when sensitive data
+        # is not hidden.
+        if settings.OTP_ADMIN_HIDE_SENSITIVE_DATA and obj:
+            configuration_fields = ['step', 't0', 'digits', 'tolerance']
+        else:
+            configuration_fields = ['key', 'step', 't0', 'digits', 'tolerance']
+        fieldsets = [
+            ('Identity', {
+                'fields': ['user', 'name', 'confirmed'],
+            }),
+            ('Configuration', {
+                'fields': configuration_fields,
+            }),
+            ('State', {
+                'fields': ['drift'],
+            }),
+            ('Throttling', {
+                'fields': ['throttling_failure_timestamp', 'throttling_failure_count'],
+            }),
+        ]
+        # Show the QR code link only for existing objects when sensitive data
+        # is not hidden.
+        if not settings.OTP_ADMIN_HIDE_SENSITIVE_DATA and obj:
+            fieldsets.append(
+                (None, {
+                    'fields': ['qrcode_link'],
+                }),
+            )
+        return fieldsets
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
@@ -71,6 +93,9 @@ class TOTPDeviceAdmin(admin.ModelAdmin):
         return urls
 
     def config_view(self, request, pk):
+        if settings.OTP_ADMIN_HIDE_SENSITIVE_DATA:
+            raise PermissionDenied()
+
         device = TOTPDevice.objects.get(pk=pk)
         if not self.has_view_or_change_permission(request, device):
             raise PermissionDenied()
@@ -83,6 +108,9 @@ class TOTPDeviceAdmin(admin.ModelAdmin):
         return TemplateResponse(request, 'otp_totp/admin/config.html', context)
 
     def qrcode_view(self, request, pk):
+        if settings.OTP_ADMIN_HIDE_SENSITIVE_DATA:
+            raise PermissionDenied()
+
         device = TOTPDevice.objects.get(pk=pk)
         if not self.has_view_or_change_permission(request, device):
             raise PermissionDenied()

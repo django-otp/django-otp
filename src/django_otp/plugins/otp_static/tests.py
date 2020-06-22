@@ -1,11 +1,19 @@
+from unittest.mock import patch
+
+from django.contrib.admin import AdminSite
+from django.contrib.auth.models import Permission
+from django.contrib.contenttypes.models import ContentType
 from django.db import IntegrityError
+from django.test import RequestFactory
 from django.test.utils import override_settings
 
+from django_otp.conf import settings
 from django_otp.forms import OTPAuthenticationForm
 from django_otp.tests import TestCase, ThrottlingTestMixin
 
+from .admin import StaticDeviceAdmin, StaticTokenInline
 from .lib import add_static_token
-from .models import StaticDevice
+from .models import StaticDevice, StaticToken
 
 
 class DeviceTest(TestCase):
@@ -184,3 +192,53 @@ class ThrottlingTestCase(ThrottlingTestMixin, TestCase):
 
     def invalid_token(self):
         return 'bogus'
+
+
+class StaticDeviceAdminTest(TestCase):
+    def setUp(self):
+        try:
+            self.admin = self.create_user(
+                'admin',
+                'password',
+                email='admin@example.com',
+                is_staff=True,
+            )
+        except IntegrityError:
+            self.skipTest("Unable to create test user.")
+        else:
+            self.device = self.admin.staticdevice_set.create()
+        self.device_admin = StaticDeviceAdmin(StaticDevice, AdminSite())
+        self.get_request = RequestFactory().get('/')
+        self.get_request.user = self.admin
+
+    @patch.object(settings, 'OTP_ADMIN_HIDE_SENSITIVE_DATA', True)
+    def test_inline_instances_when_sensitive_information_hidden(self):
+        self._add_device_perms('change_statictoken')
+        instances = self.device_admin.get_inline_instances(self.get_request, obj=None)
+        self.assertIsInstance(instances, list)
+        self.assertEqual(len(instances), 1)
+        self.assertIsInstance(instances[0], StaticTokenInline)
+        instances = self.device_admin.get_inline_instances(self.get_request, obj=self.device)
+        self.assertEqual(instances, [])
+
+    @patch.object(settings, 'OTP_ADMIN_HIDE_SENSITIVE_DATA', False)
+    def test_inline_instances_when_sensitive_information_shown(self):
+        self._add_device_perms('change_statictoken')
+        for obj in (None, self.device):
+            instances = self.device_admin.get_inline_instances(self.get_request, obj=obj)
+            self.assertIsInstance(instances, list)
+            self.assertEqual(len(instances), 1)
+
+    #
+    # Helpers
+    #
+
+    def _add_device_perms(self, *codenames):
+        ct = ContentType.objects.get_for_models(StaticDevice, StaticToken)
+
+        perms = [
+            Permission.objects.get(content_type__in=ct.values(), codename=codename)
+            for codename in codenames
+        ]
+
+        self.admin.user_permissions.add(*perms)

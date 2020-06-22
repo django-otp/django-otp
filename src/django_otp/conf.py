@@ -9,6 +9,7 @@ class Settings:
     """
     defaults = {
         'OTP_LOGIN_URL': django.conf.settings.LOGIN_URL,
+        'OTP_ADMIN_HIDE_SENSITIVE_DATA': False,
     }
 
     def __init__(self):
