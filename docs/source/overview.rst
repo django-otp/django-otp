@@ -465,6 +465,17 @@ The URL where requests are redirected for two-factor authentication, especially
 when using the :func:`~django_otp.decorators.otp_required` decorator.
 
 
+.. setting:: OTP_ADMIN_HIDE_SENSITIVE_DATA
+
+**OTP_ADMIN_HIDE_SENSITIVE_DATA**
+
+Default: `False`
+
+This controls showing some sensitive data on the Django admin site (e.g., keys
+and corresponding QR codes, static tokens). Note, it is respected by built-in
+plugins, but external ones may or may not support it.
+
+
 Glossary
 --------
 
