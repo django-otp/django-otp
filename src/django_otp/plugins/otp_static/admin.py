@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.contrib.admin.sites import AlreadyRegistered
 
+from django_otp.conf import settings
+
 from .models import StaticDevice, StaticToken
 
 
@@ -24,6 +26,11 @@ class StaticDeviceAdmin(admin.ModelAdmin):
     inlines = [
         StaticTokenInline,
     ]
+
+    def get_inline_instances(self, request, obj=None):
+        if settings.OTP_ADMIN_HIDE_SENSITIVE_DATA and obj:
+            return []
+        return super().get_inline_instances(request, obj)
 
 
 # Somehow this is getting imported twice, triggering a useless exception.
