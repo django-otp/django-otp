@@ -12,14 +12,11 @@ class Settings:
         'OTP_ADMIN_HIDE_SENSITIVE_DATA': False,
     }
 
-    def __init__(self):
-        """
-        Loads our settings from django.conf.settings, applying defaults for any
-        that are omitted.
-        """
-        for name, default in self.defaults.items():
-            value = getattr(django.conf.settings, name, default)
-            setattr(self, name, value)
+    def __getattr__(self, name):
+        if name in self.defaults:
+            return getattr(django.conf.settings, name, self.defaults[name])
+        else:
+            return getattr(django.conf.settings, name)
 
 
 settings = Settings()

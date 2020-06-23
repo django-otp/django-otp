@@ -1,5 +1,3 @@
-from unittest.mock import patch
-
 from django.contrib.admin import AdminSite
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
@@ -7,7 +5,6 @@ from django.db import IntegrityError
 from django.test import RequestFactory
 from django.test.utils import override_settings
 
-from django_otp.conf import settings
 from django_otp.forms import OTPAuthenticationForm
 from django_otp.tests import TestCase, ThrottlingTestMixin
 
@@ -211,7 +208,7 @@ class StaticDeviceAdminTest(TestCase):
         self.get_request = RequestFactory().get('/')
         self.get_request.user = self.admin
 
-    @patch.object(settings, 'OTP_ADMIN_HIDE_SENSITIVE_DATA', True)
+    @override_settings(OTP_ADMIN_HIDE_SENSITIVE_DATA=True)
     def test_inline_instances_when_sensitive_information_hidden(self):
         self._add_device_perms('change_statictoken')
         instances = self.device_admin.get_inline_instances(self.get_request, obj=None)
@@ -221,7 +218,7 @@ class StaticDeviceAdminTest(TestCase):
         instances = self.device_admin.get_inline_instances(self.get_request, obj=self.device)
         self.assertEqual(instances, [])
 
-    @patch.object(settings, 'OTP_ADMIN_HIDE_SENSITIVE_DATA', False)
+    @override_settings(OTP_ADMIN_HIDE_SENSITIVE_DATA=False)
     def test_inline_instances_when_sensitive_information_shown(self):
         self._add_device_perms('change_statictoken')
         for obj in (None, self.device):

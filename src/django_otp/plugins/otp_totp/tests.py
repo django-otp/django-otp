@@ -1,5 +1,4 @@
 from time import time
-from unittest.mock import patch
 from urllib.parse import parse_qs, urlsplit
 
 import django
@@ -12,9 +11,7 @@ from django.test import RequestFactory
 from django.test.utils import override_settings
 from django.urls import reverse
 
-from django_otp.conf import settings
 from django_otp.tests import TestCase, ThrottlingTestMixin
-
 
 from .admin import TOTPDeviceAdmin
 from .models import TOTPDevice
@@ -204,63 +201,63 @@ class TOTPAdminTest(TestCase):
                 response = self.client.get(url)
                 self.assertEqual(response.status_code, 200)
 
-    @patch.object(settings, 'OTP_ADMIN_HIDE_SENSITIVE_DATA', True)
+    @override_settings(OTP_ADMIN_HIDE_SENSITIVE_DATA=True)
     def test_sensitive_information_hidden_while_adding_device(self):
         fields = self._get_fields(device=None)
         self.assertIn('key', fields)
         self.assertNotIn('qrcode_link', fields)
 
-    @patch.object(settings, 'OTP_ADMIN_HIDE_SENSITIVE_DATA', True)
+    @override_settings(OTP_ADMIN_HIDE_SENSITIVE_DATA=True)
     def test_sensitive_information_hidden_while_changing_device(self):
         fields = self._get_fields(device=self.device)
         self.assertNotIn('key', fields)
         self.assertNotIn('qrcode_link', fields)
 
-    @patch.object(settings, 'OTP_ADMIN_HIDE_SENSITIVE_DATA', False)
+    @override_settings(OTP_ADMIN_HIDE_SENSITIVE_DATA=False)
     def test_sensitive_information_shown_while_adding_device(self):
         fields = self._get_fields(device=None)
         self.assertIn('key', fields)
         self.assertNotIn('qrcode_link', fields)
 
-    @patch.object(settings, 'OTP_ADMIN_HIDE_SENSITIVE_DATA', False)
+    @override_settings(OTP_ADMIN_HIDE_SENSITIVE_DATA=False)
     def test_sensitive_information_shown_while_changing_device(self):
         fields = self._get_fields(device=self.device)
         self.assertIn('key', fields)
         self.assertIn('qrcode_link', fields)
 
-    @patch.object(settings, 'OTP_ADMIN_HIDE_SENSITIVE_DATA', True)
+    @override_settings(OTP_ADMIN_HIDE_SENSITIVE_DATA=True)
     def test_list_display_when_sensitive_information_hidden(self):
         self.assertEqual(
             self.device_admin.get_list_display(self.get_request),
             ['user', 'name', 'confirmed'],
         )
 
-    @patch.object(settings, 'OTP_ADMIN_HIDE_SENSITIVE_DATA', False)
+    @override_settings(OTP_ADMIN_HIDE_SENSITIVE_DATA=False)
     def test_list_display_when_sensitive_information_shown(self):
         self.assertEqual(
             self.device_admin.get_list_display(self.get_request),
             ['user', 'name', 'confirmed', 'qrcode_link'],
         )
 
-    @patch.object(settings, 'OTP_ADMIN_HIDE_SENSITIVE_DATA', True)
+    @override_settings(OTP_ADMIN_HIDE_SENSITIVE_DATA=True)
     def test_config_view_when_sensitive_information_hidden(self):
         self._add_device_perms('change_totpdevice')
         with self.assertRaises(PermissionDenied):
             self.device_admin.config_view(self.get_request, self.device.id)
 
-    @patch.object(settings, 'OTP_ADMIN_HIDE_SENSITIVE_DATA', False)
+    @override_settings(OTP_ADMIN_HIDE_SENSITIVE_DATA=False)
     def test_config_view_when_sensitive_information_shown(self):
         self._add_device_perms('change_totpdevice')
         response = self.device_admin.config_view(self.get_request, self.device.id)
         self.assertEqual(response.status_code, 200)
 
-    @patch.object(settings, 'OTP_ADMIN_HIDE_SENSITIVE_DATA', True)
+    @override_settings(OTP_ADMIN_HIDE_SENSITIVE_DATA=True)
     def test_qrcode_view_when_sensitive_information_hidden(self):
         self._add_device_perms('change_totpdevice')
         with self.assertRaises(PermissionDenied):
             self.device_admin.qrcode_view(self.get_request, self.device.id)
 
-    @patch.object(settings, 'OTP_ADMIN_HIDE_SENSITIVE_DATA', False)
+    @override_settings(OTP_ADMIN_HIDE_SENSITIVE_DATA=False)
     def test_qrcode_view_when_sensitive_information_shown(self):
         self._add_device_perms('change_totpdevice')
         response = self.device_admin.qrcode_view(self.get_request, self.device.id)
