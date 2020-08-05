@@ -1,4 +1,12 @@
-vv0.9.3 - June 23, 2020 - June 18, 2020 - Admin fix
+Unreleased - Django 3.1 support
+--------------------------------------------------------------------------------
+
+- `#49`_: Hide the navigation sidebar on the login page.
+
+.. _#49: https://github.com/django-otp/django-otp/issues/49
+
+
+v0.9.3 - June 23, 2020 - June 18, 2020 - Admin fix
 --------------------------------------------------------------------------------
 
 - Stricter authorization checks for qrcodes in the admin interface.
