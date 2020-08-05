@@ -1,4 +1,4 @@
-Unreleased - Django 3.1 support
+v0.9.4 - August 05, 2020 - Django 3.1 support
 --------------------------------------------------------------------------------
 
 - `#49`_: Hide the navigation sidebar on the login page.
