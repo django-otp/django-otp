@@ -108,8 +108,8 @@ def device_classes():
     """
     Returns an iterable of all loaded device models.
     """
+    from django.apps import apps           # isort: skip
     from django_otp.models import Device
-    from django.apps import apps
 
     for config in apps.get_app_configs():
         for model in config.get_models():
