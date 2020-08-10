@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'django.contrib.staticfiles',
 
     'django_otp',
     'django_otp.plugins.otp_email',
@@ -67,3 +68,7 @@ TEMPLATES = [
 SECRET_KEY = 'PWuluw4x48GkT7JDPzlDQsBJC8pjIIiqodW9MuMYcU315YEkGJL41i5qooJsg3Tt'
 
 ROOT_URLCONF = 'test_project.urls'
+
+STATIC_URL = '/static/'
+
+USE_TZ = True
