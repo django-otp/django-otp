@@ -1,5 +1,5 @@
-v0.9.5 - Unreleased
--------------------
+Unreleased - Update supported Django verisons.
+--------------------------------------------------------------------------------
 
 - Dropped support for Django < 2.2.
 
