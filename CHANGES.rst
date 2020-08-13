@@ -1,4 +1,4 @@
-Unreleased - Update supported Django verisons.
+v1.0.0 - August 13, 2020 - Update supported Django verisons.
 --------------------------------------------------------------------------------
 
 - Dropped support for Django < 2.2.
