@@ -71,7 +71,7 @@ setup(
     zip_safe=False,
 
     install_requires=[
-        'django >= 1.11',
+        'django >= 2.2',
     ],
     extras_require={
         'qrcode': ['qrcode'],
