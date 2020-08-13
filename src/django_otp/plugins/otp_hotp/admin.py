@@ -1,4 +1,3 @@
-from django.conf.urls import url
 from django.contrib import admin
 from django.contrib.admin.sites import AlreadyRegistered
 from django.core.exceptions import PermissionDenied
@@ -10,6 +9,12 @@ from django.utils.html import format_html
 from django_otp.conf import settings
 
 from .models import HOTPDevice
+
+
+try:
+    from django.urls import re_path
+except ImportError:  # Django < 2.0
+    from django.conf.urls import url as re_path
 
 
 class HOTPDeviceAdmin(admin.ModelAdmin):
@@ -86,8 +91,8 @@ class HOTPDeviceAdmin(admin.ModelAdmin):
 
     def get_urls(self):
         urls = [
-            url(r'^(?P<pk>\d+)/config/$', self.admin_site.admin_view(self.config_view), name='otp_hotp_hotpdevice_config'),
-            url(r'^(?P<pk>\d+)/qrcode/$', self.admin_site.admin_view(self.qrcode_view), name='otp_hotp_hotpdevice_qrcode'),
+            re_path(r'^(?P<pk>\d+)/config/$', self.admin_site.admin_view(self.config_view), name='otp_hotp_hotpdevice_config'),
+            re_path(r'^(?P<pk>\d+)/qrcode/$', self.admin_site.admin_view(self.qrcode_view), name='otp_hotp_hotpdevice_qrcode'),
         ] + super().get_urls()
 
         return urls
