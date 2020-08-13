@@ -1,10 +1,9 @@
-from django.conf.urls import url
 from django.contrib import admin
 from django.contrib.admin.sites import AlreadyRegistered
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse
 from django.template.response import TemplateResponse
-from django.urls import reverse
+from django.urls import path, reverse
 from django.utils.html import format_html
 
 from django_otp.conf import settings
@@ -86,8 +85,8 @@ class TOTPDeviceAdmin(admin.ModelAdmin):
 
     def get_urls(self):
         urls = [
-            url(r'^(?P<pk>\d+)/config/$', self.admin_site.admin_view(self.config_view), name='otp_totp_totpdevice_config'),
-            url(r'^(?P<pk>\d+)/qrcode/$', self.admin_site.admin_view(self.qrcode_view), name='otp_totp_totpdevice_qrcode'),
+            path('<int:pk>/config/', self.admin_site.admin_view(self.config_view), name='otp_totp_totpdevice_config'),
+            path('<int:pk>/qrcode/', self.admin_site.admin_view(self.qrcode_view), name='otp_totp_totpdevice_qrcode'),
         ] + super().get_urls()
 
         return urls
@@ -126,13 +125,6 @@ class TOTPDeviceAdmin(admin.ModelAdmin):
             response = HttpResponse('', status=503)
 
         return response
-
-    def has_view_or_change_permission(self, request, obj=None):
-        """ Django 1.11 compatibility. """
-        if hasattr(super(), 'has_view_or_change_permission'):
-            return super().has_view_or_change_permission(request, obj)
-        else:
-            return self.has_change_permission(request, obj)
 
 
 try:

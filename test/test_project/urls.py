@@ -1,7 +1,7 @@
-from django.conf.urls import url
 from django.contrib import admin
 import django.contrib.auth.views
 from django.http import HttpResponse
+from django.urls import path
 from django.views.generic.base import View
 
 import django_otp.views
@@ -19,11 +19,11 @@ class HomeView(View):
 
 
 urlpatterns = [
-    url(r'^$', HomeView.as_view()),
+    path('', HomeView.as_view()),
 
-    url(r'^login/$', django_otp.views.LoginView.as_view()),
-    url(r'^logout/$', django.contrib.auth.views.LogoutView.as_view()),
+    path('login/', django_otp.views.LoginView.as_view()),
+    path('logout/', django.contrib.auth.views.LogoutView.as_view()),
 
-    url(r'^admin/', admin.site.urls),
-    url(r'^otpadmin/', otp_admin_site.urls),
+    path('admin/', admin.site.urls),
+    path('otpadmin/', otp_admin_site.urls),
 ]
