@@ -2,7 +2,7 @@ name: Run tox
 
 on:
   push:
-    branches: [ esting-environment-fixes ]
+    branches: [ testing-environment-fixes ]
 
 jobs:
   tox:
