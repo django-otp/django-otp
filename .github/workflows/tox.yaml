@@ -1,8 +1,8 @@
 name: Run tox
 
 on:
-  pull_request:
-    branches: [ master ]
+  push:
+    branches: [ esting-environment-fixes ]
 
 jobs:
   tox:
