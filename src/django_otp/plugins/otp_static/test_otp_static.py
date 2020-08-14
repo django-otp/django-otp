@@ -6,7 +6,7 @@ from django.test import RequestFactory
 from django.test.utils import override_settings
 
 from django_otp.forms import OTPAuthenticationForm
-from django_otp.tests import TestCase, ThrottlingTestMixin
+from django_otp.test_otp import TestCase, ThrottlingTestMixin
 
 from .admin import StaticDeviceAdmin, StaticTokenInline
 from .lib import add_static_token
