@@ -3,7 +3,6 @@ from urllib.parse import parse_qs, urlsplit
 
 from freezegun import freeze_time
 
-import django
 from django.contrib.admin.sites import AdminSite
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
@@ -252,9 +251,6 @@ class HOTPAdminTest(TestCase):
                 self.assertEqual(response.status_code, 403)
 
     def test_view_perm(self):
-        if django.VERSION[0] < 2:
-            raise self.skipTest("Requires Django>=2.0")
-
         self._add_device_perms('view_hotpdevice')
         self.client.login(username='admin', password='password')
 

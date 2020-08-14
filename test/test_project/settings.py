@@ -13,6 +13,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': project_path('db.sqlite3'),
+        'TEST': {
+            'NAME': ':memory:',
+        }
     }
 }
 
