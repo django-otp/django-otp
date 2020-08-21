@@ -1,5 +1,5 @@
 .. include:: ../../README.rst
-   :end-before: end-of-doc-include
+   :end-before: .. end-of-doc-intro
 
 Contents
 --------

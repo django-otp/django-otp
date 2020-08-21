@@ -33,10 +33,14 @@ Status
 ------
 
 This project is stable and maintained, but is no longer actively used by the
-author. Well-formed pull requests are welcome. Anyone interested in taking over
-aspects of the project should `contact me <https://github.com/psagers>`_.
+author and is not seeing much ongoing investment. Anyone interested in taking
+over aspects of the project should `contact me <https://github.com/psagers>`_.
 
-.. end-of-doc-include
+.. end-of-doc-intro
+
+Well-formed issues and pull requests are welcome, but please see the
+:ref:`contributing` section first.
+
 
 Development
 -----------
@@ -47,6 +51,34 @@ suitable shell.
 The tests in tox.ini cover a representative sample of supported Python and
 Django versions, as well as running `flake8`_ and `isort`_ for linting and style
 consistency. Please run `tox` before checking in and sending a pull request.
+
+
+.. _contributing:
+
+Contributing
+------------
+
+As mentioned above, this project is stable and mature. Issues and pull requests
+are welcome for important bugs and improvements. For non-trivial changes, it's
+often a good idea to start by opening an issue to track the need for a change
+and then optionally open a pull request with a proposed resolution. Issues and
+pull requests should also be focused on a single thing. Pull requests that
+bundle together a bunch of loosely related commits are unlikely to go anywhere.
+
+Another good rule of thumb—for any project, but especially a mature one—is to
+keep changes as simple as possible. In particular, there should be a high bar
+for adding new dependencies. Although it can't be ruled out, it seems highly
+unlikely that a new runtime dependecy will ever be added. New testing
+dependencies are more likely, but only if there's no other way to address an
+important need.
+
+If there's a development tool that you'd like to use with this project, the
+first step is to try to update config files (setup.cfg or similar) to integrate
+the tool with the existing code. A bit of configuration glue for popular tools
+should always be safe. If that's not possible, we can consider modifying the
+code to be compatible with a broader range of tools (without breaking any
+existing compatibilities). Only as a last resort would a new testing or
+development tool be incorporated into the project as a dependency.
 
 
 .. _pipenv: https://pipenv.readthedocs.io/en/latest/
