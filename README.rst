@@ -39,7 +39,7 @@ over aspects of the project should `contact me <https://github.com/psagers>`_.
 .. end-of-doc-intro
 
 Well-formed issues and pull requests are welcome, but please see the
-:ref:`contributing` section first.
+Contributing section first.
 
 
 Development
@@ -52,8 +52,6 @@ The tests in tox.ini cover a representative sample of supported Python and
 Django versions, as well as running `flake8`_ and `isort`_ for linting and style
 consistency. Please run `tox` before checking in and sending a pull request.
 
-
-.. _contributing:
 
 Contributing
 ------------
