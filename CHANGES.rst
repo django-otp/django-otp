@@ -1,3 +1,9 @@
+v1.0.1 - October 06, 2020 - Add French translations
+--------------------------------------------------------------------------------
+
+- Added contributed French string translations.
+
+
 v1.0.0 - August 13, 2020 - Update supported Django verisons.
 --------------------------------------------------------------------------------
 
