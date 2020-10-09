@@ -423,7 +423,7 @@ likely want to override.
 
 **OTP_EMAIL_BODY_TEMPLATE_PATH**
 
-Default: ``None``
+Default: ``otp/email/token.txt``
 
 A path string to a template file to use for the email body. The render context
 will include the generated token in the ``token`` key.
