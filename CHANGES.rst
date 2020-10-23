@@ -1,4 +1,4 @@
-Unreleased - Email body template path setting
+v1.0.2 - October 23, 2020 - Email body template path setting
 --------------------------------------------------------------------------------
 
 - Added a setting to load the email body template from a template file.
