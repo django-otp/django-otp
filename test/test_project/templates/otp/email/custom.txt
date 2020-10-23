@@ -1,0 +1,1 @@
+Test template 3: {{token}}

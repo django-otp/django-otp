@@ -57,7 +57,7 @@ class EmailDevice(ThrottlingMixin, SideChannelDevice):
         if settings.OTP_EMAIL_BODY_TEMPLATE:
             body = Template(settings.OTP_EMAIL_BODY_TEMPLATE).render(Context(context))
         else:
-            body = get_template('otp/email/token.txt').render(context)
+            body = get_template(settings.OTP_EMAIL_BODY_TEMPLATE_PATH).render(context)
 
         send_mail(settings.OTP_EMAIL_SUBJECT,
                   body,
