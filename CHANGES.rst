@@ -1,3 +1,9 @@
+Unreleased - Email body template path setting
+--------------------------------------------------------------------------------
+
+- Added a setting to load the email body template from a template file.
+
+
 v1.0.1 - October 06, 2020 - Add French translations
 --------------------------------------------------------------------------------
 

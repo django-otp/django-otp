@@ -406,7 +406,7 @@ Default: ``'OTP token'``
 The subject of the email. You probably want to customize this.
 
 
-.. setting:: OTP_EMAIL_TOKEN_TEMPLATE
+.. setting:: OTP_EMAIL_BODY_TEMPLATE
 
 **OTP_EMAIL_BODY_TEMPLATE**
 
@@ -415,11 +415,11 @@ Default: ``None``
 A raw template string to use for the email body. The render context will
 include the generated token in the ``token`` key.
 
-If this and :setting:`OTP_EMAIL_BODY_TEMPLATE_PATH<OTP_EMAIL_TOKEN_TEMPLATE_PATH>`
-are not set, we'll render the template 'otp/email/token.txt', which you'll most
-likely want to override.
+If this and :setting:`OTP_EMAIL_BODY_TEMPLATE_PATH` are not set, we'll render
+the template 'otp/email/token.txt', which you'll most likely want to override.
 
-.. setting:: OTP_EMAIL_TOKEN_TEMPLATE_PATH
+
+.. setting:: OTP_EMAIL_BODY_TEMPLATE_PATH
 
 **OTP_EMAIL_BODY_TEMPLATE_PATH**
 
@@ -428,9 +428,9 @@ Default: ``otp/email/token.txt``
 A path string to a template file to use for the email body. The render context
 will include the generated token in the ``token`` key.
 
-If this and :setting:`OTP_EMAIL_BODY_TEMPLATE<OTP_EMAIL_TOKEN_TEMPLATE>` are not
-set, we'll render the template 'otp/email/token.txt', which you'll most likely
-want to override.
+If this and :setting:`OTP_EMAIL_BODY_TEMPLATE` are not set, we'll render the
+template 'otp/email/token.txt', which you'll most likely want to override.
+
 
 .. setting:: OTP_EMAIL_TOKEN_VALIDITY
 
