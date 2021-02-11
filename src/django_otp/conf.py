@@ -10,6 +10,7 @@ class Settings:
     defaults = {
         'OTP_LOGIN_URL': django.conf.settings.LOGIN_URL,
         'OTP_ADMIN_HIDE_SENSITIVE_DATA': False,
+        'OTP_ENCRYPTION_OBJECT': 'django_otp.encryption',
     }
 
     def __getattr__(self, name):
