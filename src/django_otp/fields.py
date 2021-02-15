@@ -1,3 +1,4 @@
+from binascii import unhexlify
 from importlib import import_module
 
 from django.db import models
@@ -6,9 +7,13 @@ from django.utils.module_loading import import_string
 from django_otp.conf import settings
 
 
-class OptionalEncyptionCharField(models.CharField):
+class EncryptedHexCharField(models.CharField):
     """
-    A CharField that allows encryption if so configured.
+    A CharField that stores hex strings with the ability to encrypt it as well.
+
+    Encryption has to be configured using OTP_ENCRYPTION_OBJECT in the settings.
+    The value has to point to a class or module with 'encrypt' and 'decrypt' methods.
+    Both methods take a value
     """
 
     def __init__(self, *args, **kwargs):
@@ -24,11 +29,15 @@ class OptionalEncyptionCharField(models.CharField):
         self.encrypt = getattr(encryption_object, 'encrypt')
         self.decrypt = getattr(encryption_object, 'decrypt')
 
-    def get_db_prep_value(self, value, connection, prepared=False):
-        return self.encrypt(super().get_db_prep_value(value, connection, prepared))
+    def get_db_prep_save(self, value, connection):
+        if not value:
+            return value
+        binary = self.encrypt(unhexlify(value))
+        return super().get_db_prep_value(binary.hex(), connection)
 
-    def from_db_value(self, value):
-        return self.to_python(super().to_python(value))
+    def from_db_value(self, value, *args):
+        if not value:
+            return value
 
-    def to_python(self, value):
-        return self.decrypt(value)
+        binary = self.decrypt(unhexlify(value))
+        return binary.hex()

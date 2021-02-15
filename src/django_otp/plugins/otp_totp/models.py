@@ -6,7 +6,7 @@ from urllib.parse import quote, urlencode
 from django.conf import settings
 from django.db import models
 
-from django_otp.fields import OptionalEncyptionCharField
+from django_otp.fields import EncryptedHexCharField
 from django_otp.models import Device, ThrottlingMixin
 from django_otp.oath import TOTP
 from django_otp.util import hex_validator, random_hex
@@ -67,7 +67,7 @@ class TOTPDevice(ThrottlingMixin, Device):
         subsequently. (Default: -1)
 
     """
-    key = OptionalEncyptionCharField(max_length=80, validators=[key_validator], default=default_key, help_text="A hex-encoded secret key of up to 40 bytes.")
+    key = EncryptedHexCharField(max_length=80, validators=[key_validator], default=default_key, help_text="A hex-encoded secret key of up to 40 bytes.")
     step = models.PositiveSmallIntegerField(default=30, help_text="The time step in seconds.")
     t0 = models.BigIntegerField(default=0, help_text="The Unix time at which to begin counting steps.")
     digits = models.PositiveSmallIntegerField(choices=[(6, 6), (8, 8)], default=6, help_text="The number of digits to expect in a token.")

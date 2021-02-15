@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='totpdevice',
             name='key',
-            field=django_otp.fields.OptionalEncyptionCharField(default=django_otp.plugins.otp_totp.models.default_key, help_text='A hex-encoded secret key of up to 40 bytes.', max_length=80, validators=[django_otp.plugins.otp_totp.models.key_validator]),
+            field=django_otp.fields.EncryptedHexCharField(default=django_otp.plugins.otp_totp.models.default_key, help_text='A hex-encoded secret key of up to 40 bytes.', max_length=80, validators=[django_otp.plugins.otp_totp.models.key_validator]),
         ),
     ]
