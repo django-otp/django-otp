@@ -5,7 +5,6 @@ from django.db import models
 from django.utils.module_loading import import_string
 
 
-
 class EncryptedHexCharField(models.CharField):
     """
     A CharField that stores hex strings with the ability to encrypt it as well.
