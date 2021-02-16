@@ -10,6 +10,7 @@ from django.test import RequestFactory
 from django.test.utils import override_settings
 from django.urls import reverse
 
+from django_otp.conf import settings
 from django_otp.tests import TestCase, ThrottlingTestMixin
 
 from .admin import TOTPDeviceAdmin
@@ -290,3 +291,28 @@ class ThrottlingTestCase(TOTPDeviceMixin, ThrottlingTestMixin, TestCase):
 
     def invalid_token(self):
         return -1
+
+
+# TODO: Test doesn't actually test the encryption object
+#       The setting isn't override before everything is imported
+#       Therefore the default value is used
+@override_settings(
+    OTP_ENCRYPTION_OBJECT='django_otp.plugins.otp_totp.encryption.DumpEncryption',
+)
+class EncryptionTestCase(TestCase):
+
+    def test_save(self):
+        self.hex_key = '2a2bbba1092ffdd25a328ad1a0a5f5d61d7aacc4'
+        try:
+            self.alice = self.create_user(
+                'alice', 'password', email='alice@example.com')
+        except IntegrityError:
+            self.skipTest("Unable to create the test user.")
+        else:
+            self.device = self.alice.totpdevice_set.create(
+                key=self.hex_key, step=30,
+                t0=int(time() - (30 * 3)), digits=6, tolerance=0, drift=0
+            )
+        # TODO: This check doesn't actually check that the model is using it
+        self.assertEqual(settings.OTP_ENCRYPTION_OBJECT, 'django_otp.plugins.otp_totp.encryption.DumpEncryption')
+        self.assertEqual(self.hex_key, self.device.key)

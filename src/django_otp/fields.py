@@ -4,7 +4,6 @@ from importlib import import_module
 from django.db import models
 from django.utils.module_loading import import_string
 
-from django_otp.conf import settings
 
 
 class EncryptedHexCharField(models.CharField):
@@ -19,12 +18,15 @@ class EncryptedHexCharField(models.CharField):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        from django_otp.conf import settings
+        otp_encryption_object = settings.OTP_ENCRYPTION_OBJECT
+        print("otp_encryption_object: %s" % otp_encryption_object)
         try:
             # Maybe the path is to an object in a module
-            encryption_object = import_string(settings.OTP_ENCRYPTION_OBJECT)
+            encryption_object = import_string(otp_encryption_object)
         except ImportError:
             # Maybe the path is to a module itself
-            encryption_object = import_module(settings.OTP_ENCRYPTION_OBJECT)
+            encryption_object = import_module(otp_encryption_object)
 
         self.encrypt = getattr(encryption_object, 'encrypt')
         self.decrypt = getattr(encryption_object, 'decrypt')
