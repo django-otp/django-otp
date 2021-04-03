@@ -10,6 +10,7 @@ from django.db import IntegrityError
 from django.test import RequestFactory
 from django.test import TestCase as DjangoTestCase
 from django.urls import reverse
+from django.utils import timezone
 
 from django_otp import DEVICE_ID_SESSION_KEY, oath, util
 from django_otp.middleware import OTPMiddleware
@@ -105,11 +106,14 @@ class ThrottlingTestMixin:
         self.assertEqual(data1, None)
 
         # After failure, verify is not allowed
-        self.device.verify_token(self.invalid_token())
-        verify_is_allowed2, data2 = self.device.verify_is_allowed()
-        self.assertEqual(verify_is_allowed2, False)
-        self.assertEqual(data2, {'reason': VerifyNotAllowed.N_FAILED_ATTEMPTS,
-                                 'failure_count': 1})
+        with freeze_time():
+            self.device.verify_token(self.invalid_token())
+            verify_is_allowed2, data2 = self.device.verify_is_allowed()
+            self.assertEqual(verify_is_allowed2, False)
+            self.assertEqual(data2, {'reason': VerifyNotAllowed.N_FAILED_ATTEMPTS,
+                                     'failure_count': 1,
+                                     'locked_until': timezone.now() + timezone.timedelta(seconds=1)
+                                     })
 
         # After a successful attempt, should be allowed again
         with freeze_time() as frozen_time:

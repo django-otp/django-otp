@@ -304,7 +304,8 @@ class ThrottlingMixin(models.Model):
                 return (False,
                         {'reason': VerifyNotAllowed.N_FAILED_ATTEMPTS,
                          'failure_count': self.throttling_failure_count,
-                         })
+                         'locked_until': now + timedelta(seconds=delay_required)}
+                        )
 
         return super().verify_is_allowed()
 
