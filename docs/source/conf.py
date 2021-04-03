@@ -87,7 +87,7 @@ copyright = '2012, Peter Sagerson'
 # built documents.
 #
 # The full version, including alpha/beta/rc tags.
-release = '1.0.2'
+release = '1.0.3'
 
 # The short X.Y version.
 version = '.'.join(release.split('.')[:2])

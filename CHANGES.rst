@@ -1,3 +1,11 @@
+v1.0.3 - April 03, 2021 - Email body template path setting
+--------------------------------------------------------------------------------
+
+- `#71`_: Provide time at which throttling lock expires.
+
+.. _#71: https://github.com/django-otp/django-otp/issues/71
+
+
 v1.0.2 - October 23, 2020 - Email body template path setting
 --------------------------------------------------------------------------------
 
