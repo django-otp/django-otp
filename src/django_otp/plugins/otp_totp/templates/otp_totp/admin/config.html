@@ -4,6 +4,7 @@
 <div style="text-align: center;">
   <p id="qrcode">
     <img width="200" height="200"
+         style="background-color: white"
          src="{% url "admin:otp_totp_totpdevice_qrcode" pk=device.pk %}"
          onerror="document.getElementById('qrcode').style.display = 'none'; document.getElementById('no-qrcode').style.display = 'block';"
     >
