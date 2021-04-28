@@ -1,3 +1,12 @@
+v1.0.4 - April 28, 2021 - Dark mode fix
+--------------------------------------------------------------------------------
+
+- `#76`_: Django 3.2 supports the prefers-color-scheme media query, so we need
+  to force a white background for QR codes.
+
+.. _#76: https://github.com/django-otp/django-otp/issues/76
+
+
 v1.0.3 - April 03, 2021 - Email body template path setting
 --------------------------------------------------------------------------------
 
