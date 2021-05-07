@@ -126,7 +126,10 @@ class TOTPDevice(ThrottlingMixin, Device):
         The issuer is taken from :setting:`OTP_TOTP_ISSUER`, if available.
 
         """
-        label = self.user.get_username()
+        label = getattr(settings, 'OTP_TOTP_LABEL', None) or self.user.get_username()
+        if callable(label):
+            label = label(self)
+
         params = {
             'secret': b32encode(self.bin_key),
             'algorithm': 'SHA1',

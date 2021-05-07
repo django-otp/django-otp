@@ -97,6 +97,32 @@ class TOTPTest(TOTPDeviceMixin, TestCase):
         self.assertIn('secret', params)
         self.assertNotIn('issuer', params)
 
+    def test_config_url_label(self):
+        with override_settings(OTP_TOTP_LABEL=None):
+            url = self.device.config_url
+
+        parsed = urlsplit(url)
+        params = parse_qs(parsed.query)
+
+        self.assertEqual(parsed.scheme, 'otpauth')
+        self.assertEqual(parsed.netloc, 'totp')
+        self.assertEqual(parsed.path, '/alice')
+        self.assertIn('secret', params)
+        self.assertNotIn('issuer', params)
+
+    def test_config_url_label_method(self):
+        with override_settings(OTP_TOTP_LABEL=lambda d: d.user.email):
+            url = self.device.config_url
+
+        parsed = urlsplit(url)
+        params = parse_qs(parsed.query)
+
+        self.assertEqual(parsed.scheme, 'otpauth')
+        self.assertEqual(parsed.netloc, 'totp')
+        self.assertEqual(parsed.path, '/alice%40example.com')
+        self.assertIn('secret', params)
+        self.assertNotIn('issuer', params)
+
     def test_config_url_issuer(self):
         with override_settings(OTP_TOTP_ISSUER='example.com'):
             url = self.device.config_url
