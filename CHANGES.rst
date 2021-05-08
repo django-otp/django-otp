@@ -1,3 +1,12 @@
+v1.0.5 - May 08, 2021 - config_url fix
+--------------------------------------------------------------------------------
+
+- `#77`_: Force username to a string in `config_url`. Note that this might not
+  produce a very human-friendly result, but it shouldn't throw an exception.
+
+.. _#77: https://github.com/django-otp/django-otp/issues/77
+
+
 v1.0.4 - April 28, 2021 - Dark mode fix
 --------------------------------------------------------------------------------
 
