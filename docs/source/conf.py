@@ -56,7 +56,8 @@ django.conf.settings.configure(
         'django_otp.plugins.otp_totp',
         'django_otp.plugins.otp_static',
         'django_otp.plugins.otp_email',
-    ]
+    ],
+    SECRET_KEY='properly-configured',
 )
 django.setup()
 
