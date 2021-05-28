@@ -413,10 +413,9 @@ The subject of the email. You probably want to customize this.
 Default: ``None``
 
 A raw template string to use for the email body. The render context will
-include the generated token in the ``token`` key.
-
-Dictionary sent to :meth:`~django_otp.plugins.otp_email.models.EmailDevice.generate_challenge`
-under ``extra_context`` will be also used as context for building the email.
+include the generated token in the ``token`` key. Additional template context
+may be passed to
+:meth:`~django_otp.plugins.otp_email.models.EmailDevice.generate_challenge`.
 
 If this and :setting:`OTP_EMAIL_BODY_TEMPLATE_PATH` are not set, we'll render
 the template 'otp/email/token.txt', which you'll most likely want to override.
@@ -429,10 +428,9 @@ the template 'otp/email/token.txt', which you'll most likely want to override.
 Default: ``otp/email/token.txt``
 
 A path string to a template file to use for the email body. The render context
-will include the generated token in the ``token`` key.
-
-Dictionary sent to :meth:`~django_otp.plugins.otp_email.models.EmailDevice.generate_challenge`
-under ``extra_context`` will be also used as context for building the email.
+will include the generated token in the ``token`` key. Additional template
+context may be passed to
+:meth:`~django_otp.plugins.otp_email.models.EmailDevice.generate_challenge`.
 
 If this and :setting:`OTP_EMAIL_BODY_TEMPLATE` are not set, we'll render the
 template 'otp/email/token.txt', which you'll most likely want to override.

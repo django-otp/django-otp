@@ -1,3 +1,13 @@
+Unreleased - Email customization
+--------------------------------------------------------------------------------
+
+- `#82`_: Add ability to pass extra context when rendering
+  :class:`~django_otp.plugins.otp_email.models.EmailDevice` templates.
+
+.. _#82: https://github.com/django-otp/django-otp/issues/82
+
+
+
 v1.0.5 - May 08, 2021 - config_url fix
 --------------------------------------------------------------------------------
 

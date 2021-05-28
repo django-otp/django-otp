@@ -51,9 +51,10 @@ class EmailDevice(ThrottlingMixin, SideChannelDevice):
         """
         Generates a random token and emails it to the user.
 
-        :param extra_context: If provided, the dictionary will be used as context,
-            along with the token, for generating the email. Default is ``None``.
+        :param extra_context: Additional context variables for rendering the
+            email template.
         :type extra_context: dict
+
         """
         self.generate_token(valid_secs=settings.OTP_EMAIL_TOKEN_VALIDITY)
 
