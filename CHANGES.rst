@@ -1,4 +1,4 @@
-Unreleased - Email customization
+v1.0.6 - May 28, 2021 - Email customization
 --------------------------------------------------------------------------------
 
 - `#82`_: Add ability to pass extra context when rendering
