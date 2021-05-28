@@ -50,6 +50,10 @@ class EmailDevice(ThrottlingMixin, SideChannelDevice):
     def generate_challenge(self, extra_context=None):
         """
         Generates a random token and emails it to the user.
+
+        :param extra_context: If provided, the dictionary will be used as context,
+            along with the token, for generating the email. Default is ``None``.
+        :type extra_context: dict
         """
         self.generate_token(valid_secs=settings.OTP_EMAIL_TOKEN_VALIDITY)
 
