@@ -249,7 +249,7 @@ class OTPTokenForm(OTPAuthenticationFormMixin, forms.Form):
 
         from functools import partial
 
-        from django.contrib.auth.decoratorrs import login_required
+        from django.contrib.auth.decorators import login_required
         from django.contrib.auth.views import login
 
 
