@@ -158,7 +158,7 @@ class OTPMiddlewareTestCase(TestCase):
         device = self.alice.staticdevice_set.get()
         request.session = {
             DEVICE_ID_SESSION_KEY: '{}.{}/{}'.format(
-                device.__module__, device.__class__.__name__, device.id
+                device.__module__, device.__class__.__name__, device.pk
             )
         }
 
