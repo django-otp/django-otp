@@ -90,7 +90,7 @@ class Device(models.Model):
 
     @property
     def persistent_id(self):
-        return '{0}/{1}'.format(self.model_label(), self.id)
+        return '{0}/{1}'.format(self.model_label(), self.pk)
 
     @classmethod
     def model_label(cls):
@@ -118,7 +118,7 @@ class Device(models.Model):
 
             device_cls = apps.get_model(app_label, model_name)
             if issubclass(device_cls, Device):
-                device = device_cls.objects.filter(id=int(device_id)).first()
+                device = device_cls.objects.filter(pk=device_id).first()
         except (ValueError, LookupError):
             pass
 
