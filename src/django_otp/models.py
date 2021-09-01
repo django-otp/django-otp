@@ -331,9 +331,9 @@ class ThrottlingMixin(models.Model):
 
         """
         self.throttling_failure_timestamp = timezone.now()
-        self.throttling_failure_count += 1
+        self.throttling_failure_count = models.F('throttling_failure_count') + 1
         if commit:
-            self.save()
+            self.save(update_fields=['throttling_failure_timestamp', 'throttling_failure_count'])
 
     @cached_property
     def throttling_enabled(self):
