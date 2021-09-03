@@ -144,12 +144,14 @@ The Low-Level API
 
 .. autofunction:: django_otp.user_has_device
 
+.. autofunction:: django_otp.verify_token
+
 .. autofunction:: django_otp.match_token
 
 .. autofunction:: django_otp.login
 
 .. autoclass:: django_otp.models.Device
-    :members: is_interactive, generate_challenge, verify_token, verify_is_allowed
+    :members: is_interactive, generate_challenge, verify_token, verify_is_allowed, persistent_id, from_persistent_id
 
 .. autoclass:: django_otp.models.SideChannelDevice
     :members: generate_token, verify_token

@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
+from django.db import transaction
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import ngettext_lazy
 
@@ -80,27 +81,37 @@ class OTPAuthenticationFormMixin:
         if user is None:
             return
 
-        device = self._chosen_device(user)
-        token = self.cleaned_data.get('otp_token')
+        validation_error = None
+        with transaction.atomic():
+            try:
+                device = self._chosen_device(user)
+                token = self.cleaned_data.get('otp_token')
 
-        user.otp_device = None
+                user.otp_device = None
 
-        try:
-            if self.cleaned_data.get('otp_challenge'):
-                self._handle_challenge(device)
-            elif token:
-                user.otp_device = self._verify_token(user, token, device)
-            else:
-                raise forms.ValidationError(self.otp_error_messages['token_required'], code='token_required')
-        finally:
-            if user.otp_device is None:
-                self._update_form(user)
+                try:
+                    if self.cleaned_data.get('otp_challenge'):
+                        self._handle_challenge(device)
+                    elif token:
+                        user.otp_device = self._verify_token(user, token, device)
+                    else:
+                        raise forms.ValidationError(self.otp_error_messages['token_required'], code='token_required')
+                finally:
+                    if user.otp_device is None:
+                        self._update_form(user)
+            except forms.ValidationError as e:
+                # Validation errors shouldn't abort the transaction, so we have
+                # to carefully transport them out.
+                validation_error = e
+
+        if validation_error:
+            raise validation_error
 
     def _chosen_device(self, user):
         device_id = self.cleaned_data.get('otp_device')
 
         if device_id:
-            device = Device.from_persistent_id(device_id)
+            device = Device.from_persistent_id(device_id, for_verify=True)
         else:
             device = None
 

@@ -6,13 +6,16 @@ import unittest
 from freezegun import freeze_time
 
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AnonymousUser
 from django.db import IntegrityError
 from django.test import RequestFactory
 from django.test import TestCase as DjangoTestCase
+from django.test import TransactionTestCase as DjangoTransactionTestCase
+from django.test.utils import override_settings
 from django.urls import reverse
 from django.utils import timezone
 
-from django_otp import DEVICE_ID_SESSION_KEY, oath, util
+from django_otp import DEVICE_ID_SESSION_KEY, match_token, oath, user_has_device, util, verify_token
 from django_otp.middleware import OTPMiddleware
 from django_otp.models import VerifyNotAllowed
 
@@ -27,7 +30,7 @@ def load_tests(loader, tests, pattern):
     return suite
 
 
-class TestCase(DjangoTestCase):
+class OTPTestCaseMixin:
     """
     Utilities for dealing with custom user models.
     """
@@ -46,6 +49,14 @@ class TestCase(DjangoTestCase):
         purposes.
         """
         return self.User.objects.create_user(username, password=password, **kwargs)
+
+
+class TestCase(OTPTestCaseMixin, DjangoTestCase):
+    pass
+
+
+class TransactionTestCase(OTPTestCaseMixin, DjangoTransactionTestCase):
+    pass
 
 
 class ThrottlingTestMixin:
@@ -123,6 +134,43 @@ class ThrottlingTestMixin:
             verify_is_allowed3, data3 = self.device.verify_is_allowed()
             self.assertEqual(verify_is_allowed3, True)
             self.assertEqual(data3, None)
+
+
+@override_settings(OTP_STATIC_THROTTLE_FACTOR=0)
+class APITestCase(TestCase):
+    def setUp(self):
+        try:
+            self.alice = self.create_user('alice', 'password')
+            self.bob = self.create_user('bob', 'password')
+        except IntegrityError:
+            self.skipTest("Unable to create a test user.")
+        else:
+            device = self.alice.staticdevice_set.create()
+            device.token_set.create(token='alice')
+
+    def test_user_has_device(self):
+        with self.subTest(user='anonymous'):
+            self.assertFalse(user_has_device(AnonymousUser()))
+        with self.subTest(user='alice'):
+            self.assertTrue(user_has_device(self.alice))
+        with self.subTest(user='bob'):
+            self.assertFalse(user_has_device(self.bob))
+
+    def test_verify_token(self):
+        device = self.alice.staticdevice_set.first()
+
+        verified = verify_token(self.alice, device.persistent_id, 'bogus')
+        self.assertIsNone(verified)
+
+        verified = verify_token(self.alice, device.persistent_id, 'alice')
+        self.assertIsNotNone(verified)
+
+    def test_match_token(self):
+        verified = match_token(self.alice, 'bogus')
+        self.assertIsNone(verified)
+
+        verified = match_token(self.alice, 'alice')
+        self.assertIsNotNone(verified)
 
 
 class OTPMiddlewareTestCase(TestCase):

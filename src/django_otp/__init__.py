@@ -1,4 +1,5 @@
 from django.contrib.auth.signals import user_logged_in
+from django.db import transaction
 
 
 DEVICE_ID_SESSION_KEY = 'otp_device_id'
@@ -37,6 +38,36 @@ def _handle_auth_login(sender, request, user, **kwargs):
 
 
 user_logged_in.connect(_handle_auth_login)
+
+
+def verify_token(user, device_id, token):
+    """
+    Attempts to verify a :term:`token` against a specific device, identified by
+    :attr:`~django_otp.models.Device.persistent_id`.
+
+    This wraps the verification process in a transaction to ensure that things
+    like throttling polices are properly enforced.
+
+    :param user: The user supplying the token.
+    :type user: :class:`~django.contrib.auth.models.User`
+
+    :param str device_id: A device's persistent_id value.
+
+    :param string token: An OTP token to verify.
+
+    :returns: The device that accepted ``token``, if any.
+    :rtype: :class:`~django_otp.models.Device` or ``None``
+
+    """
+    from django_otp.models import Device
+
+    verified = None
+    with transaction.atomic():
+        device = Device.from_persistent_id(device_id, for_verify=True)
+        if (device is not None) and (device.user_id == user.pk) and device.verify_token(token):
+            verified = device
+
+    return verified
 
 
 def match_token(user, token):
