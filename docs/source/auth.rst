@@ -140,6 +140,17 @@ and :class:`~django_otp.forms.OTPTokenForm` is implemented in a mixin class:
 The Low-Level API
 ~~~~~~~~~~~~~~~~~
 
+More customized integrations can use these APIs to manage the verification
+process directly.
+
+.. warning::
+
+   Verifying OTP tokens should always take place inside of a transaction. If
+   you're loading the devices yourself, be sure to use
+   :meth:`~django.db.models.query.QuerySet.select_for_update` to prevent
+   concurrent access. Relevant APIs below have a ``for_verify`` parameter for
+   this purpose.
+
 .. autofunction:: django_otp.devices_for_user
 
 .. autofunction:: django_otp.user_has_device

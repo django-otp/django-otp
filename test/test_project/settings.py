@@ -3,6 +3,8 @@
 import os
 from os.path import abspath, dirname, join
 
+from django.core.exceptions import ImproperlyConfigured
+
 
 def project_path(path):
     return abspath(join(dirname(__file__), path))
@@ -27,6 +29,9 @@ elif backend == 'postgresql':
             'USER': 'postgres',
         }
     }
+else:
+    raise ImproperlyConfigured("Unrecognized value for DB_BACKEND: {}".format(backend))
+
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 

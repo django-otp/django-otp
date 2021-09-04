@@ -112,10 +112,10 @@ class Device(models.Model):
 
             device == Device.from_persistent_id(device.persistent_id)
 
-        :param bool for_verify: If `True`, we'll load the device with
+        :param bool for_verify: If ``True``, we'll load the device with
             :meth:`~django.db.models.query.QuerySet.select_for_update` to
-            prevent concurrent verifications from succeeding. In this case, it
-            must be called inside a transaction.
+            prevent concurrent verifications from succeeding. In which case,
+            this must be called inside a transaction.
 
         """
         device = None
@@ -195,7 +195,7 @@ class Device(models.Model):
         Verifies a token. As a rule, the token should no longer be valid if
         this returns ``True``.
 
-        :param string token: The OTP token provided by the user.
+        :param str token: The OTP token provided by the user.
         :rtype: bool
         """
         return False
@@ -241,7 +241,7 @@ class SideChannelDevice(Device):
 
         On success, the token is cleared and the device saved.
 
-        :param string token: The OTP token provided by the user.
+        :param str token: The OTP token provided by the user.
         :rtype: bool
 
         """

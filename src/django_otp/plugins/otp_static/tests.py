@@ -1,25 +1,16 @@
-from threading import Thread
-
 from django.contrib.admin import AdminSite
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
-from django.db import IntegrityError, connection
-from django.test import RequestFactory, skipUnlessDBFeature
+from django.db import IntegrityError
+from django.test import RequestFactory
 from django.test.utils import override_settings
 
-from django_otp.forms import OTPAuthenticationForm, OTPTokenForm
-from django_otp.tests import TestCase, ThrottlingTestMixin, TransactionTestCase
+from django_otp.forms import OTPAuthenticationForm
+from django_otp.tests import TestCase, ThrottlingTestMixin
 
 from .admin import StaticDeviceAdmin, StaticTokenInline
 from .lib import add_static_token
 from .models import StaticDevice, StaticToken
-
-
-class TestThread(Thread):
-    "Django testing quirk: threads have to close their DB connections."
-    def run(self):
-        super().run()
-        connection.close()
 
 
 class DeviceTest(TestCase):
@@ -198,47 +189,6 @@ class ThrottlingTestCase(ThrottlingTestMixin, TestCase):
 
     def invalid_token(self):
         return 'bogus'
-
-
-class ThrottlingConcurrencyTestCase(TransactionTestCase):
-    def setUp(self):
-        try:
-            self.alice = self.create_user('alice', 'password')
-            self.bob = self.create_user('bob', 'password')
-        except IntegrityError:
-            self.skipTest("Unable to create a test user.")
-        else:
-            for user in [self.alice, self.bob]:
-                user.staticdevice_set.create()
-
-    @skipUnlessDBFeature('has_select_for_update')
-    @override_settings(OTP_STATIC_THROTTLE_FACTOR=0)
-    def test_concurrent_throttle_count(self):
-        self._test_concurrency(thread_count=10, expected_failures=10)
-
-    @skipUnlessDBFeature('has_select_for_update')
-    @override_settings(OTP_STATIC_THROTTLE_FACTOR=1)
-    def test_serialized_throttling(self):
-        # After the first failure, verification will be skipped and the count
-        # will not be incremented.
-        self._test_concurrency(thread_count=10, expected_failures=1)
-
-    def _test_concurrency(self, thread_count, expected_failures):
-        forms = (
-            OTPTokenForm(device.user, None, {'otp_device': device.persistent_id, 'otp_token': 'bogus'})
-            for _ in range(thread_count)
-            for device in StaticDevice.objects.all()
-        )
-
-        threads = [TestThread(target=form.is_valid) for form in forms]
-        for thread in threads:
-            thread.start()
-        for thread in threads:
-            thread.join()
-
-        for device in StaticDevice.objects.all():
-            with self.subTest(user=device.user.get_username()):
-                self.assertEqual(device.throttling_failure_count, expected_failures)
 
 
 class StaticDeviceAdminTest(TestCase):
