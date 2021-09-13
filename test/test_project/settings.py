@@ -1,6 +1,9 @@
 # django-otp test project
 
+import os
 from os.path import abspath, dirname, join
+
+from django.core.exceptions import ImproperlyConfigured
 
 
 def project_path(path):
@@ -9,15 +12,26 @@ def project_path(path):
 
 DEBUG = True
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': project_path('db.sqlite3'),
-        'TEST': {
-            'NAME': ':memory:',
+backend = os.getenv('DB_BACKEND', 'sqlite3')
+if backend == 'sqlite3':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': project_path('db.sqlite3'),
         }
     }
-}
+elif backend == 'postgresql':
+    # SQLite lacks some features necessary for advanced concurrency tests.
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'django_otp_test',
+            'USER': 'postgres',
+        }
+    }
+else:
+    raise ImproperlyConfigured("Unrecognized value for DB_BACKEND: {}".format(backend))
+
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 

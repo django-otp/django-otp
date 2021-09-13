@@ -1,4 +1,5 @@
 from django.contrib.auth.signals import user_logged_in
+from django.db import transaction
 
 
 DEVICE_ID_SESSION_KEY = 'otp_device_id'
@@ -11,7 +12,7 @@ def login(request, device):
 
     This is called automatically any time :func:`django.contrib.auth.login` is
     called with a user having an ``otp_device`` atribute. If you use Django's
-    :func:`~django.contrib.auth.views.login` view with the django-otp
+    :class:`~django.contrib.auth.views.LoginView` view with the django-otp
     authentication forms, then you won't need to call this.
 
     :param request: The HTTP request
@@ -39,6 +40,36 @@ def _handle_auth_login(sender, request, user, **kwargs):
 user_logged_in.connect(_handle_auth_login)
 
 
+def verify_token(user, device_id, token):
+    """
+    Attempts to verify a :term:`token` against a specific device, identified by
+    :attr:`~django_otp.models.Device.persistent_id`.
+
+    This wraps the verification process in a transaction to ensure that things
+    like throttling polices are properly enforced.
+
+    :param user: The user supplying the token.
+    :type user: :class:`~django.contrib.auth.models.User`
+
+    :param str device_id: A device's persistent_id value.
+
+    :param str token: An OTP token to verify.
+
+    :returns: The device that accepted ``token``, if any.
+    :rtype: :class:`~django_otp.models.Device` or ``None``
+
+    """
+    from django_otp.models import Device
+
+    verified = None
+    with transaction.atomic():
+        device = Device.from_persistent_id(device_id, for_verify=True)
+        if (device is not None) and (device.user_id == user.pk) and device.verify_token(token):
+            verified = device
+
+    return verified
+
+
 def match_token(user, token):
     """
     Attempts to verify a :term:`token` on every device attached to the given
@@ -48,17 +79,22 @@ def match_token(user, token):
     :param user: The user supplying the token.
     :type user: :class:`~django.contrib.auth.models.User`
 
-    :param string token: An OTP token to verify.
+    :param str token: An OTP token to verify.
 
     :returns: The device that accepted ``token``, if any.
     :rtype: :class:`~django_otp.models.Device` or ``None``
     """
-    matches = (d for d in devices_for_user(user) if d.verify_token(token))
+    with transaction.atomic():
+        for device in devices_for_user(user, for_verify=True):
+            if device.verify_token(token):
+                break
+        else:
+            device = None
 
-    return next(matches, None)
+    return device
 
 
-def devices_for_user(user, confirmed=True):
+def devices_for_user(user, confirmed=True, for_verify=False):
     """
     Return an iterable of all devices registered to the given user.
 
@@ -67,9 +103,14 @@ def devices_for_user(user, confirmed=True):
     :param user: standard or custom user object.
     :type user: :class:`~django.contrib.auth.models.User`
 
-    :param confirmed: If ``None``, all matching devices are returned.
+    :param bool confirmed: If ``None``, all matching devices are returned.
         Otherwise, this can be any true or false value to limit the query
         to confirmed or unconfirmed devices, respectively.
+
+    :param bool for_verify: If ``True``, we'll load the devices with
+        :meth:`~django.db.models.query.QuerySet.select_for_update` to prevent
+        concurrent verifications from succeeding. In which case, this must be
+        called inside a transaction.
 
     :rtype: iterable
     """
@@ -77,8 +118,11 @@ def devices_for_user(user, confirmed=True):
         return
 
     for model in device_classes():
-        for device in model.objects.devices_for_user(user, confirmed=confirmed):
-            yield device
+        device_set = model.objects.devices_for_user(user, confirmed=confirmed)
+        if for_verify:
+            device_set = device_set.select_for_update()
+
+        yield from device_set
 
 
 def user_has_device(user, confirmed=True):

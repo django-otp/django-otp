@@ -90,6 +90,9 @@ class Device(models.Model):
 
     @property
     def persistent_id(self):
+        """
+        A stable device identifier for forms and APIs.
+        """
         return '{0}/{1}'.format(self.model_label(), self.id)
 
     @classmethod
@@ -103,11 +106,16 @@ class Device(models.Model):
         return '{0}.{1}'.format(cls._meta.app_label, cls._meta.model_name)
 
     @classmethod
-    def from_persistent_id(cls, persistent_id):
+    def from_persistent_id(cls, persistent_id, for_verify=False):
         """
         Loads a device from its persistent id::
 
             device == Device.from_persistent_id(device.persistent_id)
+
+        :param bool for_verify: If ``True``, we'll load the device with
+            :meth:`~django.db.models.query.QuerySet.select_for_update` to
+            prevent concurrent verifications from succeeding. In which case,
+            this must be called inside a transaction.
 
         """
         device = None
@@ -118,7 +126,10 @@ class Device(models.Model):
 
             device_cls = apps.get_model(app_label, model_name)
             if issubclass(device_cls, Device):
-                device = device_cls.objects.filter(id=int(device_id)).first()
+                device_set = device_cls.objects.filter(id=int(device_id))
+                if for_verify:
+                    device_set = device_set.select_for_update()
+                device = device_set.first()
         except (ValueError, LookupError):
             pass
 
@@ -184,7 +195,7 @@ class Device(models.Model):
         Verifies a token. As a rule, the token should no longer be valid if
         this returns ``True``.
 
-        :param string token: The OTP token provided by the user.
+        :param str token: The OTP token provided by the user.
         :rtype: bool
         """
         return False
@@ -230,7 +241,7 @@ class SideChannelDevice(Device):
 
         On success, the token is cleared and the device saved.
 
-        :param string token: The OTP token provided by the user.
+        :param str token: The OTP token provided by the user.
         :rtype: bool
 
         """
