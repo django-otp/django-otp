@@ -1,4 +1,4 @@
-Unreleased - Concurrent verification
+v1.1.0 - September 13, 2021 - Concurrent verification
 --------------------------------------------------------------------------------
 
 Where possible, all APIs now verify tokens atomically. This prevents race
