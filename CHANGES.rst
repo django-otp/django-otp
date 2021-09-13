@@ -1,3 +1,12 @@
+Unreleased - Concurrent verification
+--------------------------------------------------------------------------------
+
+Where possible, all APIs now verify tokens atomically. This prevents race
+conditions that could result in a token being verified twice as well as closing
+gaps in throttling enforcement. Low-level integrators may still need to
+:ref:`manage their own transactions <Low-Level API>`.
+
+
 v1.0.6 - May 28, 2021 - Email customization
 --------------------------------------------------------------------------------
 
