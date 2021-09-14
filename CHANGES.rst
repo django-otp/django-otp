@@ -1,3 +1,11 @@
+v1.1.1 - September 14, 2021 - Throttling message fix
+--------------------------------------------------------------------------------
+
+- `#87`_: Fix ``locked_until`` key in throttling reason map.
+
+.. _#87: https://github.com/django-otp/django-otp/issues/87
+
+
 v1.1.0 - September 13, 2021 - Concurrent verification
 --------------------------------------------------------------------------------
 
