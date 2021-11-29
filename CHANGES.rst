@@ -1,3 +1,12 @@
+v1.1.2 - November 29, 2021 - Forward compatibility
+--------------------------------------------------------------------------------
+
+- `#93`_: Default to AutoField to avoid spurious migrations.
+
+.. _#93: https://github.com/django-otp/django-otp/issues/93
+
+
+
 v1.1.1 - September 14, 2021 - Throttling message fix
 --------------------------------------------------------------------------------
 
