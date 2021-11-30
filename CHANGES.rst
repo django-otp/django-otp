@@ -1,3 +1,11 @@
+v1.1.3 - November 30, 2021 - Admin template fix
+--------------------------------------------------------------------------------
+
+- `#89`_: Use the standard `username` context variable for compatibility.
+
+.. _#89: https://github.com/django-otp/django-otp/pulls/89
+
+
 v1.1.2 - November 29, 2021 - Forward compatibility
 --------------------------------------------------------------------------------
 
