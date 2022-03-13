@@ -94,15 +94,7 @@ your normal login views, django-otp includes an
 
 .. autoclass:: django_otp.admin.OTPAdminAuthenticationForm
 
-See the Django :class:`~django.contrib.admin.AdminSite` documentation for more
-on installing custom admin sites. If you want to copy the default admin site
-into an :class:`~django_otp.admin.OTPAdminSite`, we find that the following
-works well. Note that it relies on a private property, so use this at your own
-risk::
-
-    otp_admin_site = OTPAdminSite(OTPAdminSite.name)
-    for model_cls, model_admin in admin.site._registry.iteritems():
-        otp_admin_site.register(model_cls, model_admin.__class__)
+Django has a mechanism for :ref:`overriding-default-admin-site`.
 
 .. note::
 

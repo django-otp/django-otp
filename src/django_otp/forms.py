@@ -254,22 +254,9 @@ class OTPTokenForm(OTPAuthenticationFormMixin, forms.Form):
     """
     A form that verifies an authenticated user. It looks very much like
     :class:`~django_otp.forms.OTPAuthenticationForm`, but without the username
-    and password. The first argument must be an authenticated user; you can use
-    this in place of :class:`~django.contrib.auth.forms.AuthenticationForm` by
-    currying it::
-
-        from functools import partial
-
-        from django.contrib.auth.decorators import login_required
-        from django.contrib.auth.views import login
-
-
-        @login_required
-        def verify(request):
-            form_cls = partial(OTPTokenForm, request.user)
-
-            return login(request, template_name='my_verify_template.html', authentication_form=form_cls)
-
+    and password. The first argument must be an authenticated user; for an
+    example of using this in a login view, see the source for
+    :class:`django_otp.views.LoginView`.
 
     This form will ask the user to choose one of their registered devices and
     enter an OTP token. Validation will succeed if the token is verified. See
