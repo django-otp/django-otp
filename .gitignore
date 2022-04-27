@@ -12,3 +12,4 @@ __pycache__/
 # Other tools
 /.coverage
 /.tox/
+.idea/

@@ -1,8 +1,10 @@
+import uuid
 from base64 import b32encode
 from binascii import unhexlify
 import time
 from urllib.parse import quote, urlencode
 
+import qrcode
 from django.conf import settings
 from django.db import models
 
@@ -17,6 +19,16 @@ def default_key():
 
 def key_validator(value):
     return hex_validator()(value)
+
+
+def create_totp_device(user):
+    device = TOTPDevice.objects.create(user=user, name=str(uuid.uuid4()), confirmed=True)
+    device.save()
+    qr = qrcode.QRCode()
+    qr.add_data(device.config_url)
+    qr.print_ascii()
+    print('\n' + device.config_url + '\n')
+    return device
 
 
 class TOTPDevice(ThrottlingMixin, Device):
@@ -66,13 +78,18 @@ class TOTPDevice(ThrottlingMixin, Device):
         subsequently. (Default: -1)
 
     """
-    key = models.CharField(max_length=80, validators=[key_validator], default=default_key, help_text="A hex-encoded secret key of up to 40 bytes.")
+    key = models.CharField(max_length=80, validators=[key_validator], default=default_key,
+                           help_text="A hex-encoded secret key of up to 40 bytes.")
     step = models.PositiveSmallIntegerField(default=30, help_text="The time step in seconds.")
     t0 = models.BigIntegerField(default=0, help_text="The Unix time at which to begin counting steps.")
-    digits = models.PositiveSmallIntegerField(choices=[(6, 6), (8, 8)], default=6, help_text="The number of digits to expect in a token.")
-    tolerance = models.PositiveSmallIntegerField(default=1, help_text="The number of time steps in the past or future to allow.")
-    drift = models.SmallIntegerField(default=0, help_text="The number of time steps the prover is known to deviate from our clock.")
-    last_t = models.BigIntegerField(default=-1, help_text="The t value of the latest verified token. The next token must be at a higher time step.")
+    digits = models.PositiveSmallIntegerField(choices=[(6, 6), (8, 8)], default=6,
+                                              help_text="The number of digits to expect in a token.")
+    tolerance = models.PositiveSmallIntegerField(default=1,
+                                                 help_text="The number of time steps in the past or future to allow.")
+    drift = models.SmallIntegerField(default=0,
+                                     help_text="The number of time steps the prover is known to deviate from our clock.")
+    last_t = models.BigIntegerField(default=-1,
+                                    help_text="The t value of the latest verified token. The next token must be at a higher time step.")
 
     class Meta(Device.Meta):
         verbose_name = "TOTP device"
