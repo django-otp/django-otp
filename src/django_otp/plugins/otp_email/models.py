@@ -64,7 +64,7 @@ class EmailDevice(ThrottlingMixin, SideChannelDevice):
         else:
             body = get_template(settings.OTP_EMAIL_BODY_TEMPLATE_PATH).render(context)
 
-        send_mail(settings.OTP_EMAIL_SUBJECT,
+        send_mail(str(settings.OTP_EMAIL_SUBJECT),
                   body,
                   settings.OTP_EMAIL_SENDER,
                   [self.email or self.user.email])
