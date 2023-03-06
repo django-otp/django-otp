@@ -1,3 +1,11 @@
+v1.1.5 - March 06, 2023 - Bugfix release
+--------------------------------------------------------------------------------
+
+- `#115`_: Force OTP_EMAIL_SUBJECT to be a string
+
+.. _#115: https://github.com/django-otp/django-otp/pull/115
+
+
 v1.1.4 - November 10, 2022 - Spanish translation
 --------------------------------------------------------------------------------
 
