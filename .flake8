@@ -1,6 +1,3 @@
-[metadata]
-long_description: file: README.rst
-
 [flake8]
 ignore =
        # line break after binary operator

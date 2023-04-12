@@ -1,0 +1,5 @@
+# Don't remove this file.
+#
+# When hatch builds an sdist, it includes any .gitignore and .hgignore it can
+# find here or in parent directories. To avoid information leakage, this file
+# masks any .hgignore one might have in their home directory.

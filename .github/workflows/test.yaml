@@ -1,0 +1,24 @@
+name: Run tests
+
+on:
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: actions/setup-python@v4
+      with:
+        python-version: |
+          3.7
+          3.11
+
+    - name: Install hatch
+      run: pipx install hatch
+
+    - name: Run Tests
+      run: hatch run test:run
