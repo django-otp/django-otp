@@ -2,8 +2,7 @@
 __pycache__/
 *.py[co]
 
-# setuptools
-/MANIFEST
+# builds
 /build/
 /dist/
 /docs/build/
@@ -11,4 +10,3 @@ __pycache__/
 
 # Other tools
 /.coverage
-/.tox/
