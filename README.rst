@@ -56,9 +56,9 @@ full validation suite. Everything is executed in the context of the Django
 project in test/test\_project.
 
 As a quick primer, hatch scripts can be run with ``hatch run [<env>:]<script>``.
-To run linters and tests in the default environment, just run ``hatch run
-check``. This should run tests with your default Python version and the latest
-Django. Other scripts include:
+To run linters and tests in the default environment, just run
+``hatch run check``. This should run tests with your default Python version and
+the latest Django. Other scripts include:
 
 * **manage**: Run a management command via the test project. This can be used to
   generate migrations.
@@ -74,8 +74,8 @@ specific Python versions installed for this.
 
 By default, the test project uses SQLite. Because SQLite doesn't support row
 locking, some concurrency tests will be skipped. To test against PostgreSQL in a
-wide-open local install (username postgres, no password), run ``hatch run
-postgres:test``.
+wide-open local install (username postgres, no password), run
+``hatch run postgres:test``.
 
 You can clean up the hatch environments with ``hatch env prune``, for example to
 force dependency updates.
