@@ -3,10 +3,12 @@ __pycache__/
 *.py[co]
 
 # builds
-/build/
 /dist/
 /docs/build/
-*.egg-info/
+
+# test
+*.sqlite3
+/test/config/env-*.toml
 
 # Other tools
 /.coverage

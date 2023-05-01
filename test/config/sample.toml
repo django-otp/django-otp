@@ -1,0 +1,18 @@
+# A list of plugins to add to INSTALLED_APPS. You'll need to install relevant
+# packages into your environment manually.
+plugins = []
+
+# Additional middleware to add between AuthenticationMiddleware and
+# OTPMiddleware. For more complex configs, you can override MIDDLEWARE entirely
+# under [settings].
+middleware = []
+
+# The value of DATABASES["default"].
+[database]
+ENGINE = "django.db.backends.postgresql"
+NAME = "django-otp"
+USER = "postgres"
+
+# Any other settings to add.
+[settings]
+MY_SETTING = "my-value"
