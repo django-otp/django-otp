@@ -63,6 +63,8 @@ the latest Django. Other scripts include:
 * **manage**: Run a management command via the test project. This can be used to
   generate migrations.
 * **lint**: Run all linters.
+* **fix**: Run all fixers to address linting issues. This may not fix every
+  issue reported by lint.
 * **test**: Run all tests.
 * **check**: Run linters and tests.
 * **warn**: Run tests with all warnings enabled. This is especially useful for
@@ -72,13 +74,37 @@ the latest Django. Other scripts include:
 To run the full test matrix, run ``hatch run test:run``. You will need multiple
 specific Python versions installed for this.
 
-By default, the test project uses SQLite. Because SQLite doesn't support row
-locking, some concurrency tests will be skipped. To test against PostgreSQL in a
-wide-open local install (username postgres, no password), run
-``hatch run postgres:test``.
-
 You can clean up the hatch environments with ``hatch env prune``, for example to
 force dependency updates.
+
+Configuration
+~~~~~~~~~~~~~
+
+By default, the test project uses SQLite. Because SQLite doesn't support row
+locking, some concurrency tests will be skipped. To test against PostgreSQL, you
+can add a local configuration file that points to your database.
+
+Configuration is taken from TOML files stored under ``test/config``. A config
+file named ``env-<env-name>.toml`` will be automatically applied when running
+inside a matching hatch environment. For example, ``env-default.toml`` applies
+to the default development environment and ``env-test.toml`` applies to the test
+matrix environments.
+
+With a wide-open PostgreSQL install, an ``env-test.toml`` might look like this:
+
+.. code-block:: toml
+
+   [database]
+   ENGINE = "django.db.backends.postgresql"
+   NAME = "django-otp"
+   USER = "postgres"
+
+For development, the config file can also be used to inject Django apps and
+middleware, or to override arbitrary Django settings. See
+``test/config/sample.toml`` for a full description.
+
+You can also force a specific config file by setting the environment variable
+``DJANGO_OTP_CONFIG`` to a path.
 
 
 Contributing

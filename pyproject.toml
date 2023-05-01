@@ -19,7 +19,7 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 dependencies = [
-    "django >= 2.2",
+    "django >= 3.2",
 ]
 
 [project.optional-dependencies]
@@ -46,6 +46,8 @@ dependencies = [
     "flake8 ~= 4.0",
     "freezegun ~= 1.2.0",
     "isort ~= 5.10",
+    "psycopg2",
+    "tomli >= 1.1.0; python_version < '3.11'",
 ]
 
 [tool.hatch.envs.default.env-vars]
@@ -59,6 +61,10 @@ lint = [
     "flake8 src",
     "isort -c src",
 ]
+fix = [
+    "isort src",
+]
+
 test = "python -s -m django test {args:django_otp}"
 check = ["lint", "test"]
 
@@ -67,21 +73,6 @@ cov = [
     "coverage run -m django test {args:django_otp}",
     "coverage report",
 ]
-
-
-# This runs the tests against a local PostgreSQL server in its default
-# wide-open configuration (username "postgres", no credentials). The other
-# environments will skip the concurrency tests, as SQLite doesn't support row
-# locking.
-[tool.hatch.envs.postgres]
-extra-dependencies = [
-    "psycopg2",
-]
-
-[tool.hatch.envs.postgres.env-vars]
-PYTHONPATH = "test"
-DJANGO_SETTINGS_MODULE = "test_project.settings"
-DB_BACKEND = "postgresql"
 
 
 [tool.hatch.envs.test.scripts]
@@ -134,11 +125,10 @@ open = "command xdg-open docs/build/html/index.html"
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
-[tool.hatch.build]
+[tool.hatch.build.targets.wheel]
 packages = ["src/django_otp"]
 
 [tool.hatch.build.targets.sdist]
-packages = []
 include = [
     "/src",
     "/docs",

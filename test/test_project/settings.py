@@ -1,36 +1,25 @@
 # django-otp test project
 
-import os
 from os.path import abspath, dirname, join
 
-from django.core.exceptions import ImproperlyConfigured
+from . import config
 
 
 def project_path(path):
     return abspath(join(dirname(__file__), path))
 
 
+cfg = config.load()
+
+
 DEBUG = True
 
-backend = os.getenv('DB_BACKEND', 'sqlite3')
-if backend == 'sqlite3':
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': project_path('db.sqlite3'),
-        }
+DATABASES = {
+    'default': cfg.get('database') or {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': project_path('db.sqlite3'),
     }
-elif backend == 'postgresql':
-    # SQLite lacks some features necessary for advanced concurrency tests.
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'django_otp_test',
-            'USER': 'postgres',
-        }
-    }
-else:
-    raise ImproperlyConfigured("Unrecognized value for DB_BACKEND: {}".format(backend))
+}
 
 
 INSTALLED_APPS = [
@@ -48,16 +37,24 @@ INSTALLED_APPS = [
     'django_otp.plugins.otp_totp',
 ]
 
-MIDDLEWARE = [
+INSTALLED_APPS.extend(cfg.get('plugins', []))
+
+
+middleware_pre = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+]
+
+middleware_post = [
     'django_otp.middleware.OTPMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+MIDDLEWARE = middleware_pre + cfg.get('middleware', []) + middleware_post
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
@@ -84,10 +81,13 @@ TEMPLATES = [
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-SECRET_KEY = 'PWuluw4x48GkT7JDPzlDQsBJC8pjIIiqodW9MuMYcU315YEkGJL41i5qooJsg3Tt'
+SECRET_KEY = 'test-key'
 
 ROOT_URLCONF = 'test_project.urls'
 
 STATIC_URL = '/static/'
 
 USE_TZ = True
+
+for k, v in cfg.get('settings', {}).items():
+    globals()[k] = v

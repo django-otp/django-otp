@@ -1,0 +1,6 @@
+# Configuration for our GitHub workflow.
+[database]
+ENGINE = "django.db.backends.postgresql"
+NAME = "django-otp"
+USER = "postgres"
+PASSWORD = "postgres"

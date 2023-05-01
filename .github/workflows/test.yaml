@@ -7,18 +7,32 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
 
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - uses: actions/setup-python@v4
-      with:
-        python-version: |
-          3.7
-          3.11
+      - uses: actions/setup-python@v4
+        with:
+          python-version: |
+            3.7
+            3.11
 
-    - name: Install hatch
-      run: pipx install hatch
+      - name: Install hatch
+        run: pipx install hatch
 
-    - name: Run Tests
-      run: hatch run test:run
+      - name: Run Tests
+        run: hatch run test:run
+        env:
+          DJANGO_OTP_CONFIG: test/config/github.toml
