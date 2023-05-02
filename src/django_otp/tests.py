@@ -332,11 +332,11 @@ class LoginViewTestCase(TestCase):
             'next': '/',
         }
 
-        response = self.client.post('/login/', params)
+        response = self.client.post(reverse('login'), params)
         self.assertRedirects(response, '/')
 
         response = self.client.get('/')
-        self.assertContains(response, self.alice.get_username())
+        self.assertInHTML(f'<span id="username">{self.alice.get_username()}</span>', response.content.decode(response.charset))
 
     def test_verify(self):
         device = self.alice.staticdevice_set.get()
@@ -350,11 +350,11 @@ class LoginViewTestCase(TestCase):
 
         self.client.login(username=self.alice.get_username(), password='password')
 
-        response = self.client.post('/login/', params)
+        response = self.client.post(reverse('login-otp'), params)
         self.assertRedirects(response, '/')
 
         response = self.client.get('/')
-        self.assertContains(response, self.alice.get_username())
+        self.assertInHTML(f'<span id="username">{self.alice.get_username()}</span>', response.content.decode(response.charset))
 
 
 @skipUnlessDBFeature('has_select_for_update')

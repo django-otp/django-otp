@@ -1,0 +1,56 @@
+{# vim: set ft=htmldjango sts=2 sw=2 #}
+<nav class="navbar navbar-expand-lg bg-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{% url "home" %}">django-otp</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-between" id="navbarSupportedContent">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+            Authenticated views
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="nav-link" href="{% url "require-login" %}">Require login</a></li>
+            <li><a class="nav-link" href="{% url "require-otp" %}">Require token</a></li>
+            <li><a class="nav-link" href="{% url "require-login-then-otp" %}">Require token (2 step)</a></li>
+          </ul>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+            Admin
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="nav-link" href="{% url "admin:index" %}">Plain</a></li>
+            <li><a class="nav-link" href="{% url "otpadmin:index" %}">Verified</a></li>
+          </ul>
+        </li>
+      </ul>
+      <ul class="navbar-nav">
+        <a href="{% url "about" %}" class="nav-link">
+          <i class="bi-question-circle"></i>
+        </a>
+        {% if user.is_authenticated %}
+        <li class="nav-item">
+          <form method="post" action="{% url "logout" %}">
+            {% csrf_token %}
+            <input type="submit" value="Log out" class="btn nav-link">
+          </form>
+        </li>
+        {% else %}
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+            Log in
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="nav-link" href="{% url "login" %}">Plain</a></li>
+            <li><a class="nav-link" href="{% url "login-otp" %}">Verified</a></li>
+          </ul>
+        </li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>
+

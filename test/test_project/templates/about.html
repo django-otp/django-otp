@@ -1,0 +1,18 @@
+{% extends "root.html" %}
+
+{% block main %}
+<h1 class="display-2 mb-4">About</h1>
+
+<p>
+This is a simple demo app for development and testing of django-otp. The home
+page just displays your current authentication status. The navbar contains
+links to views with different combinations of decorators to force
+authentication and/or verification. All views redirect to the home page, where
+you can see the result.
+</p>
+
+<p>
+There are also links to the admin site (with and without OTP required), plus
+links directly to the login page (with out without OTP required).
+</p>
+{% endblock %}

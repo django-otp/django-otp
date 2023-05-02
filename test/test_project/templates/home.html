@@ -1,0 +1,32 @@
+{% extends "root.html" %}
+
+
+{% block main %}
+<h1 class="display-2 mb-4">Status</h1>
+
+<table class="table">
+  <tbody>
+    <tr>
+      <th scope="row">Username</th>
+      <td>
+        {% if user.is_authenticated %}
+        <span id="username">{{ user.get_username }}</span>
+        {% else %}
+        <i>anonymous</i>
+        {% endif %}
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Verified by</th>
+      <td>
+        {% if user.otp_device %}
+        {{ user.otp_device }}<br>
+        <span id="otp_device">{{ user.otp_device.persistent_id }}</span>
+        {% else %}
+        <i>none</i>
+        {% endif %}
+      </td>
+    </tr>
+  </tbody>
+</table>
+{% endblock %}

@@ -2,6 +2,8 @@
 
 from os.path import abspath, dirname, join
 
+from django.urls import reverse_lazy
+
 from . import config
 
 
@@ -86,6 +88,12 @@ SECRET_KEY = 'test-key'
 ROOT_URLCONF = 'test_project.urls'
 
 STATIC_URL = '/static/'
+
+LOGIN_URL = reverse_lazy('login')
+LOGIN_REDIRECT_URL = reverse_lazy('home')
+LOGOUT_REDIRECT_URL = reverse_lazy('home')
+
+OTP_LOGIN_URL = reverse_lazy('login-otp')
 
 USE_TZ = True
 
