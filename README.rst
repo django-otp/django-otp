@@ -77,6 +77,11 @@ specific Python versions installed for this.
 You can clean up the hatch environments with ``hatch env prune``, for example to
 force dependency updates.
 
+The project under ``test`` can be run as a simple interactive test environment.
+Run ``hatch run manage runserver`` and open it in a browser. This has an
+implementation of the login form and views with different combinations of
+decorators, which you can experiment with or use to test changes.
+
 Configuration
 ~~~~~~~~~~~~~
 

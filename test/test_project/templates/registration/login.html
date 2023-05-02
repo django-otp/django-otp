@@ -1,0 +1,33 @@
+{% extends "root.html" %}
+
+
+{% block main %}
+{% if form.username %}
+<h1 class="display-2 mb-4">Log in</h1>
+{% elif form.otp_token %}
+<h1 class="display-2 mb-4">Verify</h1>
+{% endif %}
+
+{% for error in form.non_field_errors %}
+<div class="alert alert-danger">{{ error }}</div>
+{% endfor %}
+<form method="POST">
+  {% csrf_token %}
+  {% if form.username %}
+  <div class="mb-3">{% include "bs5/input.html" with field=form.username %}</div>
+  {% endif %}
+  {% if form.password %}
+  <div class="mb-3">{% include "bs5/input.html" with field=form.password type="password" %}</div>
+  {% endif %}
+  {% if form.otp_device and form.get_user %}
+  <div class="mb-3">{% include "bs5/select.html" with field=form.otp_device %}</div>
+  {% endif %}
+  {% if form.otp_token %}
+  <div class="mb-3">{% include "bs5/input.html" with field=form.otp_token %}</div>
+  {% endif %}
+  <div class="mb-3 d-flex justify-content-end">
+    <input type="submit" class="btn btn-primary" value="Log in">
+    {% if form.otp_token and form.get_user %}<input type="submit" class="btn btn-secondary order-first me-2" name="otp_challenge" value="Get Challenge">{% endif %}
+  </div>
+</form>
+{% endblock %}

@@ -1,0 +1,9 @@
+{# vim: set ft=htmldjango sw=2 sts=2 #}
+<label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+<input type="{{ type|default:"text" }}" name="{{ field.html_name }}" value="{{ field.value|default_if_none:"" }}" class="form-control" id="{{ field.id }}">
+{% if field.help_text %}
+<div class="form-text">{{ field.help_text }}</div>
+{% endif %}
+{% for error in field.errors %}
+<div class="invalid-feedback">{{ error }}</div>
+{% endfor %}
