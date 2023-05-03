@@ -1,5 +1,6 @@
 from datetime import timedelta
 from doctest import DocTestSuite
+from io import StringIO
 import pickle
 from threading import Thread
 import unittest
@@ -8,6 +9,8 @@ from freezegun import freeze_time
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
+from django.core.management import call_command
+from django.core.management.base import CommandError
 from django.db import IntegrityError, connection
 from django.test import RequestFactory
 from django.test import TestCase as DjangoTestCase
@@ -21,7 +24,7 @@ from django_otp import DEVICE_ID_SESSION_KEY, match_token, oath, user_has_device
 from django_otp.forms import OTPTokenForm
 from django_otp.middleware import OTPMiddleware
 from django_otp.models import VerifyNotAllowed
-from django_otp.plugins.otp_static.models import StaticDevice
+from django_otp.plugins.otp_static.models import StaticDevice, StaticToken
 
 
 def load_tests(loader, tests, pattern):
@@ -442,3 +445,45 @@ class ConcurrencyTestCase(TransactionTestCase):
         for device in StaticDevice.objects.all():
             with self.subTest(user=device.user.get_username()):
                 self.assertEqual(device.throttling_failure_count, expected_failures)
+
+
+class AddStaticTokenTestCase(TestCase):
+    def setUp(self):
+        try:
+            self.alice = self.create_user('alice', 'password')
+            self.bob = self.create_user('bob', 'password', is_staff=True)
+        except IntegrityError:
+            self.skipTest("Unable to create a test user.")
+
+    def test_no_user(self):
+        with self.assertRaises(CommandError):
+            call_command('addstatictoken', 'bogus')
+
+    def test_new_device(self):
+        out = StringIO()
+        call_command('addstatictoken', 'alice', stdout=out)
+        token = out.getvalue().strip()
+
+        static_token = StaticToken.objects.select_related('device__user').get(token=token)
+        self.assertEqual(static_token.device.user, self.alice)
+
+    def test_existing_device(self):
+        device = self.alice.staticdevice_set.create()
+
+        out = StringIO()
+        call_command('addstatictoken', 'alice', stdout=out)
+        token = out.getvalue().strip()
+
+        static_token = StaticToken.objects.select_related('device__user').get(token=token)
+        self.assertEqual(static_token.device, device)
+
+    def test_explicit_token(self):
+        device = self.alice.staticdevice_set.create()
+
+        out = StringIO()
+        call_command('addstatictoken', 'alice', '-t', 'secret-token', stdout=out)
+        token = out.getvalue().strip()
+
+        static_token = StaticToken.objects.select_related('device__user').get(token=token)
+        self.assertEqual(token, 'secret-token')
+        self.assertEqual(static_token.device, device)

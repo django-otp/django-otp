@@ -119,23 +119,8 @@ As mentioned above, this project is stable and mature. Issues and pull requests
 are welcome for important bugs and improvements. For non-trivial changes, it's
 often a good idea to start by opening an issue to track the need for a change
 and then optionally open a pull request with a proposed resolution. Issues and
-pull requests should also be focused on a single thing. Pull requests that
-bundle together a bunch of loosely related commits are unlikely to go anywhere.
-
-Another good rule of thumb—for any project, but especially a mature one—is to
-keep changes as simple as possible. In particular, there should be a high bar
-for adding new dependencies. Although it can't be ruled out, it seems highly
-unlikely that a new runtime dependency will ever be added. New testing
-dependencies are more likely, but only if there's no other way to address an
-important need.
-
-If there's a development tool that you'd like to use with this project, the
-first step is to try to update config files (setup.cfg or similar) to integrate
-the tool with the existing code. A bit of configuration glue for popular tools
-should always be safe. If that's not possible, we can consider modifying the
-code to be compatible with a broader range of tools (without breaking any
-existing compatibilities). Only as a last resort would a new testing or
-development tool be incorporated into the project as a dependency.
+pull requests should be focused on a single thing: pull requests that bundle
+together a bunch of loosely related commits are unlikely to go anywhere.
 
 It's also good to remember that writing the code is typically the least part of
 the work. This is true for software development in general, but especially a
