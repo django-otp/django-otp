@@ -21,13 +21,16 @@ class OTPMiddleware:
     verified.  As a convenience, this also installs ``user.is_verified()``,
     which returns ``True`` if ``user.otp_device`` is not ``None``.
     """
+
     def __init__(self, get_response=None):
         self.get_response = get_response
 
     def __call__(self, request):
         user = getattr(request, 'user', None)
         if user is not None:
-            request.user = SimpleLazyObject(functools.partial(self._verify_user, request, user))
+            request.user = SimpleLazyObject(
+                functools.partial(self._verify_user, request, user)
+            )
 
         return self.get_response(request)
 
@@ -40,7 +43,11 @@ class OTPMiddleware:
 
         if user.is_authenticated:
             persistent_id = request.session.get(DEVICE_ID_SESSION_KEY)
-            device = self._device_from_persistent_id(persistent_id) if persistent_id else None
+            device = (
+                self._device_from_persistent_id(persistent_id)
+                if persistent_id
+                else None
+            )
 
             if (device is not None) and (device.user_id != user.pk):
                 device = None

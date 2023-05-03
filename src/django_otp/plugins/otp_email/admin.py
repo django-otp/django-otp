@@ -9,13 +9,20 @@ class EmailDeviceAdmin(admin.ModelAdmin):
     :class:`~django.contrib.admin.ModelAdmin` for
     :class:`~django_otp.plugins.otp_email.models.EmailDevice`.
     """
+
     fieldsets = [
-        ('Identity', {
-            'fields': ['user', 'name', 'confirmed'],
-        }),
-        ('Configuration', {
-            'fields': ['email'],
-        }),
+        (
+            'Identity',
+            {
+                'fields': ['user', 'name', 'confirmed'],
+            },
+        ),
+        (
+            'Configuration',
+            {
+                'fields': ['email'],
+            },
+        ),
     ]
     raw_id_fields = ['user']
 

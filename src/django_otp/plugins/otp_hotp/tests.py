@@ -23,20 +23,19 @@ class HOTPDeviceMixin:
     """
     A TestCase helper that gives us a HOTPDevice to work with.
     """
+
     # The next three tokens
     tokens = [782373, 313268, 307722]
     key = 'd2e8a68036f68960b1c30532bb6c56da5934d879'
 
     def setUp(self):
         try:
-            alice = self.create_user(
-                'alice', 'password', email='alice@example.com')
+            alice = self.create_user('alice', 'password', email='alice@example.com')
         except IntegrityError:
             self.skipTest("Unable to create test user.")
         else:
             self.device = alice.hotpdevice_set.create(
-                key=self.key, digits=6,
-                tolerance=1, counter=0
+                key=self.key, digits=6, tolerance=1, counter=0
             )
 
 
@@ -128,6 +127,7 @@ class AuthFormTest(TestCase):
     """
     Test auth form with HOTP tokens
     """
+
     tokens = HOTPTest.tokens
     key = HOTPTest.key
 
@@ -138,8 +138,7 @@ class AuthFormTest(TestCase):
             self.skipTest("Unable to create test user.")
         else:
             self.device = alice.hotpdevice_set.create(
-                key=self.key, digits=6,
-                tolerance=1, counter=0
+                key=self.key, digits=6, tolerance=1, counter=0
             )
 
     def test_no_token(self):
@@ -194,7 +193,10 @@ class AuthFormTest(TestCase):
             # Should fail even with good data:
             form2 = OTPAuthenticationForm(None, good_data)
             self.assertFalse(form2.is_valid())
-            self.assertIn('Verification temporarily disabled because of 1 failed attempt', form2.errors['__all__'][0])
+            self.assertIn(
+                'Verification temporarily disabled because of 1 failed attempt',
+                form2.errors['__all__'][0],
+            )
 
             # Fail again after throttling expired:
             frozen_time.tick(timedelta(seconds=1.1))
@@ -205,7 +207,10 @@ class AuthFormTest(TestCase):
             # Test n=2 error message:
             form4 = OTPAuthenticationForm(None, bad_data)
             self.assertFalse(form4.is_valid())
-            self.assertIn('Verification temporarily disabled because of 2 failed attempts', form4.errors['__all__'][0])
+            self.assertIn(
+                'Verification temporarily disabled because of 2 failed attempts',
+                form4.errors['__all__'][0],
+            )
 
             # Pass this time:
             frozen_time.tick(timedelta(seconds=2.1))
@@ -220,15 +225,16 @@ class HOTPAdminTest(TestCase):
         """
         try:
             self.admin = self.create_user(
-                'admin', 'password', email='admin@example.com',
-                is_staff=True
+                'admin', 'password', email='admin@example.com', is_staff=True
             )
         except IntegrityError:
             self.skipTest("Unable to create test user.")
         else:
             self.device = self.admin.hotpdevice_set.create(
-                key='d2e8a68036f68960b1c30532bb6c56da5934d879', digits=6,
-                tolerance=1, counter=0
+                key='d2e8a68036f68960b1c30532bb6c56da5934d879',
+                digits=6,
+                tolerance=1,
+                counter=0,
             )
         self.device_admin = HOTPDeviceAdmin(HOTPDevice, AdminSite())
         self.get_request = RequestFactory().get('/')
@@ -237,7 +243,9 @@ class HOTPAdminTest(TestCase):
     def test_anonymous(self):
         for suffix in ['config', 'qrcode']:
             with self.subTest(view=suffix):
-                url = reverse('admin:otp_hotp_hotpdevice_' + suffix, kwargs={'pk': self.device.pk})
+                url = reverse(
+                    'admin:otp_hotp_hotpdevice_' + suffix, kwargs={'pk': self.device.pk}
+                )
                 response = self.client.get(url)
                 self.assertEqual(response.status_code, 302)
 
@@ -246,7 +254,9 @@ class HOTPAdminTest(TestCase):
 
         for suffix in ['config', 'qrcode']:
             with self.subTest(view=suffix):
-                url = reverse('admin:otp_hotp_hotpdevice_' + suffix, kwargs={'pk': self.device.pk})
+                url = reverse(
+                    'admin:otp_hotp_hotpdevice_' + suffix, kwargs={'pk': self.device.pk}
+                )
                 response = self.client.get(url)
                 self.assertEqual(response.status_code, 403)
 
@@ -256,7 +266,9 @@ class HOTPAdminTest(TestCase):
 
         for suffix in ['config', 'qrcode']:
             with self.subTest(view=suffix):
-                url = reverse('admin:otp_hotp_hotpdevice_' + suffix, kwargs={'pk': self.device.pk})
+                url = reverse(
+                    'admin:otp_hotp_hotpdevice_' + suffix, kwargs={'pk': self.device.pk}
+                )
                 response = self.client.get(url)
                 self.assertEqual(response.status_code, 200)
 
@@ -266,7 +278,9 @@ class HOTPAdminTest(TestCase):
 
         for suffix in ['config', 'qrcode']:
             with self.subTest(view=suffix):
-                url = reverse('admin:otp_hotp_hotpdevice_' + suffix, kwargs={'pk': self.device.pk})
+                url = reverse(
+                    'admin:otp_hotp_hotpdevice_' + suffix, kwargs={'pk': self.device.pk}
+                )
                 response = self.client.get(url)
                 self.assertEqual(response.status_code, 200)
 
@@ -349,7 +363,9 @@ class HOTPAdminTest(TestCase):
     def _get_fields(self, device):
         return {
             field
-            for fieldset in self.device_admin.get_fieldsets(self.get_request, obj=device)
+            for fieldset in self.device_admin.get_fieldsets(
+                self.get_request, obj=device
+            )
             for field in fieldset[1]['fields']
         }
 

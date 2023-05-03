@@ -10,12 +10,12 @@ from .conf import settings
 
 
 def default_key():  # pragma: no cover
-    """ Obsolete code here for migrations. """
+    """Obsolete code here for migrations."""
     return random_hex(20)
 
 
 def key_validator(value):  # pragma: no cover
-    """ Obsolete code here for migrations. """
+    """Obsolete code here for migrations."""
     return hex_validator()(value)
 
 
@@ -37,11 +37,12 @@ class EmailDevice(ThrottlingMixin, SideChannelDevice):
         *EmailField*: An alternative email address to send the tokens to.
 
     """
+
     email = models.EmailField(
         max_length=254,
         blank=True,
         null=True,
-        help_text='Optional alternative email address to send tokens to'
+        help_text='Optional alternative email address to send tokens to',
     )
 
     def get_throttle_factor(self):
@@ -64,10 +65,12 @@ class EmailDevice(ThrottlingMixin, SideChannelDevice):
         else:
             body = get_template(settings.OTP_EMAIL_BODY_TEMPLATE_PATH).render(context)
 
-        send_mail(str(settings.OTP_EMAIL_SUBJECT),
-                  body,
-                  settings.OTP_EMAIL_SENDER,
-                  [self.email or self.user.email])
+        send_mail(
+            str(settings.OTP_EMAIL_SUBJECT),
+            body,
+            settings.OTP_EMAIL_SENDER,
+            [self.email or self.user.email],
+        )
 
         message = "sent by email"
 

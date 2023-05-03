@@ -8,6 +8,7 @@ class Settings:
     instance will contain all of our settings as attributes, with default values
     if they are not specified by the configuration.
     """
+
     @cached_property
     def defaults(self):
         return {

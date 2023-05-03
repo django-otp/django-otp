@@ -22,6 +22,7 @@ class OTPAdminAuthenticationForm(AdminAuthenticationForm, OTPAuthenticationFormM
     that solicits an OTP token. This has the same behavior as
     :class:`~django_otp.forms.OTPAuthenticationForm`.
     """
+
     otp_device = forms.CharField(required=False, widget=forms.Select)
     otp_token = forms.CharField(required=False)
 
@@ -44,6 +45,7 @@ class OTPAdminSite(AdminSite):
     treated as if :attr:`~django.contrib.auth.models.User.is_staff` is
     ``False``.
     """
+
     #: The default instance name of this admin site. You should instantiate
     #: this class as ``OTPAdminSite(OTPAdminSite.name)`` to make sure the admin
     #: templates render the correct URLs.

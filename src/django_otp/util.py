@@ -32,6 +32,7 @@ def hex_validator(length=0):
         ...
     ValidationError: ['0123456789abcdef does not represent exactly 9 bytes.']
     """
+
     def _validator(value):
         try:
             if isinstance(value, str):
@@ -42,7 +43,9 @@ def hex_validator(length=0):
             raise ValidationError('{0} is not valid hex-encoded data.'.format(value))
 
         if (length > 0) and (len(value) != length * 2):
-            raise ValidationError('{0} does not represent exactly {1} bytes.'.format(value, length))
+            raise ValidationError(
+                '{0} does not represent exactly {1} bytes.'.format(value, length)
+            )
 
     return _validator
 

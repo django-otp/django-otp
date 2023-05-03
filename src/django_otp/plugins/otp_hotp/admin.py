@@ -16,6 +16,7 @@ class HOTPDeviceAdmin(admin.ModelAdmin):
     :class:`~django.contrib.admin.ModelAdmin` for
     :class:`~django_otp.plugins.otp_hotp.models.HOTPDevice`.
     """
+
     list_display = ['user', 'name', 'confirmed']
 
     raw_id_fields = ['user']
@@ -36,26 +37,44 @@ class HOTPDeviceAdmin(admin.ModelAdmin):
         else:
             configuration_fields = ['key', 'digits', 'tolerance']
         fieldsets = [
-            ('Identity', {
-                'fields': ['user', 'name', 'confirmed'],
-            }),
-            ('Configuration', {
-                'fields': configuration_fields,
-            }),
-            ('State', {
-                'fields': ['counter'],
-            }),
-            ('Throttling', {
-                'fields': ['throttling_failure_timestamp', 'throttling_failure_count'],
-            }),
+            (
+                'Identity',
+                {
+                    'fields': ['user', 'name', 'confirmed'],
+                },
+            ),
+            (
+                'Configuration',
+                {
+                    'fields': configuration_fields,
+                },
+            ),
+            (
+                'State',
+                {
+                    'fields': ['counter'],
+                },
+            ),
+            (
+                'Throttling',
+                {
+                    'fields': [
+                        'throttling_failure_timestamp',
+                        'throttling_failure_count',
+                    ],
+                },
+            ),
         ]
         # Show the QR code link only for existing objects when sensitive data
         # is not hidden.
         if not settings.OTP_ADMIN_HIDE_SENSITIVE_DATA and obj:
             fieldsets.append(
-                (None, {
-                    'fields': ['qrcode_link'],
-                }),
+                (
+                    None,
+                    {
+                        'fields': ['qrcode_link'],
+                    },
+                ),
             )
         return fieldsets
 
@@ -77,6 +96,7 @@ class HOTPDeviceAdmin(admin.ModelAdmin):
             link = ''
 
         return link
+
     qrcode_link.short_description = "QR Code"
 
     #
@@ -85,8 +105,16 @@ class HOTPDeviceAdmin(admin.ModelAdmin):
 
     def get_urls(self):
         urls = [
-            path('<int:pk>/config/', self.admin_site.admin_view(self.config_view), name='otp_hotp_hotpdevice_config'),
-            path('<int:pk>/qrcode/', self.admin_site.admin_view(self.qrcode_view), name='otp_hotp_hotpdevice_qrcode'),
+            path(
+                '<int:pk>/config/',
+                self.admin_site.admin_view(self.config_view),
+                name='otp_hotp_hotpdevice_config',
+            ),
+            path(
+                '<int:pk>/qrcode/',
+                self.admin_site.admin_view(self.qrcode_view),
+                name='otp_hotp_hotpdevice_qrcode',
+            ),
         ] + super().get_urls()
 
         return urls
@@ -118,7 +146,9 @@ class HOTPDeviceAdmin(admin.ModelAdmin):
             import qrcode
             import qrcode.image.svg
 
-            img = qrcode.make(device.config_url, image_factory=qrcode.image.svg.SvgImage)
+            img = qrcode.make(
+                device.config_url, image_factory=qrcode.image.svg.SvgImage
+            )
             response = HttpResponse(content_type='image/svg+xml')
             img.save(response)
         except ImportError:

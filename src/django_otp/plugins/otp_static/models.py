@@ -24,6 +24,7 @@ class StaticDevice(ThrottlingMixin, Device):
         The RelatedManager for our tokens.
 
     """
+
     def get_throttle_factor(self):
         return getattr(settings, 'OTP_STATIC_THROTTLE_FACTOR', 1)
 
@@ -39,7 +40,7 @@ class StaticDevice(ThrottlingMixin, Device):
         else:
             match = None
 
-        return (match is not None)
+        return match is not None
 
 
 class StaticToken(models.Model):
@@ -54,7 +55,10 @@ class StaticToken(models.Model):
 
         *CharField*: A random string up to 16 characters.
     """
-    device = models.ForeignKey(StaticDevice, related_name='token_set', on_delete=models.CASCADE)
+
+    device = models.ForeignKey(
+        StaticDevice, related_name='token_set', on_delete=models.CASCADE
+    )
     token = models.CharField(max_length=16, db_index=True)
 
     @staticmethod

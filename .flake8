@@ -4,3 +4,5 @@ ignore =
        W504
        # line too long
        E501
+       # line break before binary operator
+       W503
