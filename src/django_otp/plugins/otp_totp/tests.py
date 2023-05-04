@@ -20,8 +20,20 @@ class TOTPDeviceMixin:
     """
     A TestCase helper that gives us a TOTPDevice to work with.
     """
+
     # The next ten tokens
-    tokens = [179225, 656163, 839400, 154567, 346912, 471576, 45675, 101397, 491039, 784503]
+    tokens = [
+        179225,
+        656163,
+        839400,
+        154567,
+        346912,
+        471576,
+        45675,
+        101397,
+        491039,
+        784503,
+    ]
 
     def setUp(self):
         """
@@ -29,13 +41,18 @@ class TOTPDeviceMixin:
         """
         try:
             self.alice = self.create_user(
-                'alice', 'password', email='alice@example.com')
+                'alice', 'password', email='alice@example.com'
+            )
         except IntegrityError:
             self.skipTest("Unable to create the test user.")
         else:
             self.device = self.alice.totpdevice_set.create(
-                key='2a2bbba1092ffdd25a328ad1a0a5f5d61d7aacc4', step=30,
-                t0=int(time() - (30 * 3)), digits=6, tolerance=0, drift=0
+                key='2a2bbba1092ffdd25a328ad1a0a5f5d61d7aacc4',
+                step=30,
+                t0=int(time() - (30 * 3)),
+                digits=6,
+                tolerance=0,
+                drift=0,
             )
 
 
@@ -147,15 +164,18 @@ class TOTPAdminTest(TestCase):
         """
         try:
             self.admin = self.create_user(
-                'admin', 'password', email='admin@example.com',
-                is_staff=True
+                'admin', 'password', email='admin@example.com', is_staff=True
             )
         except IntegrityError:
             self.skipTest("Unable to create the test user.")
         else:
             self.device = self.admin.totpdevice_set.create(
-                key='2a2bbba1092ffdd25a328ad1a0a5f5d61d7aacc4', step=30,
-                t0=int(time() - (30 * 3)), digits=6, tolerance=0, drift=0
+                key='2a2bbba1092ffdd25a328ad1a0a5f5d61d7aacc4',
+                step=30,
+                t0=int(time() - (30 * 3)),
+                digits=6,
+                tolerance=0,
+                drift=0,
             )
         self.device_admin = TOTPDeviceAdmin(TOTPDevice, AdminSite())
         self.get_request = RequestFactory().get('/')
@@ -164,7 +184,9 @@ class TOTPAdminTest(TestCase):
     def test_anonymous(self):
         for suffix in ['config', 'qrcode']:
             with self.subTest(view=suffix):
-                url = reverse('admin:otp_totp_totpdevice_' + suffix, kwargs={'pk': self.device.pk})
+                url = reverse(
+                    'admin:otp_totp_totpdevice_' + suffix, kwargs={'pk': self.device.pk}
+                )
                 response = self.client.get(url)
                 self.assertEqual(response.status_code, 302)
 
@@ -173,7 +195,9 @@ class TOTPAdminTest(TestCase):
 
         for suffix in ['config', 'qrcode']:
             with self.subTest(view=suffix):
-                url = reverse('admin:otp_totp_totpdevice_' + suffix, kwargs={'pk': self.device.pk})
+                url = reverse(
+                    'admin:otp_totp_totpdevice_' + suffix, kwargs={'pk': self.device.pk}
+                )
                 response = self.client.get(url)
                 self.assertEqual(response.status_code, 403)
 
@@ -183,7 +207,9 @@ class TOTPAdminTest(TestCase):
 
         for suffix in ['config', 'qrcode']:
             with self.subTest(view=suffix):
-                url = reverse('admin:otp_totp_totpdevice_' + suffix, kwargs={'pk': self.device.pk})
+                url = reverse(
+                    'admin:otp_totp_totpdevice_' + suffix, kwargs={'pk': self.device.pk}
+                )
                 response = self.client.get(url)
                 self.assertEqual(response.status_code, 200)
 
@@ -193,7 +219,9 @@ class TOTPAdminTest(TestCase):
 
         for suffix in ['config', 'qrcode']:
             with self.subTest(view=suffix):
-                url = reverse('admin:otp_totp_totpdevice_' + suffix, kwargs={'pk': self.device.pk})
+                url = reverse(
+                    'admin:otp_totp_totpdevice_' + suffix, kwargs={'pk': self.device.pk}
+                )
                 response = self.client.get(url)
                 self.assertEqual(response.status_code, 200)
 
@@ -276,7 +304,9 @@ class TOTPAdminTest(TestCase):
     def _get_fields(self, device):
         return {
             field
-            for fieldset in self.device_admin.get_fieldsets(self.get_request, obj=device)
+            for fieldset in self.device_admin.get_fieldsets(
+                self.get_request, obj=device
+            )
             for field in fieldset[1]['fields']
         }
 

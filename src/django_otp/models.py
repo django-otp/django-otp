@@ -15,6 +15,7 @@ class DeviceManager(models.Manager):
     The :class:`~django.db.models.Manager` object installed as
     ``Device.objects``.
     """
+
     def devices_for_user(self, user, confirmed=None):
         """
         Returns a queryset for all devices of this class that belong to the
@@ -71,9 +72,18 @@ class Device(models.Model):
 
         A :class:`~django_otp.models.DeviceManager`.
     """
-    user = models.ForeignKey(getattr(settings, 'AUTH_USER_MODEL', 'auth.User'), help_text="The user that this device belongs to.", on_delete=models.CASCADE)
-    name = models.CharField(max_length=64, help_text="The human-readable name of this device.")
-    confirmed = models.BooleanField(default=True, help_text="Is this device ready for use?")
+
+    user = models.ForeignKey(
+        getattr(settings, 'AUTH_USER_MODEL', 'auth.User'),
+        help_text="The user that this device belongs to.",
+        on_delete=models.CASCADE,
+    )
+    name = models.CharField(
+        max_length=64, help_text="The human-readable name of this device."
+    )
+    confirmed = models.BooleanField(
+        default=True, help_text="Is this device ready for use?"
+    )
 
     objects = DeviceManager()
 
@@ -164,6 +174,7 @@ class Device(models.Model):
             trap ``Exception`` and report it to the user.
         """
         return None
+
     generate_challenge.stub = True
 
     def verify_is_allowed(self):
@@ -209,10 +220,11 @@ class SideChannelDevice(Device):
     concrete devices only have to implement delivery.
 
     """
+
     token = models.CharField(max_length=16, blank=True, null=True)
     valid_until = models.DateTimeField(
         default=timezone.now,
-        help_text="The timestamp of the moment of expiry of the saved token."
+        help_text="The timestamp of the moment of expiry of the saved token.",
     )
 
     class Meta:
@@ -247,7 +259,11 @@ class SideChannelDevice(Device):
         """
         _now = timezone.now()
 
-        if (self.token is not None) and (token == self.token) and (_now < self.valid_until):
+        if (
+            (self.token is not None)
+            and (token == self.token)
+            and (_now < self.valid_until)
+        ):
             self.token = None
             self.valid_until = _now
             self.save()
@@ -270,6 +286,7 @@ class VerifyNotAllowed:
        in member ``failure_count``
 
     """
+
     N_FAILED_ATTEMPTS = 'N_FAILED_ATTEMPTS'
 
 
@@ -278,13 +295,16 @@ class ThrottlingMixin(models.Model):
     Mixin class for models that need throttling behaviour. Implements
     exponential back-off.
     """
+
     # This mixin is not publicly documented, but is used internally to avoid
     # code duplication. Subclasses must implement get_throttle_factor(), and
     # must use the verify_is_allowed(), throttle_reset() and
     # throttle_increment() methods from within their verify_token() method.
     throttling_failure_timestamp = models.DateTimeField(
-        null=True, blank=True, default=None,
-        help_text="A timestamp of the last failed verification attempt. Null if last attempt succeeded."
+        null=True,
+        blank=True,
+        default=None,
+        help_text="A timestamp of the last failed verification attempt. Null if last attempt succeeded.",
     )
     throttling_failure_count = models.PositiveIntegerField(
         default=0, help_text="Number of successive failed attempts."
@@ -304,19 +324,27 @@ class ThrottlingMixin(models.Model):
         where ``n`` is the number of successive failures. See
         :class:`~django_otp.models.VerifyNotAllowed`.
         """
-        if (self.throttling_enabled and
-                self.throttling_failure_count > 0 and
-                self.throttling_failure_timestamp is not None):
+        if (
+            self.throttling_enabled
+            and self.throttling_failure_count > 0
+            and self.throttling_failure_timestamp is not None
+        ):
             now = timezone.now()
             delay = (now - self.throttling_failure_timestamp).total_seconds()
             # Required delays should be 1, 2, 4, 8 ...
-            delay_required = self.get_throttle_factor() * (2 ** (self.throttling_failure_count - 1))
+            delay_required = self.get_throttle_factor() * (
+                2 ** (self.throttling_failure_count - 1)
+            )
             if delay < delay_required:
-                return (False,
-                        {'reason': VerifyNotAllowed.N_FAILED_ATTEMPTS,
-                         'failure_count': self.throttling_failure_count,
-                         'locked_until': self.throttling_failure_timestamp + timedelta(seconds=delay_required)}
-                        )
+                return (
+                    False,
+                    {
+                        'reason': VerifyNotAllowed.N_FAILED_ATTEMPTS,
+                        'failure_count': self.throttling_failure_count,
+                        'locked_until': self.throttling_failure_timestamp
+                        + timedelta(seconds=delay_required),
+                    },
+                )
 
         return super().verify_is_allowed()
 

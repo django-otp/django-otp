@@ -20,6 +20,7 @@ class LoginView(auth_views.LoginView):
     :setting:`OTP_LOGIN_URL`.
 
     """
+
     otp_authentication_form = OTPAuthenticationForm
     otp_token_form = OTPTokenForm
 

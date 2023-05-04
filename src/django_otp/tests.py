@@ -20,7 +20,14 @@ from django.test.utils import override_settings
 from django.urls import reverse
 from django.utils import timezone
 
-from django_otp import DEVICE_ID_SESSION_KEY, match_token, oath, user_has_device, util, verify_token
+from django_otp import (
+    DEVICE_ID_SESSION_KEY,
+    match_token,
+    oath,
+    user_has_device,
+    util,
+    verify_token,
+)
 from django_otp.forms import OTPTokenForm
 from django_otp.middleware import OTPMiddleware
 from django_otp.models import VerifyNotAllowed
@@ -39,6 +46,7 @@ def load_tests(loader, tests, pattern):
 
 class TestThread(Thread):
     "Django testing quirk: threads have to close their DB connections."
+
     def run(self):
         super().run()
         connection.close()
@@ -48,6 +56,7 @@ class OTPTestCaseMixin:
     """
     Utilities for dealing with custom user models.
     """
+
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -85,15 +94,16 @@ class ThrottlingTestMixin:
     as well as implementing methods to generate tokens to test with.
 
     """
+
     def setUp(self):
         self.device = None
 
     def valid_token(self):
-        """ Returns a valid token to pass to our device under test. """
+        """Returns a valid token to pass to our device under test."""
         raise NotImplementedError()
 
     def invalid_token(self):
-        """ Returns an invalid token to pass to our device under test. """
+        """Returns an invalid token to pass to our device under test."""
         raise NotImplementedError()
 
     #
@@ -135,10 +145,14 @@ class ThrottlingTestMixin:
             self.device.verify_token(self.invalid_token())
             verify_is_allowed2, data2 = self.device.verify_is_allowed()
             self.assertEqual(verify_is_allowed2, False)
-            self.assertEqual(data2, {'reason': VerifyNotAllowed.N_FAILED_ATTEMPTS,
-                                     'failure_count': 1,
-                                     'locked_until': timezone.now() + timezone.timedelta(seconds=1)
-                                     })
+            self.assertEqual(
+                data2,
+                {
+                    'reason': VerifyNotAllowed.N_FAILED_ATTEMPTS,
+                    'failure_count': 1,
+                    'locked_until': timezone.now() + timezone.timedelta(seconds=1),
+                },
+            )
 
         # After a successful attempt, should be allowed again
         with freeze_time() as frozen_time:
@@ -206,9 +220,7 @@ class OTPMiddlewareTestCase(TestCase):
         request = self.factory.get('/')
         request.user = self.alice
         device = self.alice.staticdevice_set.get()
-        request.session = {
-            DEVICE_ID_SESSION_KEY: device.persistent_id
-        }
+        request.session = {DEVICE_ID_SESSION_KEY: device.persistent_id}
 
         self.middleware(request)
 
@@ -263,9 +275,7 @@ class OTPMiddlewareTestCase(TestCase):
         request = self.factory.get('/')
         request.user = self.alice
         device = self.bob.staticdevice_set.get()
-        request.session = {
-            DEVICE_ID_SESSION_KEY: device.persistent_id
-        }
+        request.session = {DEVICE_ID_SESSION_KEY: device.persistent_id}
 
         self.middleware(request)
 
@@ -275,9 +285,7 @@ class OTPMiddlewareTestCase(TestCase):
         request = self.factory.get('/')
         request.user = self.alice
         device = self.alice.staticdevice_set.get()
-        request.session = {
-            DEVICE_ID_SESSION_KEY: device.persistent_id
-        }
+        request.session = {DEVICE_ID_SESSION_KEY: device.persistent_id}
 
         self.middleware(request)
 
@@ -303,10 +311,13 @@ class LoginViewTestCase(TestCase):
         self.assertContains(response, 'Password:')
         self.assertNotContains(response, 'OTP Device:')
         self.assertContains(response, 'OTP Token:')
-        response = self.client.post(reverse('otpadmin:login'), data={
-            'username': self.bob.get_username(),
-            'password': 'password',
-        })
+        response = self.client.post(
+            reverse('otpadmin:login'),
+            data={
+                'username': self.bob.get_username(),
+                'password': 'password',
+            },
+        )
         self.assertContains(response, 'Username:')
         self.assertContains(response, 'Password:')
         self.assertContains(response, 'OTP Device:')
@@ -314,13 +325,16 @@ class LoginViewTestCase(TestCase):
 
         device = self.bob.staticdevice_set.get()
         token = device.token_set.get()
-        response = self.client.post(reverse('otpadmin:login'), data={
-            'username': self.bob.get_username(),
-            'password': 'password',
-            'otp_device': device.persistent_id,
-            'otp_token': token.token,
-            'next': '/',
-        })
+        response = self.client.post(
+            reverse('otpadmin:login'),
+            data={
+                'username': self.bob.get_username(),
+                'password': 'password',
+                'otp_device': device.persistent_id,
+                'otp_token': token.token,
+                'next': '/',
+            },
+        )
         self.assertRedirects(response, '/')
 
     def test_authenticate(self):
@@ -339,7 +353,10 @@ class LoginViewTestCase(TestCase):
         self.assertRedirects(response, '/')
 
         response = self.client.get('/')
-        self.assertInHTML(f'<span id="username">{self.alice.get_username()}</span>', response.content.decode(response.charset))
+        self.assertInHTML(
+            f'<span id="username">{self.alice.get_username()}</span>',
+            response.content.decode(response.charset),
+        )
 
     def test_verify(self):
         device = self.alice.staticdevice_set.get()
@@ -357,7 +374,10 @@ class LoginViewTestCase(TestCase):
         self.assertRedirects(response, '/')
 
         response = self.client.get('/')
-        self.assertInHTML(f'<span id="username">{self.alice.get_username()}</span>', response.content.decode(response.charset))
+        self.assertInHTML(
+            f'<span id="username">{self.alice.get_username()}</span>',
+            response.content.decode(response.charset),
+        )
 
 
 @skipUnlessDBFeature('has_select_for_update')
@@ -390,7 +410,9 @@ class ConcurrencyTestCase(TransactionTestCase):
                 connection.close()
 
         device = self.alice.staticdevice_set.get()
-        threads = [VerifyThread(device.user, device.persistent_id, 'valid') for _ in range(10)]
+        threads = [
+            VerifyThread(device.user, device.persistent_id, 'valid') for _ in range(10)
+        ]
         for thread in threads:
             thread.start()
         for thread in threads:
@@ -431,7 +453,11 @@ class ConcurrencyTestCase(TransactionTestCase):
 
     def _test_throttling_concurrency(self, thread_count, expected_failures):
         forms = (
-            OTPTokenForm(device.user, None, {'otp_device': device.persistent_id, 'otp_token': 'bogus'})
+            OTPTokenForm(
+                device.user,
+                None,
+                {'otp_device': device.persistent_id, 'otp_token': 'bogus'},
+            )
             for _ in range(thread_count)
             for device in StaticDevice.objects.all()
         )
@@ -464,7 +490,9 @@ class AddStaticTokenTestCase(TestCase):
         call_command('addstatictoken', 'alice', stdout=out)
         token = out.getvalue().strip()
 
-        static_token = StaticToken.objects.select_related('device__user').get(token=token)
+        static_token = StaticToken.objects.select_related('device__user').get(
+            token=token
+        )
         self.assertEqual(static_token.device.user, self.alice)
 
     def test_existing_device(self):
@@ -474,7 +502,9 @@ class AddStaticTokenTestCase(TestCase):
         call_command('addstatictoken', 'alice', stdout=out)
         token = out.getvalue().strip()
 
-        static_token = StaticToken.objects.select_related('device__user').get(token=token)
+        static_token = StaticToken.objects.select_related('device__user').get(
+            token=token
+        )
         self.assertEqual(static_token.device, device)
 
     def test_explicit_token(self):
@@ -484,6 +514,8 @@ class AddStaticTokenTestCase(TestCase):
         call_command('addstatictoken', 'alice', '-t', 'secret-token', stdout=out)
         token = out.getvalue().strip()
 
-        static_token = StaticToken.objects.select_related('device__user').get(token=token)
+        static_token = StaticToken.objects.select_related('device__user').get(
+            token=token
+        )
         self.assertEqual(token, 'secret-token')
         self.assertEqual(static_token.device, device)

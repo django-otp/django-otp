@@ -34,8 +34,13 @@ def hotp(key, counter, digits=6):
     hs = hmac.new(key, msg, sha1).digest()
     hs = list(iter(hs))
 
-    offset = hs[19] & 0x0f
-    bin_code = (hs[offset] & 0x7f) << 24 | hs[offset + 1] << 16 | hs[offset + 2] << 8 | hs[offset + 3]
+    offset = hs[19] & 0x0F
+    bin_code = (
+        (hs[offset] & 0x7F) << 24
+        | hs[offset + 1] << 16
+        | hs[offset + 2] << 8
+        | hs[offset + 3]
+    )
     hotp = bin_code % pow(10, digits)
 
     return hotp
@@ -125,6 +130,7 @@ class TOTP:
     >>> totp.token()
     359152
     """
+
     def __init__(self, key, step=30, t0=0, digits=6, drift=0):
         self.key = key
         self.step = step
@@ -134,11 +140,11 @@ class TOTP:
         self._time = None
 
     def token(self):
-        """ The computed TOTP token. """
+        """The computed TOTP token."""
         return hotp(self.key, self.t(), digits=self.digits)
 
     def t(self):
-        """ The computed time step. """
+        """The computed time step."""
         return ((int(self.time) - self.t0) // self.step) + self.drift
 
     @property

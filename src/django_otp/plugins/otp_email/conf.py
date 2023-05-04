@@ -9,6 +9,7 @@ class OTPEmailSettings:
     values if they are not specified by the configuration.
 
     """
+
     defaults = {
         'OTP_EMAIL_SENDER': None,
         'OTP_EMAIL_SUBJECT': 'OTP token',

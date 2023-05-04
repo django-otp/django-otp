@@ -1,7 +1,6 @@
 from django.contrib.auth.signals import user_logged_in
 from django.db import transaction
 
-
 DEVICE_ID_SESSION_KEY = 'otp_device_id'
 
 
@@ -64,7 +63,11 @@ def verify_token(user, device_id, token):
     verified = None
     with transaction.atomic():
         device = Device.from_persistent_id(device_id, for_verify=True)
-        if (device is not None) and (device.user_id == user.pk) and device.verify_token(token):
+        if (
+            (device is not None)
+            and (device.user_id == user.pk)
+            and device.verify_token(token)
+        ):
             verified = device
 
     return verified
@@ -158,7 +161,7 @@ def device_classes():
     """
     Returns an iterable of all loaded device models.
     """
-    from django.apps import apps           # isort: skip
+    from django.apps import apps  # isort: skip
     from django_otp.models import Device
 
     for config in apps.get_app_configs():

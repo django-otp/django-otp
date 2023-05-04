@@ -66,13 +66,35 @@ class TOTPDevice(ThrottlingMixin, Device):
         subsequently. (Default: -1)
 
     """
-    key = models.CharField(max_length=80, validators=[key_validator], default=default_key, help_text="A hex-encoded secret key of up to 40 bytes.")
-    step = models.PositiveSmallIntegerField(default=30, help_text="The time step in seconds.")
-    t0 = models.BigIntegerField(default=0, help_text="The Unix time at which to begin counting steps.")
-    digits = models.PositiveSmallIntegerField(choices=[(6, 6), (8, 8)], default=6, help_text="The number of digits to expect in a token.")
-    tolerance = models.PositiveSmallIntegerField(default=1, help_text="The number of time steps in the past or future to allow.")
-    drift = models.SmallIntegerField(default=0, help_text="The number of time steps the prover is known to deviate from our clock.")
-    last_t = models.BigIntegerField(default=-1, help_text="The t value of the latest verified token. The next token must be at a higher time step.")
+
+    key = models.CharField(
+        max_length=80,
+        validators=[key_validator],
+        default=default_key,
+        help_text="A hex-encoded secret key of up to 40 bytes.",
+    )
+    step = models.PositiveSmallIntegerField(
+        default=30, help_text="The time step in seconds."
+    )
+    t0 = models.BigIntegerField(
+        default=0, help_text="The Unix time at which to begin counting steps."
+    )
+    digits = models.PositiveSmallIntegerField(
+        choices=[(6, 6), (8, 8)],
+        default=6,
+        help_text="The number of digits to expect in a token.",
+    )
+    tolerance = models.PositiveSmallIntegerField(
+        default=1, help_text="The number of time steps in the past or future to allow."
+    )
+    drift = models.SmallIntegerField(
+        default=0,
+        help_text="The number of time steps the prover is known to deviate from our clock.",
+    )
+    last_t = models.BigIntegerField(
+        default=-1,
+        help_text="The t value of the latest verified token. The next token must be at a higher time step.",
+    )
 
     class Meta(Device.Meta):
         verbose_name = "TOTP device"
@@ -141,7 +163,9 @@ class TOTPDevice(ThrottlingMixin, Device):
         if isinstance(issuer, str) and (issuer != ''):
             issuer = issuer.replace(':', '')
             label = '{}:{}'.format(issuer, label)
-            urlencoded_params += '&issuer={}'.format(quote(issuer))  # encode issuer as per RFC 3986, not quote_plus
+            urlencoded_params += '&issuer={}'.format(
+                quote(issuer)
+            )  # encode issuer as per RFC 3986, not quote_plus
 
         url = 'otpauth://totp/{}?{}'.format(quote(label), urlencoded_params)
 

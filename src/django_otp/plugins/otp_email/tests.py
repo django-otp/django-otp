@@ -92,7 +92,9 @@ class EmailTest(EmailDeviceMixin, TestCase):
         with self.subTest(field='from_email'):
             self.assertEqual(msg.from_email, "root@localhost")
         with self.subTest(field='body'):
-            self.assertEqual(msg.body, "Test template 1: {}\n".format(self.device.token))
+            self.assertEqual(
+                msg.body, "Test template 1: {}\n".format(self.device.token)
+            )
 
     @override_settings(
         OTP_EMAIL_SENDER="webmaster@example.com",
@@ -130,7 +132,9 @@ class EmailTest(EmailDeviceMixin, TestCase):
         with self.subTest(field='subject'):
             self.assertEqual(msg.subject, "Test subject")
         with self.subTest(field='body'):
-            self.assertEqual(msg.body, "Test template 3: {}\n".format(self.device.token))
+            self.assertEqual(
+                msg.body, "Test template 3: {}\n".format(self.device.token)
+            )
 
     @override_settings(
         OTP_EMAIL_SENDER="webmaster@example.com",
@@ -152,7 +156,9 @@ class EmailTest(EmailDeviceMixin, TestCase):
         with self.subTest(field='body'):
             self.assertEqual(
                 msg.body,
-                "Test template 4: {} {} {}".format(self.device.token, extra_context["foo"], extra_context["bar"])
+                "Test template 4: {} {} {}".format(
+                    self.device.token, extra_context["foo"], extra_context["bar"]
+                ),
             )
 
     def test_alternative_email(self):

@@ -14,7 +14,8 @@ from .models import StaticDevice, StaticToken
 
 
 class DeviceTest(TestCase):
-    """ A few generic tests to get us started. """
+    """A few generic tests to get us started."""
+
     def setUp(self):
         try:
             self.user = self.create_user('alice', 'password')
@@ -36,6 +37,7 @@ class LibTest(TestCase):
     """
     Test miscellaneous library functions.
     """
+
     def setUp(self):
         try:
             self.user = self.create_user('alice', 'password')
@@ -73,6 +75,7 @@ class AuthFormTest(TestCase):
     We try to honor custom user models, but if we can't create users, we'll
     skip the tests.
     """
+
     def setUp(self):
         for device_id, username in enumerate(['alice', 'bob']):
             try:
@@ -215,14 +218,18 @@ class StaticDeviceAdminTest(TestCase):
         self.assertIsInstance(instances, list)
         self.assertEqual(len(instances), 1)
         self.assertIsInstance(instances[0], StaticTokenInline)
-        instances = self.device_admin.get_inline_instances(self.get_request, obj=self.device)
+        instances = self.device_admin.get_inline_instances(
+            self.get_request, obj=self.device
+        )
         self.assertEqual(instances, [])
 
     @override_settings(OTP_ADMIN_HIDE_SENSITIVE_DATA=False)
     def test_inline_instances_when_sensitive_information_shown(self):
         self._add_device_perms('change_statictoken')
         for obj in (None, self.device):
-            instances = self.device_admin.get_inline_instances(self.get_request, obj=obj)
+            instances = self.device_admin.get_inline_instances(
+                self.get_request, obj=obj
+            )
             self.assertIsInstance(instances, list)
             self.assertEqual(len(instances), 1)
 

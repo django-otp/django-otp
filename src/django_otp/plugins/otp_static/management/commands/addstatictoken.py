@@ -7,13 +7,23 @@ from django_otp.plugins.otp_static.lib import add_static_token, get_user_model
 
 
 class Command(BaseCommand):
-    help = fill('Adds a single static OTP token to the given user. '
-                'The token will be added to an arbitrary static device '
-                'attached to the user, creating one if necessary.', width=78)
+    help = fill(
+        'Adds a single static OTP token to the given user. '
+        'The token will be added to an arbitrary static device '
+        'attached to the user, creating one if necessary.',
+        width=78,
+    )
 
     def add_arguments(self, parser):
-        parser.add_argument('-t', '--token', dest='token', help='The token to add. If omitted, one will be randomly generated.')
-        parser.add_argument('username', help='The user to which the token will be assigned.')
+        parser.add_argument(
+            '-t',
+            '--token',
+            dest='token',
+            help='The token to add. If omitted, one will be randomly generated.',
+        )
+        parser.add_argument(
+            'username', help='The user to which the token will be assigned.'
+        )
 
     def handle(self, *args, **options):
         username = options['username']
