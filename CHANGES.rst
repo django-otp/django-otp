@@ -1,3 +1,18 @@
+v1.2.0 - May 11, 2023 - Tooling, TOTP images
+--------------------------------------------------------------------------------
+
+- This project is now managed with `hatch`_, which replaces setuptools, pipenv,
+  and tox. Users of the package should not be impacted. Developers can refer to
+  the readme for details. If you're packaging this project from source, I
+  suggest relying on pip's isolated builds rather than using hatch directly.
+
+- `#123`_: Add support for passing an image parameter in the otpauth URL.
+
+
+.. _hatch: https://hatch.pypa.io/
+.. _#123: https://github.com/django-otp/django-otp/pull/123
+
+
 v1.1.6 - March 07, 2023 - German translation
 --------------------------------------------------------------------------------
 
