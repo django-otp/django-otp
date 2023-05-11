@@ -78,9 +78,11 @@ class Device(models.Model):
         help_text="The user that this device belongs to.",
         on_delete=models.CASCADE,
     )
+
     name = models.CharField(
         max_length=64, help_text="The human-readable name of this device."
     )
+
     confirmed = models.BooleanField(
         default=True, help_text="Is this device ready for use?"
     )
@@ -222,6 +224,7 @@ class SideChannelDevice(Device):
     """
 
     token = models.CharField(max_length=16, blank=True, null=True)
+
     valid_until = models.DateTimeField(
         default=timezone.now,
         help_text="The timestamp of the moment of expiry of the saved token.",
@@ -292,20 +295,25 @@ class VerifyNotAllowed:
 
 class ThrottlingMixin(models.Model):
     """
-    Mixin class for models that need throttling behaviour. Implements
-    exponential back-off.
+    Mixin class for models that want throttling behaviour.
+
+    This implements exponential back-off for verifying tokens. Subclasses must
+    implement :meth:`get_throttle_factor`, and must use the
+    :meth:`verify_is_allowed`, :meth:`throttle_reset` and
+    :meth:`throttle_increment` methods from within their verify_token() method.
+
+    See the implementation of
+    :class:`~django_otp.plugins.otp_email.models.EmailDevice` for an example.
+
     """
 
-    # This mixin is not publicly documented, but is used internally to avoid
-    # code duplication. Subclasses must implement get_throttle_factor(), and
-    # must use the verify_is_allowed(), throttle_reset() and
-    # throttle_increment() methods from within their verify_token() method.
     throttling_failure_timestamp = models.DateTimeField(
         null=True,
         blank=True,
         default=None,
         help_text="A timestamp of the last failed verification attempt. Null if last attempt succeeded.",
     )
+
     throttling_failure_count = models.PositiveIntegerField(
         default=0, help_text="Number of successive failed attempts."
     )
@@ -317,12 +325,14 @@ class ThrottlingMixin(models.Model):
 
         ``data_dict`` contains further information. Currently it can be::
 
-            {'reason': VerifyNotAllowed.N_FAILED_ATTEMPTS,
-             'failure_count': n
+            {
+                'reason': VerifyNotAllowed.N_FAILED_ATTEMPTS,
+                'failure_count': n
             }
 
         where ``n`` is the number of successive failures. See
         :class:`~django_otp.models.VerifyNotAllowed`.
+
         """
         if (
             self.throttling_enabled
@@ -379,6 +389,18 @@ class ThrottlingMixin(models.Model):
         return self.get_throttle_factor() > 0
 
     def get_throttle_factor(self):  # pragma: no cover
+        """
+        This must be implemented to return the throttle factor.
+
+        The number of seconds required between verification attempts will be
+        :math:`c2^{n-1}` where `c` is this factor and `n` is the number of
+        previous failures. A factor of 1 translates to delays of 1, 2, 4, 8,
+        etc. seconds. A factor of 0 disables the throttling.
+
+        Normally this is just a wrapper for a plugin-specific setting like
+        :setting:`OTP_EMAIL_THROTTLE_FACTOR`.
+
+        """
         raise NotImplementedError()
 
     class Meta:

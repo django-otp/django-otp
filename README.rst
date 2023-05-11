@@ -37,8 +37,9 @@ Status
 This project is stable and maintained, but is no longer actively used by the
 author and is not seeing much ongoing investment.
 
-Well-formed issues and pull requests are welcome, but please see the
-Contributing section of the README first.
+Well-formed issues and pull requests are welcome, but please see CONTRIBUTING.md
+first. General questions and ideas should be directed to the Discussions
+section; issues should be reserved for confirmed bugs.
 
 .. end-of-doc-intro
 
@@ -110,25 +111,6 @@ middleware, or to override arbitrary Django settings. See
 
 You can also force a specific config file by setting the environment variable
 ``DJANGO_OTP_CONFIG`` to a path.
-
-
-Contributing
-------------
-
-As mentioned above, this project is stable and mature. Issues and pull requests
-are welcome for important bugs and improvements. For non-trivial changes, it's
-often a good idea to start by opening an issue to track the need for a change
-and then optionally open a pull request with a proposed resolution. Issues and
-pull requests should be focused on a single thing: pull requests that bundle
-together a bunch of loosely related commits are unlikely to go anywhere.
-
-It's also good to remember that writing the code is typically the least part of
-the work. This is true for software development in general, but especially a
-small stable project like this. The bulk of the work is in `understanding the
-problem <http://www.youtube.com/watch?v=f84n5oFoZBc>`_, determining the desired
-attributes of a solution, researching and evaluating alternatives, writing
-documentation, designing a testing strategy, etc. Writing the code itself tends
-to be a minor matter that emerges from that process.
 
 
 The Future

@@ -156,9 +156,6 @@ process directly.
 .. autoclass:: django_otp.models.Device
     :members: is_interactive, generate_challenge, verify_token, verify_is_allowed, persistent_id, from_persistent_id
 
-.. autoclass:: django_otp.models.SideChannelDevice
-    :members: generate_token, verify_token
-
 .. autoclass:: django_otp.models.DeviceManager
     :members: devices_for_user
 

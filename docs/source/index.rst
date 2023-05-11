@@ -10,6 +10,7 @@ Contents
     overview
     auth
     extend
+    contributing
     changes
 
 
