@@ -146,6 +146,7 @@ class TOTPDevice(ThrottlingMixin, Device):
 
         See https://github.com/google/google-authenticator/wiki/Key-Uri-Format.
         The issuer is taken from :setting:`OTP_TOTP_ISSUER`, if available.
+        The image (for e.g. FreeOTP) is taken from :setting:`OTP_TOTP_IMAGE`, if available.
 
         """
         label = str(self.user.get_username())
@@ -157,16 +158,26 @@ class TOTPDevice(ThrottlingMixin, Device):
         }
         urlencoded_params = urlencode(params)
 
-        issuer = getattr(settings, 'OTP_TOTP_ISSUER', None)
-        if callable(issuer):
-            issuer = issuer(self)
-        if isinstance(issuer, str) and (issuer != ''):
+        issuer = self._read_str_from_settings('OTP_TOTP_ISSUER')
+        if issuer:
             issuer = issuer.replace(':', '')
             label = '{}:{}'.format(issuer, label)
             urlencoded_params += '&issuer={}'.format(
                 quote(issuer)
             )  # encode issuer as per RFC 3986, not quote_plus
 
+        image = self._read_str_from_settings('OTP_TOTP_IMAGE')
+        if image:
+            urlencoded_params += "&image={}".format(quote(image, safe=':/'))
+
         url = 'otpauth://totp/{}?{}'.format(quote(label), urlencoded_params)
 
         return url
+
+    def _read_str_from_settings(self, key):
+        val = getattr(settings, key, None)
+        if callable(val):
+            val = val(self)
+        if isinstance(val, str) and (val != ''):
+            return val
+        return None

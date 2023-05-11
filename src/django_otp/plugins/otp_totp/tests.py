@@ -156,6 +156,21 @@ class TOTPTest(TOTPDeviceMixin, TestCase):
         self.assertIn('issuer', params)
         self.assertEqual(params['issuer'][0], 'alice@example.com')
 
+    def test_config_url_image(self):
+        image_url = "https://test.invalid/square.png"
+
+        with override_settings(OTP_TOTP_ISSUER=None, OTP_TOTP_IMAGE=image_url):
+            url = self.device.config_url
+
+        parsed = urlsplit(url)
+        params = parse_qs(parsed.query)
+
+        self.assertEqual(parsed.scheme, 'otpauth')
+        self.assertEqual(parsed.netloc, 'totp')
+        self.assertEqual(parsed.path, '/alice')
+        self.assertIn('secret', params)
+        self.assertEqual(params['image'][0], image_url)
+
 
 class TOTPAdminTest(TestCase):
     def setUp(self):
