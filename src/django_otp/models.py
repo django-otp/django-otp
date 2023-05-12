@@ -86,6 +86,7 @@ class Device(models.Model):
     confirmed = models.BooleanField(
         default=True, help_text="Is this device ready for use?"
     )
+
     objects = DeviceManager()
 
     class Meta:
@@ -158,6 +159,19 @@ class Device(models.Model):
         """
         return not hasattr(self.generate_challenge, 'stub')
 
+    def generate_is_allowed(self):
+        """
+        Checks whether it is permissible to call :meth:`generate_challenge`. If
+        it is allowed, returns ``(True, None)``. Otherwise returns ``(False,
+        data_dict)``, where ``data_dict`` contains extra information, defined
+        by the implementation.
+
+        This method can be used to implement throttling of token generation for
+        interactive devices. Client code should check this method before calling
+        :meth:`generate_challenge` and report problems to the user.
+        """
+        return (True, None)
+
     def generate_challenge(self):
         """
         Generates a challenge value that the user will need to produce a token.
@@ -228,27 +242,9 @@ class SideChannelDevice(Device):
         default=timezone.now,
         help_text="The timestamp of the moment of expiry of the saved token.",
     )
-    last_generated = models.DateTimeField(
-        null=True,
-        blank=True,
-        help_text="The last time a token was generated for this device.",
-    )
 
     class Meta:
         abstract = True
-
-    def generate_is_allowed(self):
-        """
-        Checks whether it is permissible to call :meth:`generate_challenge`. If
-        it is allowed, returns ``(True, None)``. Otherwise returns ``(False,
-        data_dict)``, where ``data_dict`` contains extra information, defined
-        by the implementation.
-
-        This method can be used to implement throttling of token generation for
-        interactive devices. Client code should check this method before calling
-        :meth:`generate_challenge` and report problems to the user.
-        """
-        return (True, None)
 
     def generate_token(self, length=6, valid_secs=300, commit=True):
         """
@@ -262,10 +258,8 @@ class SideChannelDevice(Device):
         :param bool commit: Whether to autosave the generated token.
 
         """
-        dt_now = timezone.now()
         self.token = random_number_token(length)
-        self.valid_until = dt_now + timedelta(seconds=valid_secs)
-        self.last_generated = dt_now
+        self.valid_until = timezone.now() + timedelta(seconds=valid_secs)
         if commit:
             self.save()
 
@@ -318,6 +312,19 @@ class GenerationThrottlingMixin(models.Model):
     tokens.
     """
 
+    last_generated_timestamp = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text="The last time a token was generated for this device.",
+    )
+
+    def generate_token(self, *args, **kwargs):
+        """
+        Update the timestamp of the last token generation to the current time.
+        """
+        self.last_generated_timestamp = timezone.now()
+        self.save()
+
     def generate_is_allowed(self):
         """
         Checks if the time since the last token generation is greater than
@@ -325,8 +332,8 @@ class GenerationThrottlingMixin(models.Model):
         """
         dt_now = timezone.now()
         if (
-            not self.last_generated
-            or (dt_now - self.last_generated).total_seconds()
+            not self.last_generated_timestamp
+            or (dt_now - self.last_generated_timestamp).total_seconds()
             > settings.OTP_GENERATION_INTERVAL
         ):
             return True, None
@@ -336,6 +343,18 @@ class GenerationThrottlingMixin(models.Model):
                 'next_generation_at': dt_now
                 + timedelta(settings.OTP_GENERATION_INTERVAL),
             }
+
+    def generate_throttle_reset(self, commit=True):
+        """
+        Call this method to reset throttling (normally when a token generation
+        succeeded).
+
+        Pass 'commit=False' to avoid calling self.save().
+        """
+        self.last_generated_timestamp = None
+
+        if commit:
+            self.save()
 
     class Meta:
         abstract = True

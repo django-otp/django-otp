@@ -65,14 +65,9 @@ class OTPAuthenticationFormMixin:
             'Invalid token. Please make sure you have entered it correctly.'
         ),
         'n_failed_attempts': ngettext_lazy(
-            "Verification temporarily disabled because of %(failure_count)d failed"
-            " attempt, please try again soon.",
-            "Verification temporarily disabled because of %(failure_count)d failed"
-            " attempts, please try again soon.",
+            "Verification temporarily disabled because of %(failure_count)d failed attempt, please try again soon.",
+            "Verification temporarily disabled because of %(failure_count)d failed attempts, please try again soon.",
             "failure_count",
-        ),
-        'generation_not_allowed': _(
-            "Next generation is allowed in {0}",
         ),
         'verification_not_allowed': _(
             "Verification of the token is currently disabled"
@@ -139,19 +134,6 @@ class OTPAuthenticationFormMixin:
         return device
 
     def _handle_challenge(self, device):
-        try:
-            generate_is_allowed, extra = device.generate_is_allowed()
-        except AttributeError:
-            raise forms.ValidationError(
-                self.otp_error_messages['not_interactive'], code='not_interactive'
-            )
-        if not generate_is_allowed:
-            raise forms.ValidationError(
-                self.otp_error_messages['generation_not_allowed'].format(
-                    extra['next_generation_at']
-                ),
-            )
-
         try:
             challenge = device.generate_challenge() if (device is not None) else None
         except Exception as e:

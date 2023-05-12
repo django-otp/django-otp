@@ -61,34 +61,40 @@ class EmailDevice(GenerationThrottlingMixin, ThrottlingMixin, SideChannelDevice)
         :type extra_context: dict
 
         """
-        self.generate_token(valid_secs=settings.OTP_EMAIL_TOKEN_VALIDITY)
+        generate_allowed, _ = self.generate_is_allowed()
+        if generate_allowed:
+            self.generate_token(valid_secs=settings.OTP_EMAIL_TOKEN_VALIDITY)
 
-        context = {'token': self.token, **(extra_context or {})}
-        if settings.OTP_EMAIL_BODY_TEMPLATE:
-            body = Template(settings.OTP_EMAIL_BODY_TEMPLATE).render(Context(context))
-        else:
-            body = get_template(settings.OTP_EMAIL_BODY_TEMPLATE_PATH).render(context)
+            context = {'token': self.token, **(extra_context or {})}
+            if settings.OTP_EMAIL_BODY_TEMPLATE:
+                body = Template(settings.OTP_EMAIL_BODY_TEMPLATE).render(
+                    Context(context)
+                )
+            else:
+                body = get_template(settings.OTP_EMAIL_BODY_TEMPLATE_PATH).render(context)
 
-        if settings.OTP_EMAIL_BODY_HTML_TEMPLATE:
-            body_html = Template(settings.OTP_EMAIL_BODY_HTML_TEMPLATE).render(
-                Context(context)
+            if settings.OTP_EMAIL_BODY_HTML_TEMPLATE:
+                body_html = Template(settings.OTP_EMAIL_BODY_HTML_TEMPLATE).render(
+                    Context(context)
+                )
+            elif settings.OTP_EMAIL_BODY_HTML_TEMPLATE_PATH:
+                body_html = get_template(settings.OTP_EMAIL_BODY_HTML_TEMPLATE_PATH).render(
+                    context
+                )
+            else:
+                body_html = None
+
+            send_mail(
+                str(settings.OTP_EMAIL_SUBJECT),
+                body,
+                settings.OTP_EMAIL_SENDER,
+                [self.email or self.user.email],
+                html_message=body_html,
             )
-        elif settings.OTP_EMAIL_BODY_HTML_TEMPLATE_PATH:
-            body_html = get_template(settings.OTP_EMAIL_BODY_HTML_TEMPLATE_PATH).render(
-                context
-            )
+
+            message = "sent by email"
         else:
-            body_html = None
-
-        send_mail(
-            str(settings.OTP_EMAIL_SUBJECT),
-            body,
-            settings.OTP_EMAIL_SENDER,
-            [self.email or self.user.email],
-            html_message=body_html,
-        )
-
-        message = "sent by email"
+            message = "email not sent. Not allowed to generate token at this time."
 
         return message
 
@@ -99,6 +105,7 @@ class EmailDevice(GenerationThrottlingMixin, ThrottlingMixin, SideChannelDevice)
 
             if verified:
                 self.throttle_reset()
+                self.generate_throttle_reset()
             else:
                 self.throttle_increment()
         else:
