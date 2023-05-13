@@ -4,9 +4,9 @@ from django.template import Context, Template
 from django.template.loader import get_template
 
 from django_otp.models import (
+    GenerationThrottlingMixin,
     SideChannelDevice,
     ThrottlingMixin,
-    GenerationThrottlingMixin,
 )
 from django_otp.util import hex_validator, random_hex
 
