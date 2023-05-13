@@ -49,6 +49,9 @@ class EmailDevice(GenerationThrottlingMixin, ThrottlingMixin, SideChannelDevice)
         help_text='Optional alternative email address to send tokens to',
     )
 
+    def get_generation_interval(self):
+        return settings.OTP_EMAIL_GENERATION_INTERVAL
+
     def get_throttle_factor(self):
         return settings.OTP_EMAIL_THROTTLE_FACTOR
 

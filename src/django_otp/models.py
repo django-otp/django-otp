@@ -331,17 +331,16 @@ class GenerationThrottlingMixin(models.Model):
         configured (in seconds) by OTP_GENERATION_INTERVAL.
         """
         dt_now = timezone.now()
+        allowed_after_seconds = (dt_now - self.last_generated_timestamp).total_seconds()
         if (
             not self.last_generated_timestamp
-            or (dt_now - self.last_generated_timestamp).total_seconds()
-            > settings.OTP_GENERATION_INTERVAL
+            or allowed_after_seconds > self.get_generation_interval()
         ):
             return True, None
         else:
             return False, {
                 'reason': "TOKEN_GENERATION_THROTTLED",
-                'next_generation_at': dt_now
-                + timedelta(settings.OTP_GENERATION_INTERVAL),
+                'next_generation_at': dt_now + timedelta(seconds=allowed_after_seconds),
             }
 
     def generate_throttle_reset(self, commit=True):
@@ -355,6 +354,13 @@ class GenerationThrottlingMixin(models.Model):
 
         if commit:
             self.save()
+
+    @cached_property
+    def generation_throttling_enabled(self):
+        return self.get_generation_interval() > 0
+
+    def get_generation_interval(self):
+        raise NotImplementedError()
 
     class Meta:
         abstract = True
