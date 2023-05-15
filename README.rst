@@ -37,9 +37,9 @@ Status
 This project is stable and maintained, but is no longer actively used by the
 author and is not seeing much ongoing investment.
 
-Well-formed issues and pull requests are welcome, but please see CONTRIBUTING.md
-first. General questions and ideas should be directed to the Discussions
-section; issues should be reserved for confirmed bugs.
+Well-formed issues and pull requests are welcome, but please see
+CONTRIBUTING.rst first. General questions and ideas should be directed to the
+Discussions section; issues should be reserved for confirmed bugs.
 
 .. end-of-doc-intro
 

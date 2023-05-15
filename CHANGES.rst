@@ -7,6 +7,7 @@ v1.2.0 - May 11, 2023 - Tooling, TOTP images
   suggest relying on pip's isolated builds rather than using hatch directly.
 
 - `#123`_: Add support for passing an image parameter in the otpauth URL.
+  See :setting:`OTP_TOTP_IMAGE`.
 
 
 .. _hatch: https://hatch.pypa.io/

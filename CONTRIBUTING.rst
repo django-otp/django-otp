@@ -9,9 +9,9 @@ are welcome.
 
 An important thing to remember is that this is a framework that supports a wide
 range of plugins. There's only one rule for a plugin: it must inherit from
-:class:`~django_otp.models.Device` and implement one key method. The project
-provides a collection of mixins and other abstract model classes to help with
-common functionality, but they are all optional.
+`django_otp.models.Device` and implement one key method. The project provides a
+collection of mixins and other abstract model classes to help with common
+functionality, but they are all optional.
 
 The key takeaway here is that when considering backward-compatibility, you can
 assume virtually nothing. In particular, note that adding a new model field to
