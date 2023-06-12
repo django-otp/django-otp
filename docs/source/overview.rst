@@ -433,6 +433,21 @@ If this and :setting:`OTP_EMAIL_BODY_TEMPLATE_PATH` are not set, we'll render
 the template 'otp/email/token.txt', which you'll most likely want to override.
 
 
+.. setting:: OTP_EMAIL_BODY_HTML_TEMPLATE
+
+**OTP_EMAIL_BODY_HTML_TEMPLATE**
+
+Default: ``None``
+
+A raw template string to use for the email html alternative body. The render context will
+include the generated token in the ``token`` key. Additional template context
+may be passed to
+:meth:`~django_otp.plugins.otp_email.models.EmailDevice.generate_challenge`.
+
+If this and :setting:`OTP_EMAIL_BODY_HTML_TEMPLATE_PATH` are not set, we won't attach any
+html alternative to the email.
+
+
 .. setting:: OTP_EMAIL_BODY_TEMPLATE_PATH
 
 **OTP_EMAIL_BODY_TEMPLATE_PATH**
@@ -446,6 +461,21 @@ context may be passed to
 
 If this and :setting:`OTP_EMAIL_BODY_TEMPLATE` are not set, we'll render the
 template 'otp/email/token.txt', which you'll most likely want to override.
+
+
+.. setting:: OTP_EMAIL_BODY_HTML_TEMPLATE_PATH
+
+**OTP_EMAIL_BODY_HTML_TEMPLATE_PATH**
+
+Default: ``None``
+
+A path string to a template file to use for the email html alternative body. The render context
+will include the generated token in the ``token`` key. Additional template
+context may be passed to
+:meth:`~django_otp.plugins.otp_email.models.EmailDevice.generate_challenge`.
+
+If this and :setting:`OTP_EMAIL_BODY_HTML_TEMPLATE` are not set, we won't attach any html
+alternative to the email.
 
 
 .. setting:: OTP_EMAIL_TOKEN_VALIDITY
