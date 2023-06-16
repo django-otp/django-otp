@@ -77,7 +77,7 @@ class EmailDevice(ThrottlingMixin, SideChannelDevice):
             body_html = None
 
         send_mail(
-            settings.OTP_EMAIL_SUBJECT,
+            str(settings.OTP_EMAIL_SUBJECT),
             body,
             settings.OTP_EMAIL_SENDER,
             [self.email or self.user.email],
