@@ -5,7 +5,14 @@ Contributing
 
 As mentioned in the README, this project is stable and mature. It's not
 receiving significant ongoing investment, but well-formed fixes and improvements
-are welcome.
+are welcome. "Well-formed" in this context primarily means that it is fully
+backward-compatible and includes documentation and test coverage. Improvements
+that can just as well exist as external plugins should be implemented as such.
+
+Before checking in, always run ``hatch run check`` to run linters and the test
+suite. The CI configuration will actually run ``hatch run test:run``, which will
+test across multiple Python/Django versions for completeness. If you get linter
+errors, you may be able to fix them with ``hatch run fix``.
 
 An important thing to remember is that this is a framework that supports a wide
 range of plugins. There's only one rule for a plugin: it must inherit from
