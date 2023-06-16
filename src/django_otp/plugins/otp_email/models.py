@@ -65,11 +65,23 @@ class EmailDevice(ThrottlingMixin, SideChannelDevice):
         else:
             body = get_template(settings.OTP_EMAIL_BODY_TEMPLATE_PATH).render(context)
 
+        if settings.OTP_EMAIL_BODY_HTML_TEMPLATE:
+            body_html = Template(settings.OTP_EMAIL_BODY_HTML_TEMPLATE).render(
+                Context(context)
+            )
+        elif settings.OTP_EMAIL_BODY_HTML_TEMPLATE_PATH:
+            body_html = get_template(settings.OTP_EMAIL_BODY_HTML_TEMPLATE_PATH).render(
+                context
+            )
+        else:
+            body_html = None
+
         send_mail(
-            str(settings.OTP_EMAIL_SUBJECT),
+            settings.OTP_EMAIL_SUBJECT,
             body,
             settings.OTP_EMAIL_SENDER,
             [self.email or self.user.email],
+            html_message=body_html,
         )
 
         message = "sent by email"

@@ -118,6 +118,32 @@ class EmailTest(EmailDeviceMixin, TestCase):
     @override_settings(
         OTP_EMAIL_SENDER="webmaster@example.com",
         OTP_EMAIL_SUBJECT="Test subject",
+        OTP_EMAIL_BODY_HTML_TEMPLATE="<div>{{token}}</div>",
+    )
+    def test_settings_html_template(self):
+        self.device.generate_challenge()
+
+        self.assertEqual(len(mail.outbox), 1)
+
+        msg = mail.outbox[0]
+
+        with self.subTest(field='from_email'):
+            self.assertEqual(msg.from_email, "webmaster@example.com")
+        with self.subTest(field='subject'):
+            self.assertEqual(msg.subject, "Test subject")
+        with self.subTest(field='body'):
+            self.assertEqual(
+                msg.body, 'Test template 1: {}\n'.format(self.device.token)
+            )
+        with self.subTest(field='alternatives'):
+            self.assertEqual(
+                msg.alternatives[0],
+                ('<div>{}</div>'.format(self.device.token), 'text/html'),
+            )
+
+    @override_settings(
+        OTP_EMAIL_SENDER="webmaster@example.com",
+        OTP_EMAIL_SUBJECT="Test subject",
         OTP_EMAIL_BODY_TEMPLATE_PATH="otp/email/custom.txt",
     )
     def test_settings_template_path(self):
@@ -134,6 +160,32 @@ class EmailTest(EmailDeviceMixin, TestCase):
         with self.subTest(field='body'):
             self.assertEqual(
                 msg.body, "Test template 3: {}\n".format(self.device.token)
+            )
+
+    @override_settings(
+        OTP_EMAIL_SENDER="webmaster@example.com",
+        OTP_EMAIL_SUBJECT="Test subject",
+        OTP_EMAIL_BODY_HTML_TEMPLATE_PATH="otp/email/custom_html.html",
+    )
+    def test_settings_html_template_path(self):
+        self.device.generate_challenge()
+
+        self.assertEqual(len(mail.outbox), 1)
+
+        msg = mail.outbox[0]
+
+        with self.subTest(field='from_email'):
+            self.assertEqual(msg.from_email, "webmaster@example.com")
+        with self.subTest(field='subject'):
+            self.assertEqual(msg.subject, "Test subject")
+        with self.subTest(field='body'):
+            self.assertEqual(
+                msg.body, 'Test template 1: {}\n'.format(self.device.token)
+            )
+        with self.subTest(field='alternatives'):
+            self.assertEqual(
+                msg.alternatives[0],
+                ('<p>{}</p>'.format(self.device.token), 'text/html'),
             )
 
     @override_settings(

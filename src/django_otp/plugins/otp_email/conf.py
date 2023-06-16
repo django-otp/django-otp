@@ -15,6 +15,8 @@ class OTPEmailSettings:
         'OTP_EMAIL_SUBJECT': 'OTP token',
         'OTP_EMAIL_BODY_TEMPLATE': None,
         'OTP_EMAIL_BODY_TEMPLATE_PATH': 'otp/email/token.txt',
+        'OTP_EMAIL_BODY_HTML_TEMPLATE': None,
+        'OTP_EMAIL_BODY_HTML_TEMPLATE_PATH': None,
         'OTP_EMAIL_TOKEN_VALIDITY': 300,
         'OTP_EMAIL_THROTTLE_FACTOR': 1,
     }
