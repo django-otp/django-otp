@@ -1,3 +1,11 @@
+v1.2.2 - June 16, 2023 - otp_email html support
+--------------------------------------------------------------------------------
+
+- `#125`_: Support email body_html templates
+
+.. _#125: https://github.com/django-otp/django-otp/pull/125
+
+
 v1.2.1 - May 26, 2023 - pt-BR translations
 --------------------------------------------------------------------------------
 
