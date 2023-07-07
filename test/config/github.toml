@@ -1,4 +1,4 @@
-# Configuration for our GitHub workflow.
+# Configuration for our GitHub workflows and codespaces.
 [database]
 ENGINE = "django.db.backends.postgresql"
 HOST = "localhost"
