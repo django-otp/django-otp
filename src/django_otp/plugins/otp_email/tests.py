@@ -7,7 +7,11 @@ from django.db import IntegrityError
 from django.test.utils import override_settings
 
 from django_otp.forms import OTPAuthenticationForm
-from django_otp.tests import TestCase, ThrottlingTestMixin
+from django_otp.tests import (
+    GenerationThrottlingTestMixin,
+    TestCase,
+    ThrottlingTestMixin,
+)
 
 from .models import EmailDevice
 
@@ -235,3 +239,12 @@ class ThrottlingTestCase(EmailDeviceMixin, ThrottlingTestMixin, TestCase):
 
     def invalid_token(self):
         return -1
+
+
+@override_settings(
+    OTP_EMAIL_GENERATION_INTERVAL=1,
+)
+class GenerationThrottlingTestCase(
+    EmailDeviceMixin, GenerationThrottlingTestMixin, TestCase
+):
+    pass

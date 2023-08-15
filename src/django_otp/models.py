@@ -306,10 +306,9 @@ class VerifyNotAllowed:
     N_FAILED_ATTEMPTS = 'N_FAILED_ATTEMPTS'
 
 
-class GenerationThrottlingMixin(models.Model):
+class GenerationCooldownMixin(models.Model):
     """
-    Mixin class for models that need throttling behaviour for generating
-    tokens.
+    Mixin class for models requiring a cooldown duration between generating a challenge.
     """
 
     last_generated_timestamp = models.DateTimeField(
@@ -318,37 +317,29 @@ class GenerationThrottlingMixin(models.Model):
         help_text="The last time a token was generated for this device.",
     )
 
-    def generate_token(self, *args, **kwargs):
-        """
-        Update the timestamp of the last token generation to the current time.
-        """
-        self.last_generated_timestamp = timezone.now()
-        super().generate_token(*args, **kwargs)
-
     def generate_is_allowed(self):
         """
         Checks if the time since the last token generation is greater than
-        configured (in seconds) by OTP_GENERATION_INTERVAL.
+        configured (in seconds).
         """
         dt_now = timezone.now()
         if (
             not self.last_generated_timestamp
             or (dt_now - self.last_generated_timestamp).total_seconds()
-            > self.get_generation_interval()
+            > self.get_cooldown_duration()
         ):
-            return True, None
+            return super().generate_is_allowed()
         else:
             return False, {
-                'reason': "TOKEN_GENERATION_THROTTLED",
-                'next_generation_at': dt_now + timedelta(
-                    seconds=self.get_generation_interval()
-                ),
+                'reason': "COOLDOWN_DURATION_PENDING",
+                'next_generation_at': dt_now
+                + timedelta(seconds=self.get_cooldown_duration()),
             }
 
-    def generate_throttle_reset(self, commit=True):
+    def cooldown_reset(self, commit=True):
         """
-        Call this method to reset throttling (normally when a token generation
-        succeeded).
+        Call this method to reset cooldown (normally when a successful
+        verification).
 
         Pass 'commit=False' to avoid calling self.save().
         """
@@ -357,11 +348,20 @@ class GenerationThrottlingMixin(models.Model):
         if commit:
             self.save()
 
-    @cached_property
-    def generation_throttling_enabled(self):
-        return self.get_generation_interval() > 0
+    def verify_token(self, token):
+        """
+        Reset the throttle if the token is valid.
+        """
+        verified = super().verify_token(token)
+        if verified:
+            self.cooldown_reset()
+        return verified
 
-    def get_generation_interval(self):
+    @cached_property
+    def cooldown_enabled(self):
+        return self.get_cooldown_duration() > 0
+
+    def get_cooldown_duration(self):
         raise NotImplementedError()
 
     class Meta:
@@ -386,7 +386,10 @@ class ThrottlingMixin(models.Model):
         null=True,
         blank=True,
         default=None,
-        help_text="A timestamp of the last failed verification attempt. Null if last attempt succeeded.",
+        help_text=(
+            "A timestamp of the last failed verification attempt. Null if last attempt"
+            " succeeded."
+        ),
     )
 
     throttling_failure_count = models.PositiveIntegerField(

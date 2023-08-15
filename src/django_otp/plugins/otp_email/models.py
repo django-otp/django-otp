@@ -1,10 +1,12 @@
+from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.core.mail import send_mail
 from django.db import models
 from django.template import Context, Template
 from django.template.loader import get_template
+from django.utils import timezone
 
 from django_otp.models import (
-    GenerationThrottlingMixin,
+    GenerationCooldownMixin,
     SideChannelDevice,
     ThrottlingMixin,
 )
@@ -23,7 +25,7 @@ def key_validator(value):  # pragma: no cover
     return hex_validator()(value)
 
 
-class EmailDevice(GenerationThrottlingMixin, ThrottlingMixin, SideChannelDevice):
+class EmailDevice(GenerationCooldownMixin, ThrottlingMixin, SideChannelDevice):
     """
     A :class:`~django_otp.models.SideChannelDevice` that delivers a token to
     the email address saved in this object or alternatively to the user's
@@ -49,9 +51,6 @@ class EmailDevice(GenerationThrottlingMixin, ThrottlingMixin, SideChannelDevice)
         help_text='Optional alternative email address to send tokens to',
     )
 
-    def get_generation_interval(self):
-        return settings.OTP_EMAIL_GENERATION_INTERVAL
-
     def get_throttle_factor(self):
         return settings.OTP_EMAIL_THROTTLE_FACTOR
 
@@ -64,9 +63,10 @@ class EmailDevice(GenerationThrottlingMixin, ThrottlingMixin, SideChannelDevice)
         :type extra_context: dict
 
         """
-        generate_allowed, _ = self.generate_is_allowed()
+        generate_allowed, data_dict = self.generate_is_allowed()
         if generate_allowed:
             self.generate_token(valid_secs=settings.OTP_EMAIL_TOKEN_VALIDITY)
+            self.last_generated_timestamp = timezone.now()
 
             context = {'token': self.token, **(extra_context or {})}
             if settings.OTP_EMAIL_BODY_TEMPLATE:
@@ -97,7 +97,16 @@ class EmailDevice(GenerationThrottlingMixin, ThrottlingMixin, SideChannelDevice)
 
             message = "sent by email"
         else:
-            message = "email not sent. Not allowed to generate token at this time."
+            if data_dict['reason'] == 'COOLDOWN_DURATION_PENDING':
+                next_generation_naturaltime = naturaltime(
+                    data_dict['next_generation_at']
+                )
+                message = (
+                    "Token generation cooldown period has not expired yet. Next"
+                    f" generation allowed {next_generation_naturaltime}"
+                )
+            else:
+                message = "Token generation is not allowed at this time"
 
         return message
 
@@ -108,10 +117,12 @@ class EmailDevice(GenerationThrottlingMixin, ThrottlingMixin, SideChannelDevice)
 
             if verified:
                 self.throttle_reset()
-                self.generate_throttle_reset()
             else:
                 self.throttle_increment()
         else:
             verified = False
 
         return verified
+
+    def get_cooldown_duration(self):
+        return settings.OTP_EMAIL_GENERATION_INTERVAL

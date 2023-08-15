@@ -9,6 +9,7 @@ from freezegun import freeze_time
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
+from django.core import mail
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.db import IntegrityError, connection
@@ -162,6 +163,45 @@ class ThrottlingTestMixin:
             verify_is_allowed3, data3 = self.device.verify_is_allowed()
             self.assertEqual(verify_is_allowed3, True)
             self.assertEqual(data3, None)
+
+
+class GenerationThrottlingTestMixin:
+    def setUp(self):
+        self.device = None
+
+    def test_cooldown_imposed_after_successful_generation(self):
+        message = self.device.generate_challenge()
+        self.assertEqual(message, 'sent by email')
+        message = self.device.generate_challenge()
+        self.assertTrue(
+            message.startswith('Token generation cooldown period has not expired yet.')
+        )
+
+    def test_allow_generation_after_cooldown(self):
+        self.assertEqual(len(mail.outbox), 0)
+        # First generation is allowed
+        self.device.generate_challenge()
+        # Assert that an email is sent
+        self.assertEqual(len(mail.outbox), 1)
+
+        with freeze_time():
+            # Second generation, within cooldown period
+            message = self.device.generate_challenge()
+            self.assertTrue(
+                message.startswith(
+                    'Token generation cooldown period has not expired yet.'
+                )
+            )
+            # Assert that no email is sent
+            self.assertEqual(len(mail.outbox), 1)
+
+        with freeze_time() as frozen_time:
+            # Third generation after cooldown period
+            frozen_time.tick(delta=timedelta(seconds=1.1))
+            message = self.device.generate_challenge()
+            self.assertEqual(message, 'sent by email')
+            # Assert that a second email is sent
+            self.assertEqual(len(mail.outbox), 2)
 
 
 @override_settings(OTP_STATIC_THROTTLE_FACTOR=0)
