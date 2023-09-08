@@ -37,7 +37,7 @@ msgstr "Einmalpasswort-Challenge: {0}"
 
 #: .\src\django_otp\forms.py:63
 msgid "Invalid token. Please make sure you have entered it correctly."
-msgstr "Üngültiges Einmalpasswort. Bitte überprüfe die Eingabe."
+msgstr "Ungültiges Einmalpasswort. Bitte überprüfe die Eingabe."
 
 #: .\src\django_otp\forms.py:65
 #, python-format
