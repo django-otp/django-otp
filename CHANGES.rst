@@ -1,3 +1,11 @@
+v1.2.3 - September 17, 2023 - German translation fix
+--------------------------------------------------------------------------------
+
+- `#131`_: Fix German translation
+
+.. _#131: https://github.com/django-otp/django-otp/pull/131
+
+
 v1.2.2 - June 16, 2023 - otp_email html support
 --------------------------------------------------------------------------------
 
