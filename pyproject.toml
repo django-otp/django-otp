@@ -43,8 +43,8 @@ features = [
 dependencies = [
     "black ~= 23.0",
     "bumpversion ~= 0.6.0",
-    "coverage ~= 6.3",
-    "flake8 ~= 4.0",
+    "coverage ~= 7.3",
+    "flake8 ~= 6.1",
     "freezegun ~= 1.2.0",
     "isort ~= 5.10",
     "psycopg2",
