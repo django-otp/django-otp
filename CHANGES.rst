@@ -1,3 +1,11 @@
+v1.2.4 - October 05, 2023 - Portuguese translation
+--------------------------------------------------------------------------------
+
+- `#133`_: Add pt-PT translation.
+
+.. _#133: https://github.com/django-otp/django-otp/pull/133
+
+
 v1.2.3 - September 17, 2023 - German translation fix
 --------------------------------------------------------------------------------
 

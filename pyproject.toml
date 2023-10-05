@@ -1,6 +1,6 @@
 [project]
 name = "django-otp"
-version = "1.2.3"
+version = "1.2.4"
 description = "A pluggable framework for adding two-factor authentication to Django using one-time passwords."
 readme = "README.rst"
 requires-python = ">=3.7"
