@@ -65,39 +65,8 @@ class EmailDevice(GenerationCooldownMixin, ThrottlingMixin, SideChannelDevice):
         """
         generate_allowed, data_dict = self.generate_is_allowed()
         if generate_allowed:
-            self.generate_token(valid_secs=settings.OTP_EMAIL_TOKEN_VALIDITY)
-            self.last_generated_timestamp = timezone.now()
+            message = self._deliver_token(extra_context)
 
-            context = {'token': self.token, **(extra_context or {})}
-            if settings.OTP_EMAIL_BODY_TEMPLATE:
-                body = Template(settings.OTP_EMAIL_BODY_TEMPLATE).render(
-                    Context(context)
-                )
-            else:
-                body = get_template(settings.OTP_EMAIL_BODY_TEMPLATE_PATH).render(
-                    context
-                )
-
-            if settings.OTP_EMAIL_BODY_HTML_TEMPLATE:
-                body_html = Template(settings.OTP_EMAIL_BODY_HTML_TEMPLATE).render(
-                    Context(context)
-                )
-            elif settings.OTP_EMAIL_BODY_HTML_TEMPLATE_PATH:
-                body_html = get_template(
-                    settings.OTP_EMAIL_BODY_HTML_TEMPLATE_PATH
-                ).render(context)
-            else:
-                body_html = None
-
-            send_mail(
-                str(settings.OTP_EMAIL_SUBJECT),
-                body,
-                settings.OTP_EMAIL_SENDER,
-                [self.email or self.user.email],
-                html_message=body_html,
-            )
-
-            message = "sent by email"
         else:
             if data_dict['reason'] == 'COOLDOWN_DURATION_PENDING':
                 next_generation_naturaltime = naturaltime(
@@ -109,6 +78,39 @@ class EmailDevice(GenerationCooldownMixin, ThrottlingMixin, SideChannelDevice):
                 )
             else:
                 message = "Token generation is not allowed at this time"
+
+        return message
+
+    def _deliver_token(self, extra_context):
+        self.generate_token(valid_secs=settings.OTP_EMAIL_TOKEN_VALIDITY)
+        self.last_generated_timestamp = timezone.now()
+
+        context = {'token': self.token, **(extra_context or {})}
+        if settings.OTP_EMAIL_BODY_TEMPLATE:
+            body = Template(settings.OTP_EMAIL_BODY_TEMPLATE).render(Context(context))
+        else:
+            body = get_template(settings.OTP_EMAIL_BODY_TEMPLATE_PATH).render(context)
+
+        if settings.OTP_EMAIL_BODY_HTML_TEMPLATE:
+            body_html = Template(settings.OTP_EMAIL_BODY_HTML_TEMPLATE).render(
+                Context(context)
+            )
+        elif settings.OTP_EMAIL_BODY_HTML_TEMPLATE_PATH:
+            body_html = get_template(settings.OTP_EMAIL_BODY_HTML_TEMPLATE_PATH).render(
+                context
+            )
+        else:
+            body_html = None
+
+        send_mail(
+            str(settings.OTP_EMAIL_SUBJECT),
+            body,
+            settings.OTP_EMAIL_SENDER,
+            [self.email or self.user.email],
+            html_message=body_html,
+        )
+
+        message = "sent by email"
 
         return message
 
