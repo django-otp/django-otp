@@ -242,7 +242,7 @@ class ThrottlingTestCase(EmailDeviceMixin, ThrottlingTestMixin, TestCase):
 
 
 @override_settings(
-    OTP_EMAIL_GENERATION_INTERVAL=1,
+    OTP_EMAIL_GENERATION_INTERVAL=10,
 )
 class GenerationThrottlingTestCase(
     EmailDeviceMixin, GenerationThrottlingTestMixin, TestCase

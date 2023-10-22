@@ -74,16 +74,18 @@ class EmailDevice(GenerationCooldownMixin, ThrottlingMixin, SideChannelDevice):
                     Context(context)
                 )
             else:
-                body = get_template(settings.OTP_EMAIL_BODY_TEMPLATE_PATH).render(context)
+                body = get_template(settings.OTP_EMAIL_BODY_TEMPLATE_PATH).render(
+                    context
+                )
 
             if settings.OTP_EMAIL_BODY_HTML_TEMPLATE:
                 body_html = Template(settings.OTP_EMAIL_BODY_HTML_TEMPLATE).render(
                     Context(context)
                 )
             elif settings.OTP_EMAIL_BODY_HTML_TEMPLATE_PATH:
-                body_html = get_template(settings.OTP_EMAIL_BODY_HTML_TEMPLATE_PATH).render(
-                    context
-                )
+                body_html = get_template(
+                    settings.OTP_EMAIL_BODY_HTML_TEMPLATE_PATH
+                ).render(context)
             else:
                 body_html = None
 
@@ -103,7 +105,7 @@ class EmailDevice(GenerationCooldownMixin, ThrottlingMixin, SideChannelDevice):
                 )
                 message = (
                     "Token generation cooldown period has not expired yet. Next"
-                    f" generation allowed {next_generation_naturaltime}"
+                    f" generation allowed {next_generation_naturaltime}."
                 )
             else:
                 message = "Token generation is not allowed at this time"

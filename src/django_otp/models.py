@@ -332,7 +332,7 @@ class GenerationCooldownMixin(models.Model):
         else:
             return False, {
                 'reason': "COOLDOWN_DURATION_PENDING",
-                'next_generation_at': dt_now
+                'next_generation_at': self.last_generated_timestamp
                 + timedelta(seconds=self.get_cooldown_duration()),
             }
 

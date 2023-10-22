@@ -177,6 +177,13 @@ class GenerationThrottlingTestMixin:
             message.startswith('Token generation cooldown period has not expired yet.')
         )
 
+    def test_cooldown_message(self):
+        with freeze_time("2023-10-10 13:00:00") as frozen_time:
+            self.device.generate_challenge()
+            frozen_time.tick(delta=timedelta(seconds=5))
+            message = self.device.generate_challenge()
+            self.assertIn("Next generation allowed 5\xa0seconds from now.", message)
+
     def test_allow_generation_after_cooldown(self):
         self.assertEqual(len(mail.outbox), 0)
         # First generation is allowed
@@ -197,7 +204,7 @@ class GenerationThrottlingTestMixin:
 
         with freeze_time() as frozen_time:
             # Third generation after cooldown period
-            frozen_time.tick(delta=timedelta(seconds=1.1))
+            frozen_time.tick(delta=timedelta(seconds=10.1))
             message = self.device.generate_challenge()
             self.assertEqual(message, 'sent by email')
             # Assert that a second email is sent
