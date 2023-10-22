@@ -9,7 +9,6 @@ from freezegun import freeze_time
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
-from django.core import mail
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.db import IntegrityError, connection
@@ -169,46 +168,72 @@ class GenerationThrottlingTestMixin:
     def setUp(self):
         self.device = None
 
+    def valid_token(self):
+        """Returns a valid token to pass to our device under test."""
+        raise NotImplementedError()
+
+    def invalid_token(self):
+        """Returns an invalid token to pass to our device under test."""
+        raise NotImplementedError()
+
+    #
+    # Tests
+    #
+
+    def test_generate_is_allowed_on_first_try(self):
+        """Token generation should be allowed on first try."""
+        allowed, _ = self.device.generate_is_allowed()
+        self.assertTrue(allowed)
+
     def test_cooldown_imposed_after_successful_generation(self):
-        message = self.device.generate_challenge()
-        self.assertEqual(message, 'sent by email')
-        message = self.device.generate_challenge()
-        self.assertTrue(
-            message.startswith('Token generation cooldown period has not expired yet.')
-        )
-
-    def test_cooldown_message(self):
-        with freeze_time("2023-10-10 13:00:00") as frozen_time:
-            self.device.generate_challenge()
-            frozen_time.tick(delta=timedelta(seconds=5))
-            message = self.device.generate_challenge()
-            self.assertIn("Next generation allowed 5\xa0seconds from now.", message)
-
-    def test_allow_generation_after_cooldown(self):
-        self.assertEqual(len(mail.outbox), 0)
-        # First generation is allowed
-        self.device.generate_challenge()
-        # Assert that an email is sent
-        self.assertEqual(len(mail.outbox), 1)
-
+        """
+        Token generation before cooldown should not be allowed
+        and the relevant reason should be returned.
+        """
         with freeze_time():
-            # Second generation, within cooldown period
-            message = self.device.generate_challenge()
-            self.assertTrue(
-                message.startswith(
-                    'Token generation cooldown period has not expired yet.'
-                )
-            )
-            # Assert that no email is sent
-            self.assertEqual(len(mail.outbox), 1)
+            self.device.generate_challenge()
+            allowed, details = self.device.generate_is_allowed()
 
-        with freeze_time() as frozen_time:
-            # Third generation after cooldown period
-            frozen_time.tick(delta=timedelta(seconds=10.1))
-            message = self.device.generate_challenge()
-            self.assertEqual(message, 'sent by email')
-            # Assert that a second email is sent
-            self.assertEqual(len(mail.outbox), 2)
+            self.assertFalse(allowed)
+            self.assertEqual(details['reason'], 'COOLDOWN_DURATION_PENDING')
+
+    def test_cooldown_expire_time(self):
+        """
+        When token generation is not allowed, the cooldown expire time
+        should be returned.
+        """
+        with freeze_time():
+            self.device.generate_challenge()
+            _, details = self.device.generate_is_allowed()
+            self.assertEqual(
+                details['next_generation_at'], timezone.now() + timedelta(seconds=10)
+            )
+
+    def test_cooldown_reset(self):
+        """Cooldown can be reset and allow token generation again before the initial period expires."""
+        with freeze_time():
+            self.device.generate_is_allowed()
+            self.device.cooldown_reset()
+            allowed, _ = self.device.generate_is_allowed()
+            self.assertTrue(allowed)
+
+    def test_valid_token_verification_resets_cooldown(self):
+        """When the token is verified, the cooldown period is reset."""
+        with freeze_time():
+            self.device.generate_challenge()
+            verified = self.device.verify_token(self.valid_token())
+            self.assertTrue(verified)
+            allowed, _ = self.device.generate_is_allowed()
+            self.assertTrue(allowed)
+
+    def test_invalid_token_verification_does_not_reset_cooldown(self):
+        """When the token is not verified, the cooldown period is not reset."""
+        with freeze_time():
+            self.device.generate_challenge()
+            verified = self.device.verify_token(self.invalid_token())
+            self.assertFalse(verified)
+            allowed, _ = self.device.generate_is_allowed()
+            self.assertFalse(allowed)
 
 
 @override_settings(OTP_STATIC_THROTTLE_FACTOR=0)
