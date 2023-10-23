@@ -306,7 +306,7 @@ class VerifyNotAllowed:
     N_FAILED_ATTEMPTS = 'N_FAILED_ATTEMPTS'
 
 
-class GenerationCooldownMixin(models.Model):
+class CooldownMixin(models.Model):
     """
     Mixin class for models requiring a cooldown duration between generating a challenge.
     """

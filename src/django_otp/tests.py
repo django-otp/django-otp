@@ -164,7 +164,7 @@ class ThrottlingTestMixin:
             self.assertEqual(data3, None)
 
 
-class GenerationThrottlingTestMixin:
+class CooldownTestMixin:
     def setUp(self):
         self.device = None
 

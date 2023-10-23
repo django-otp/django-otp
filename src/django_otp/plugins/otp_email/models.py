@@ -5,11 +5,7 @@ from django.template import Context, Template
 from django.template.loader import get_template
 from django.utils import timezone
 
-from django_otp.models import (
-    GenerationCooldownMixin,
-    SideChannelDevice,
-    ThrottlingMixin,
-)
+from django_otp.models import CooldownMixin, SideChannelDevice, ThrottlingMixin
 from django_otp.util import hex_validator, random_hex
 
 from .conf import settings
@@ -25,7 +21,7 @@ def key_validator(value):  # pragma: no cover
     return hex_validator()(value)
 
 
-class EmailDevice(GenerationCooldownMixin, ThrottlingMixin, SideChannelDevice):
+class EmailDevice(CooldownMixin, ThrottlingMixin, SideChannelDevice):
     """
     A :class:`~django_otp.models.SideChannelDevice` that delivers a token to
     the email address saved in this object or alternatively to the user's
@@ -129,4 +125,4 @@ class EmailDevice(GenerationCooldownMixin, ThrottlingMixin, SideChannelDevice):
         return verified
 
     def get_cooldown_duration(self):
-        return settings.OTP_EMAIL_GENERATION_INTERVAL
+        return settings.OTP_COOLDOWN_DURATION
