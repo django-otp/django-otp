@@ -308,7 +308,14 @@ class VerifyNotAllowed:
 
 class CooldownMixin(models.Model):
     """
-    Mixin class for models requiring a cooldown duration between generating a challenge.
+    Mixin class for models requiring a cooldown duration between challenge generations.
+
+    Subclass must implement :meth:`get_cooldown_duration`, and must use the
+    :meth:`generate_is_allowed` method from within their generate_challenge() method.
+
+    see the implementation of
+    :class:`~django_otp.plugins.otp_email.models.EmailDevice` for an example.
+
     """
 
     last_generated_timestamp = models.DateTimeField(
@@ -362,6 +369,15 @@ class CooldownMixin(models.Model):
         return self.get_cooldown_duration() > 0
 
     def get_cooldown_duration(self):
+        """
+        This must be implemented to return the cooldown duration in seconds.
+
+        A duration of 0 disables the cooldown.
+
+        Normally this is just a wrapper for a plugin-specific setting like
+        :setting:`OTP_EMAIL_COOLDOWN_DURATION`.
+
+        """
         raise NotImplementedError()
 
     class Meta:
