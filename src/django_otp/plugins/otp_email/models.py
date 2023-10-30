@@ -125,4 +125,4 @@ class EmailDevice(CooldownMixin, ThrottlingMixin, SideChannelDevice):
         return verified
 
     def get_cooldown_duration(self):
-        return settings.OTP_COOLDOWN_DURATION
+        return settings.OTP_EMAIL_COOLDOWN_DURATION

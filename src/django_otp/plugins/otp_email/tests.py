@@ -238,7 +238,7 @@ class ThrottlingTestCase(EmailDeviceMixin, ThrottlingTestMixin, TestCase):
 
 
 @override_settings(
-    OTP_COOLDOWN_DURATION=10,
+    OTP_EMAIL_COOLDOWN_DURATION=10,
 )
 class CooldownTestCase(EmailDeviceMixin, CooldownTestMixin, TestCase):
     def valid_token(self):

@@ -19,6 +19,7 @@ class OTPEmailSettings:
         'OTP_EMAIL_BODY_HTML_TEMPLATE_PATH': None,
         'OTP_EMAIL_TOKEN_VALIDITY': 300,
         'OTP_EMAIL_THROTTLE_FACTOR': 1,
+        'OTP_EMAIL_COOLDOWN_DURATION': 60,
     }
 
     def __getattr__(self, name):
