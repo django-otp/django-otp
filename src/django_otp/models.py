@@ -1,4 +1,5 @@
 from datetime import timedelta
+import enum
 
 from django.apps import apps
 from django.conf import settings
@@ -289,30 +290,30 @@ class SideChannelDevice(Device):
             return False
 
 
-class VerifyNotAllowed:
+class GenerateNotAllowed(enum.Enum):
     """
     Constants that may be returned in the ``reason`` member of the extra
     information dictionary returned by
-    :meth:`~django_otp.models.Device.verify_is_allowed`
+    :meth:`~django_otp.models.Device.generate_is_allowed`
 
-    .. data:: N_FAILED_ATTEMPTS
+    .. data:: COOLDOWN_DURATION_PENDING
 
-       Indicates that verification is disallowed because of ``n`` successive
-       failed attempts. The data dictionary should include the value of ``n``
-       in member ``failure_count``
+       Indicates that a token was generated recently and we're waiting for the
+       cooldown period to expire.
 
     """
 
-    N_FAILED_ATTEMPTS = 'N_FAILED_ATTEMPTS'
+    COOLDOWN_DURATION_PENDING = 'COOLDOWN_DURATION_PENDING'
 
 
 class CooldownMixin(models.Model):
     """
-    Mixin class for models requiring a cooldown duration between challenge generations.
+    Mixin class for models requiring a cooldown duration between challenge
+    generations.
 
     Subclass must implement :meth:`get_cooldown_duration`, and must use the
-    :meth:`generate_is_allowed` method from within their generate_challenge() method.
-    Further it must use :meth:`cooldown_set` when a token is generated.
+    :meth:`generate_is_allowed` method from within their generate_challenge()
+    method. Further it must use :meth:`cooldown_set` when a token is generated.
 
     See the implementation of
     :class:`~django_otp.plugins.otp_email.models.EmailDevice` for an example.
@@ -325,10 +326,24 @@ class CooldownMixin(models.Model):
         help_text="The last time a token was generated for this device.",
     )
 
+    class Meta:
+        abstract = True
+
     def generate_is_allowed(self):
         """
-        Checks if the time since the last token generation is greater than
-        configured (in seconds).
+        If token generation is allowed, returns ``(True, None)``. Otherwise,
+        returns ``(False, data_dict)``.
+
+        ``data_dict`` contains further information. Currently it can be::
+
+            {
+                'reason': GenerateNotAllowed.COOLDOWN_DURATION_PENDING,
+                'next_generation_at': when,
+            }
+
+        where ``when`` is a datetime marking the end of the cooldown period.
+        See :class:`GenerateNotAllowed`.
+
         """
         dt_now = timezone.now()
         if (
@@ -339,20 +354,20 @@ class CooldownMixin(models.Model):
             return super().generate_is_allowed()
         else:
             return False, {
-                'reason': "COOLDOWN_DURATION_PENDING",
+                'reason': GenerateNotAllowed.COOLDOWN_DURATION_PENDING,
                 'next_generation_at': self.last_generated_timestamp
                 + timedelta(seconds=self.get_cooldown_duration()),
             }
 
     def cooldown_reset(self, commit=True):
         """
-        Call this method to reset cooldown (normally when a successful
+        Call this method to reset cooldown (normally after a successful
         verification).
 
         Pass 'commit=False' to avoid calling self.save().
+
         """
         self.last_generated_timestamp = None
-
         if commit:
             self.save()
 
@@ -362,9 +377,9 @@ class CooldownMixin(models.Model):
         a token is generated).
 
         Pass 'commit=False' to avoid calling self.save().
+
         """
         self.last_generated_timestamp = timezone.now()
-
         if commit:
             self.save()
 
@@ -375,6 +390,7 @@ class CooldownMixin(models.Model):
         verified = super().verify_token(token)
         if verified:
             self.cooldown_reset()
+
         return verified
 
     @cached_property
@@ -393,8 +409,22 @@ class CooldownMixin(models.Model):
         """
         raise NotImplementedError()
 
-    class Meta:
-        abstract = True
+
+class VerifyNotAllowed(enum.Enum):
+    """
+    Constants that may be returned in the ``reason`` member of the extra
+    information dictionary returned by
+    :meth:`~django_otp.models.Device.verify_is_allowed`
+
+    .. data:: N_FAILED_ATTEMPTS
+
+       Indicates that verification is disallowed because of ``n`` successive
+       failed attempts. The data dictionary should include the value of ``n``
+       in member ``failure_count``
+
+    """
+
+    N_FAILED_ATTEMPTS = 'N_FAILED_ATTEMPTS'
 
 
 class ThrottlingMixin(models.Model):
@@ -424,6 +454,9 @@ class ThrottlingMixin(models.Model):
     throttling_failure_count = models.PositiveIntegerField(
         default=0, help_text="Number of successive failed attempts."
     )
+
+    class Meta:
+        abstract = True
 
     def verify_is_allowed(self):
         """
@@ -509,6 +542,3 @@ class ThrottlingMixin(models.Model):
 
         """
         raise NotImplementedError()
-
-    class Meta:
-        abstract = True

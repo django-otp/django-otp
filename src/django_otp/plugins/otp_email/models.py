@@ -4,7 +4,12 @@ from django.db import models
 from django.template import Context, Template
 from django.template.loader import get_template
 
-from django_otp.models import CooldownMixin, SideChannelDevice, ThrottlingMixin
+from django_otp.models import (
+    CooldownMixin,
+    GenerateNotAllowed,
+    SideChannelDevice,
+    ThrottlingMixin,
+)
 from django_otp.util import hex_validator, random_hex
 
 from .conf import settings
@@ -46,9 +51,6 @@ class EmailDevice(CooldownMixin, ThrottlingMixin, SideChannelDevice):
         help_text='Optional alternative email address to send tokens to',
     )
 
-    def get_throttle_factor(self):
-        return settings.OTP_EMAIL_THROTTLE_FACTOR
-
     def generate_challenge(self, extra_context=None):
         """
         Generates a random token and emails it to the user.
@@ -61,9 +63,8 @@ class EmailDevice(CooldownMixin, ThrottlingMixin, SideChannelDevice):
         generate_allowed, data_dict = self.generate_is_allowed()
         if generate_allowed:
             message = self._deliver_token(extra_context)
-
         else:
-            if data_dict['reason'] == 'COOLDOWN_DURATION_PENDING':
+            if data_dict['reason'] == GenerateNotAllowed.COOLDOWN_DURATION_PENDING:
                 next_generation_naturaltime = naturaltime(
                     data_dict['next_generation_at']
                 )
@@ -110,6 +111,7 @@ class EmailDevice(CooldownMixin, ThrottlingMixin, SideChannelDevice):
         return message
 
     def verify_token(self, token):
+        """"""
         verify_allowed, _ = self.verify_is_allowed()
         if verify_allowed:
             verified = super().verify_token(token)
@@ -124,4 +126,13 @@ class EmailDevice(CooldownMixin, ThrottlingMixin, SideChannelDevice):
         return verified
 
     def get_cooldown_duration(self):
+        """
+        Returns :setting:`OTP_EMAIL_COOLDOWN_DURATION`.
+        """
         return settings.OTP_EMAIL_COOLDOWN_DURATION
+
+    def get_throttle_factor(self):
+        """
+        Returns :setting:`OTP_EMAIL_THROTTLE_FACTOR`.
+        """
+        return settings.OTP_EMAIL_THROTTLE_FACTOR

@@ -1,3 +1,24 @@
+Unreleased - Support cooldowns for token generation
+--------------------------------------------------------------------------------
+
+- `#122`_: Added throttling to token generation.
+
+  Devices that generate random tokens can take advantage of the new
+  :class:`~django_otp.models.CooldownMixin` to enforce limits on how frequently
+  new tokens can be generated (and presumably delivered).
+  :class:`~django_otp.plugins.otp_email.models.EmailDevice` uses this and has a
+  :setting:`default cooldown <OTP_EMAIL_COOLDOWN_DURATION>` configured.
+
+  Thanks to `Demetris Stavrou`_ for this feature.
+
+- Note: :class:`~django_otp.models.VerifyNotAllowed` is now an
+  :class:`~enum.Enum`. This will break any code that inadvisably hard-coded the
+  string value of the `N_FAILED_ATTEMPTS` property.
+
+.. _#122: https://github.com/django-otp/django-otp/pull/122
+.. _Demetris Stavrou: https://github.com/demestav
+
+
 v1.2.4 - October 05, 2023 - Portuguese translation
 --------------------------------------------------------------------------------
 

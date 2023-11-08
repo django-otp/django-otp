@@ -30,7 +30,7 @@ from django_otp import (
 )
 from django_otp.forms import OTPTokenForm
 from django_otp.middleware import OTPMiddleware
-from django_otp.models import VerifyNotAllowed
+from django_otp.models import GenerateNotAllowed, VerifyNotAllowed
 from django_otp.plugins.otp_static.models import StaticDevice, StaticToken
 
 
@@ -196,7 +196,9 @@ class CooldownTestMixin:
             allowed, details = self.device.generate_is_allowed()
 
             self.assertFalse(allowed)
-            self.assertEqual(details['reason'], 'COOLDOWN_DURATION_PENDING')
+            self.assertEqual(
+                details['reason'], GenerateNotAllowed.COOLDOWN_DURATION_PENDING
+            )
 
     def test_cooldown_expire_time(self):
         """
