@@ -1,4 +1,4 @@
-Unreleased - Support cooldowns for token generation
+v1.3.0 - November 08, 2023 - Support cooldowns for token generation
 --------------------------------------------------------------------------------
 
 - `#122`_: Added throttling to token generation.
