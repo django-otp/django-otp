@@ -251,17 +251,20 @@ class CooldownTestCase(EmailDeviceMixin, CooldownTestMixin, TestCase):
         return -1
 
     def test_cooldown_imposed_message(self):
-        message = self.device.generate_challenge()
-        message = self.device.generate_challenge()
-        self.assertTrue(
-            message.startswith(
-                'Token generation cooldown period has not expired yet. Next generation allowed'
+        with freeze_time():
+            message = self.device.generate_challenge()
+            self.device.refresh_from_db()
+            message = self.device.generate_challenge()
+            self.assertTrue(
+                message.startswith(
+                    'Token generation cooldown period has not expired yet. Next generation allowed'
+                )
             )
-        )
 
     def test_cooldown_imposed_expiration_message(self):
         with freeze_time() as frozen_time:
             self.device.generate_challenge()
             frozen_time.tick(delta=timedelta(seconds=5))
+            self.device.refresh_from_db()
             message = self.device.generate_challenge()
             self.assertIn("Next generation allowed 5\xa0seconds from now.", message)

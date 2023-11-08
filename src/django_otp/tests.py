@@ -192,6 +192,7 @@ class CooldownTestMixin:
         """
         with freeze_time():
             self.device.generate_challenge()
+            self.device.refresh_from_db()
             allowed, details = self.device.generate_is_allowed()
 
             self.assertFalse(allowed)
@@ -204,6 +205,7 @@ class CooldownTestMixin:
         """
         with freeze_time():
             self.device.generate_challenge()
+            self.device.refresh_from_db()
             _, details = self.device.generate_is_allowed()
             self.assertEqual(
                 details['next_generation_at'], timezone.now() + timedelta(seconds=10)
@@ -213,7 +215,9 @@ class CooldownTestMixin:
         """Cooldown can be reset and allow token generation again before the initial period expires."""
         with freeze_time():
             self.device.generate_is_allowed()
+            self.device.refresh_from_db()
             self.device.cooldown_reset()
+            self.device.refresh_from_db()
             allowed, _ = self.device.generate_is_allowed()
             self.assertTrue(allowed)
 
@@ -221,8 +225,10 @@ class CooldownTestMixin:
         """When the token is verified, the cooldown period is reset."""
         with freeze_time():
             self.device.generate_challenge()
+            self.device.refresh_from_db()
             verified = self.device.verify_token(self.valid_token())
             self.assertTrue(verified)
+            self.device.refresh_from_db()
             allowed, _ = self.device.generate_is_allowed()
             self.assertTrue(allowed)
 
@@ -230,8 +236,10 @@ class CooldownTestMixin:
         """When the token is not verified, the cooldown period is not reset."""
         with freeze_time():
             self.device.generate_challenge()
+            self.device.refresh_from_db()
             verified = self.device.verify_token(self.invalid_token())
             self.assertFalse(verified)
+            self.device.refresh_from_db()
             allowed, _ = self.device.generate_is_allowed()
             self.assertFalse(allowed)
 

@@ -312,8 +312,9 @@ class CooldownMixin(models.Model):
 
     Subclass must implement :meth:`get_cooldown_duration`, and must use the
     :meth:`generate_is_allowed` method from within their generate_challenge() method.
+    Further it must use :meth:`cooldown_set` when a token is generated.
 
-    see the implementation of
+    See the implementation of
     :class:`~django_otp.plugins.otp_email.models.EmailDevice` for an example.
 
     """
@@ -351,6 +352,18 @@ class CooldownMixin(models.Model):
         Pass 'commit=False' to avoid calling self.save().
         """
         self.last_generated_timestamp = None
+
+        if commit:
+            self.save()
+
+    def cooldown_set(self, commit=True):
+        """
+        Call this method to set the cooldown timestamp to now (normally when
+        a token is generated).
+
+        Pass 'commit=False' to avoid calling self.save().
+        """
+        self.last_generated_timestamp = timezone.now()
 
         if commit:
             self.save()

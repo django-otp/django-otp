@@ -3,7 +3,6 @@ from django.core.mail import send_mail
 from django.db import models
 from django.template import Context, Template
 from django.template.loader import get_template
-from django.utils import timezone
 
 from django_otp.models import CooldownMixin, SideChannelDevice, ThrottlingMixin
 from django_otp.util import hex_validator, random_hex
@@ -78,8 +77,8 @@ class EmailDevice(CooldownMixin, ThrottlingMixin, SideChannelDevice):
         return message
 
     def _deliver_token(self, extra_context):
-        self.generate_token(valid_secs=settings.OTP_EMAIL_TOKEN_VALIDITY)
-        self.last_generated_timestamp = timezone.now()
+        self.cooldown_set(commit=False)
+        self.generate_token(valid_secs=settings.OTP_EMAIL_TOKEN_VALIDITY, commit=True)
 
         context = {'token': self.token, **(extra_context or {})}
         if settings.OTP_EMAIL_BODY_TEMPLATE:
