@@ -7,7 +7,7 @@ from django.db import IntegrityError
 from django.test.utils import override_settings
 
 from django_otp.forms import OTPAuthenticationForm
-from django_otp.tests import TestCase, ThrottlingTestMixin
+from django_otp.tests import CooldownTestMixin, TestCase, ThrottlingTestMixin
 
 from .models import EmailDevice
 
@@ -235,3 +235,36 @@ class ThrottlingTestCase(EmailDeviceMixin, ThrottlingTestMixin, TestCase):
 
     def invalid_token(self):
         return -1
+
+
+@override_settings(
+    OTP_EMAIL_COOLDOWN_DURATION=10,
+)
+class CooldownTestCase(EmailDeviceMixin, CooldownTestMixin, TestCase):
+    def valid_token(self):
+        if self.device.token is None:
+            self.device.generate_token()
+
+        return self.device.token
+
+    def invalid_token(self):
+        return -1
+
+    def test_cooldown_imposed_message(self):
+        with freeze_time():
+            message = self.device.generate_challenge()
+            self.device.refresh_from_db()
+            message = self.device.generate_challenge()
+            self.assertTrue(
+                message.startswith(
+                    'Token generation cooldown period has not expired yet. Next generation allowed'
+                )
+            )
+
+    def test_cooldown_imposed_expiration_message(self):
+        with freeze_time() as frozen_time:
+            self.device.generate_challenge()
+            frozen_time.tick(delta=timedelta(seconds=5))
+            self.device.refresh_from_db()
+            message = self.device.generate_challenge()
+            self.assertIn("Next generation allowed 5\xa0seconds from now.", message)

@@ -76,6 +76,8 @@ functionality.
 .. autoclass:: django_otp.models.ThrottlingMixin
    :members: get_throttle_factor, verify_is_allowed, throttle_reset, throttle_increment
 
+.. autoclass:: django_otp.models.CooldownMixin
+   :members: generate_is_allowed, cooldown_reset, cooldown_set
 .. _utilities:
 
 Utilities

@@ -1,9 +1,10 @@
+from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.core.mail import send_mail
 from django.db import models
 from django.template import Context, Template
 from django.template.loader import get_template
 
-from django_otp.models import SideChannelDevice, ThrottlingMixin
+from django_otp.models import CooldownMixin, SideChannelDevice, ThrottlingMixin
 from django_otp.util import hex_validator, random_hex
 
 from .conf import settings
@@ -19,7 +20,7 @@ def key_validator(value):  # pragma: no cover
     return hex_validator()(value)
 
 
-class EmailDevice(ThrottlingMixin, SideChannelDevice):
+class EmailDevice(CooldownMixin, ThrottlingMixin, SideChannelDevice):
     """
     A :class:`~django_otp.models.SideChannelDevice` that delivers a token to
     the email address saved in this object or alternatively to the user's
@@ -57,7 +58,27 @@ class EmailDevice(ThrottlingMixin, SideChannelDevice):
         :type extra_context: dict
 
         """
-        self.generate_token(valid_secs=settings.OTP_EMAIL_TOKEN_VALIDITY)
+        generate_allowed, data_dict = self.generate_is_allowed()
+        if generate_allowed:
+            message = self._deliver_token(extra_context)
+
+        else:
+            if data_dict['reason'] == 'COOLDOWN_DURATION_PENDING':
+                next_generation_naturaltime = naturaltime(
+                    data_dict['next_generation_at']
+                )
+                message = (
+                    "Token generation cooldown period has not expired yet. Next"
+                    f" generation allowed {next_generation_naturaltime}."
+                )
+            else:
+                message = "Token generation is not allowed at this time"
+
+        return message
+
+    def _deliver_token(self, extra_context):
+        self.cooldown_set(commit=False)
+        self.generate_token(valid_secs=settings.OTP_EMAIL_TOKEN_VALIDITY, commit=True)
 
         context = {'token': self.token, **(extra_context or {})}
         if settings.OTP_EMAIL_BODY_TEMPLATE:
@@ -101,3 +122,6 @@ class EmailDevice(ThrottlingMixin, SideChannelDevice):
             verified = False
 
         return verified
+
+    def get_cooldown_duration(self):
+        return settings.OTP_EMAIL_COOLDOWN_DURATION

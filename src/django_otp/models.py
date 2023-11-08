@@ -159,6 +159,19 @@ class Device(models.Model):
         """
         return not hasattr(self.generate_challenge, 'stub')
 
+    def generate_is_allowed(self):
+        """
+        Checks whether it is permissible to call :meth:`generate_challenge`. If
+        it is allowed, returns ``(True, None)``. Otherwise returns ``(False,
+        data_dict)``, where ``data_dict`` contains extra information, defined
+        by the implementation.
+
+        This method can be used to implement throttling of token generation for
+        interactive devices. Client code should check this method before calling
+        :meth:`generate_challenge` and report problems to the user.
+        """
+        return (True, None)
+
     def generate_challenge(self):
         """
         Generates a challenge value that the user will need to produce a token.
@@ -293,6 +306,97 @@ class VerifyNotAllowed:
     N_FAILED_ATTEMPTS = 'N_FAILED_ATTEMPTS'
 
 
+class CooldownMixin(models.Model):
+    """
+    Mixin class for models requiring a cooldown duration between challenge generations.
+
+    Subclass must implement :meth:`get_cooldown_duration`, and must use the
+    :meth:`generate_is_allowed` method from within their generate_challenge() method.
+    Further it must use :meth:`cooldown_set` when a token is generated.
+
+    See the implementation of
+    :class:`~django_otp.plugins.otp_email.models.EmailDevice` for an example.
+
+    """
+
+    last_generated_timestamp = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text="The last time a token was generated for this device.",
+    )
+
+    def generate_is_allowed(self):
+        """
+        Checks if the time since the last token generation is greater than
+        configured (in seconds).
+        """
+        dt_now = timezone.now()
+        if (
+            not self.last_generated_timestamp
+            or (dt_now - self.last_generated_timestamp).total_seconds()
+            > self.get_cooldown_duration()
+        ):
+            return super().generate_is_allowed()
+        else:
+            return False, {
+                'reason': "COOLDOWN_DURATION_PENDING",
+                'next_generation_at': self.last_generated_timestamp
+                + timedelta(seconds=self.get_cooldown_duration()),
+            }
+
+    def cooldown_reset(self, commit=True):
+        """
+        Call this method to reset cooldown (normally when a successful
+        verification).
+
+        Pass 'commit=False' to avoid calling self.save().
+        """
+        self.last_generated_timestamp = None
+
+        if commit:
+            self.save()
+
+    def cooldown_set(self, commit=True):
+        """
+        Call this method to set the cooldown timestamp to now (normally when
+        a token is generated).
+
+        Pass 'commit=False' to avoid calling self.save().
+        """
+        self.last_generated_timestamp = timezone.now()
+
+        if commit:
+            self.save()
+
+    def verify_token(self, token):
+        """
+        Reset the throttle if the token is valid.
+        """
+        verified = super().verify_token(token)
+        if verified:
+            self.cooldown_reset()
+        return verified
+
+    @cached_property
+    def cooldown_enabled(self):
+        return self.get_cooldown_duration() > 0
+
+    def get_cooldown_duration(self):
+        """
+        This must be implemented to return the cooldown duration in seconds.
+
+        A duration of 0 disables the cooldown.
+
+        Normally this is just a wrapper for a plugin-specific setting like
+        :setting:`OTP_EMAIL_COOLDOWN_DURATION`.
+
+        """
+        raise NotImplementedError()
+
+    class Meta:
+        abstract = True
+
+
 class ThrottlingMixin(models.Model):
     """
     Mixin class for models that want throttling behaviour.
@@ -311,7 +415,10 @@ class ThrottlingMixin(models.Model):
         null=True,
         blank=True,
         default=None,
-        help_text="A timestamp of the last failed verification attempt. Null if last attempt succeeded.",
+        help_text=(
+            "A timestamp of the last failed verification attempt. Null if last attempt"
+            " succeeded."
+        ),
     )
 
     throttling_failure_count = models.PositiveIntegerField(

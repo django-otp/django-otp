@@ -497,7 +497,15 @@ This controls the rate of throttling. The sequence of 1, 2, 4, 8… seconds is
 multiplied by this factor to define the delay imposed after 1, 2, 3, 4…
 successive failures. Set to 0 to disable throttling completely.
 
+.. setting:: OTP_EMAIL_COOLDOWN_DURATION
 
+**OTP_EMAIL_COOLDOWN_DURATION**
+
+Default: ``60``
+
+This controls the cooldown period after a successful generation. The next generation
+can only be initiated after the designated time period has fully elapsed. Set to 0
+to disable cooldown completely.
 
 .. _other-plugins:
 

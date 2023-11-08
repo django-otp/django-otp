@@ -164,6 +164,86 @@ class ThrottlingTestMixin:
             self.assertEqual(data3, None)
 
 
+class CooldownTestMixin:
+    def setUp(self):
+        self.device = None
+
+    def valid_token(self):
+        """Returns a valid token to pass to our device under test."""
+        raise NotImplementedError()
+
+    def invalid_token(self):
+        """Returns an invalid token to pass to our device under test."""
+        raise NotImplementedError()
+
+    #
+    # Tests
+    #
+
+    def test_generate_is_allowed_on_first_try(self):
+        """Token generation should be allowed on first try."""
+        allowed, _ = self.device.generate_is_allowed()
+        self.assertTrue(allowed)
+
+    def test_cooldown_imposed_after_successful_generation(self):
+        """
+        Token generation before cooldown should not be allowed
+        and the relevant reason should be returned.
+        """
+        with freeze_time():
+            self.device.generate_challenge()
+            self.device.refresh_from_db()
+            allowed, details = self.device.generate_is_allowed()
+
+            self.assertFalse(allowed)
+            self.assertEqual(details['reason'], 'COOLDOWN_DURATION_PENDING')
+
+    def test_cooldown_expire_time(self):
+        """
+        When token generation is not allowed, the cooldown expire time
+        should be returned.
+        """
+        with freeze_time():
+            self.device.generate_challenge()
+            self.device.refresh_from_db()
+            _, details = self.device.generate_is_allowed()
+            self.assertEqual(
+                details['next_generation_at'], timezone.now() + timedelta(seconds=10)
+            )
+
+    def test_cooldown_reset(self):
+        """Cooldown can be reset and allow token generation again before the initial period expires."""
+        with freeze_time():
+            self.device.generate_is_allowed()
+            self.device.refresh_from_db()
+            self.device.cooldown_reset()
+            self.device.refresh_from_db()
+            allowed, _ = self.device.generate_is_allowed()
+            self.assertTrue(allowed)
+
+    def test_valid_token_verification_resets_cooldown(self):
+        """When the token is verified, the cooldown period is reset."""
+        with freeze_time():
+            self.device.generate_challenge()
+            self.device.refresh_from_db()
+            verified = self.device.verify_token(self.valid_token())
+            self.assertTrue(verified)
+            self.device.refresh_from_db()
+            allowed, _ = self.device.generate_is_allowed()
+            self.assertTrue(allowed)
+
+    def test_invalid_token_verification_does_not_reset_cooldown(self):
+        """When the token is not verified, the cooldown period is not reset."""
+        with freeze_time():
+            self.device.generate_challenge()
+            self.device.refresh_from_db()
+            verified = self.device.verify_token(self.invalid_token())
+            self.assertFalse(verified)
+            self.device.refresh_from_db()
+            allowed, _ = self.device.generate_is_allowed()
+            self.assertFalse(allowed)
+
+
 @override_settings(OTP_STATIC_THROTTLE_FACTOR=0)
 class APITestCase(TestCase):
     def setUp(self):
