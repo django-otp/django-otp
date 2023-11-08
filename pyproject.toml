@@ -43,8 +43,8 @@ features = [
 dependencies = [
     "black ~= 23.0",
     "bumpversion ~= 0.6.0",
-    "coverage ~= 6.3",
-    "flake8 ~= 4.0",
+    "coverage ~= 7.3",
+    "flake8 ~= 6.1",
     "freezegun ~= 1.2.0",
     "isort ~= 5.10",
     "psycopg2",
@@ -98,12 +98,16 @@ mode = ["lint"]
 # WARNING: When you update the Python versions, make sure to update
 # .github/workflows/* as well.
 [[tool.hatch.envs.test.matrix]]
-python = ["3.7"]
+python = ["3.8"]
 django = ["3.2"]
 
 [[tool.hatch.envs.test.matrix]]
-python = ["3.11"]
-django = ["4.1", "4.2"]
+python = ["3.10"]
+django = ["4.1"]
+
+[[tool.hatch.envs.test.matrix]]
+python = ["3.12"]
+django = ["4.2"]
 
 [[tool.hatch.envs.test.matrix]]
 mode = ["coverage"]

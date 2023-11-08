@@ -2,7 +2,6 @@ import os.path
 
 from django.core.exceptions import ImproperlyConfigured
 
-
 try:
     import tomllib
 except ModuleNotFoundError:
