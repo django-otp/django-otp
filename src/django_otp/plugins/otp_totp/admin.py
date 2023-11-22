@@ -5,10 +5,14 @@ from django.http import HttpResponse
 from django.template.response import TemplateResponse
 from django.urls import path, reverse
 from django.utils.html import format_html
+from django.contrib.auth import get_user_model
 
 from django_otp.conf import settings
 
 from .models import TOTPDevice
+
+
+User = get_user_model()
 
 
 class TOTPDeviceAdmin(admin.ModelAdmin):
@@ -18,6 +22,9 @@ class TOTPDeviceAdmin(admin.ModelAdmin):
     """
 
     list_display = ['user', 'name', 'confirmed']
+
+    def get_search_fields(self, request):
+        return [f'user__{User.get_email_field_name()}', f'user__{User.USERNAME_FIELD}', 'name']
 
     raw_id_fields = ['user']
     readonly_fields = ['qrcode_link']
