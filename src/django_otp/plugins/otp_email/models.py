@@ -3,6 +3,7 @@ from django.core.mail import send_mail
 from django.db import models
 from django.template import Context, Template
 from django.template.loader import get_template
+from django.utils.translation import gettext_lazy as _
 
 from django_otp.models import (
     CooldownMixin,
@@ -106,7 +107,7 @@ class EmailDevice(CooldownMixin, ThrottlingMixin, SideChannelDevice):
             html_message=body_html,
         )
 
-        message = "sent by email"
+        message = str(_("sent by email")).capitalize()
 
         return message
 
