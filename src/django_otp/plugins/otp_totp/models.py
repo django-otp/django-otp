@@ -6,7 +6,7 @@ from urllib.parse import quote, urlencode
 from django.conf import settings
 from django.db import models
 
-from django_otp.models import AuditableMixin, Device, ThrottlingMixin
+from django_otp.models import Device, ThrottlingMixin, TimestampMixin
 from django_otp.oath import TOTP
 from django_otp.util import hex_validator, random_hex
 
@@ -19,7 +19,7 @@ def key_validator(value):
     return hex_validator()(value)
 
 
-class TOTPDevice(AuditableMixin, ThrottlingMixin, Device):
+class TOTPDevice(TimestampMixin, ThrottlingMixin, Device):
     """
     A generic TOTP :class:`~django_otp.models.Device`. The model fields mostly
     correspond to the arguments to :func:`django_otp.oath.totp`. They all have

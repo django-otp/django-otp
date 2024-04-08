@@ -17,6 +17,12 @@ class StaticDeviceAdmin(admin.ModelAdmin):
     :class:`~django_otp.plugins.otp_static.models.StaticDevice`.
     """
 
+    list_display = ['user', 'name', 'created_at', 'last_used_at', 'confirmed']
+    list_filter = ['created_at', 'last_used_at', 'confirmed']
+
+    raw_id_fields = ['user']
+    readonly_fields = ['created_at', 'last_used_at']
+
     fieldsets = [
         (
             'Identity',
@@ -24,8 +30,13 @@ class StaticDeviceAdmin(admin.ModelAdmin):
                 'fields': ['user', 'name', 'confirmed'],
             },
         ),
+        (
+            'Timestamps',
+            {
+                'fields': ['created_at', 'last_used_at'],
+            },
+        ),
     ]
-    raw_id_fields = ['user']
 
     inlines = [
         StaticTokenInline,

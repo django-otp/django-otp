@@ -8,10 +8,10 @@ from django.test.utils import override_settings
 
 from django_otp.forms import OTPAuthenticationForm
 from django_otp.tests import (
-    AuditableTestMixin,
     CooldownTestMixin,
     TestCase,
     ThrottlingTestMixin,
+    TimestampTestMixin,
 )
 
 from .models import EmailDevice
@@ -275,7 +275,7 @@ class CooldownTestCase(EmailDeviceMixin, CooldownTestMixin, TestCase):
             self.assertIn("Next generation allowed 5\xa0seconds from now.", message)
 
 
-class AuditableTestCase(EmailDeviceMixin, AuditableTestMixin, TestCase):
+class TimestampTestCase(EmailDeviceMixin, TimestampTestMixin, TestCase):
     def valid_token(self):
         if self.device.token is None:
             self.device.generate_token()

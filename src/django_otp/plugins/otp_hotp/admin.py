@@ -17,10 +17,11 @@ class HOTPDeviceAdmin(admin.ModelAdmin):
     :class:`~django_otp.plugins.otp_hotp.models.HOTPDevice`.
     """
 
-    list_display = ['user', 'name', 'confirmed']
+    list_display = ['user', 'name', 'created_at', 'last_used_at', 'confirmed']
+    list_filter = ['created_at', 'last_used_at', 'confirmed']
 
     raw_id_fields = ['user']
-    readonly_fields = ['qrcode_link']
+    readonly_fields = ['created_at', 'last_used_at', 'qrcode_link']
     radio_fields = {'digits': admin.HORIZONTAL}
 
     def get_list_display(self, request):
@@ -41,6 +42,12 @@ class HOTPDeviceAdmin(admin.ModelAdmin):
                 'Identity',
                 {
                     'fields': ['user', 'name', 'confirmed'],
+                },
+            ),
+            (
+                'Timestamps',
+                {
+                    'fields': ['created_at', 'last_used_at'],
                 },
             ),
             (

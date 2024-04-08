@@ -4,10 +4,10 @@ from os import urandom
 from django.conf import settings
 from django.db import models
 
-from django_otp.models import AuditableMixin, Device, ThrottlingMixin
+from django_otp.models import Device, ThrottlingMixin, TimestampMixin
 
 
-class StaticDevice(AuditableMixin, ThrottlingMixin, Device):
+class StaticDevice(TimestampMixin, ThrottlingMixin, Device):
     """
     A static :class:`~django_otp.models.Device` simply consists of random
     tokens shared by the database and the user.

@@ -5,11 +5,11 @@ from django.template import Context, Template
 from django.template.loader import get_template
 
 from django_otp.models import (
-    AuditableMixin,
     CooldownMixin,
     GenerateNotAllowed,
     SideChannelDevice,
     ThrottlingMixin,
+    TimestampMixin,
 )
 from django_otp.util import hex_validator, random_hex
 
@@ -26,7 +26,7 @@ def key_validator(value):  # pragma: no cover
     return hex_validator()(value)
 
 
-class EmailDevice(AuditableMixin, CooldownMixin, ThrottlingMixin, SideChannelDevice):
+class EmailDevice(TimestampMixin, CooldownMixin, ThrottlingMixin, SideChannelDevice):
     """
     A :class:`~django_otp.models.SideChannelDevice` that delivers a token to
     the email address saved in this object or alternatively to the user's

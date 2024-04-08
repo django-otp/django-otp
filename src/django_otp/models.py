@@ -544,15 +544,17 @@ class ThrottlingMixin(models.Model):
         raise NotImplementedError()
 
 
-class AuditableMixin(models.Model):
+class TimestampMixin(models.Model):
     """
-    Mixin class for models that require auditability.
+    Mixin class that adds timestamps to devices.
 
-    This mixin adds fields to record when a device was initially created in the system
-    and when it was last used. It enhances the ability to audit device usage and lifecycle.
+    This mixin adds fields to record when a device was initially created in the
+    system and when it was last used. It enhances the ability to audit device
+    usage and lifecycle.
 
-    Subclasses can access the `set_last_used_timestamp` method to update the
+    Subclasses can use :meth:`set_last_used_timestamp` to update the
     `last_used_at` timestamp whenever the device is used for verification.
+
     """
 
     created_at = models.DateTimeField(
@@ -576,8 +578,9 @@ class AuditableMixin(models.Model):
         Updates the `last_used_at` field to the current datetime to indicate
         that the device has been used.
 
-        Parameters:
-        - commit (bool): Whether to save the model instance after updating the timestamp.
+        :param bool commit: Pass False if you intend to save the instance
+            yourself.
+
         """
         self.last_used_at = timezone.now()
         if commit:

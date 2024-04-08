@@ -10,11 +10,23 @@ class EmailDeviceAdmin(admin.ModelAdmin):
     :class:`~django_otp.plugins.otp_email.models.EmailDevice`.
     """
 
+    list_display = ['user', 'name', 'created_at', 'last_used_at', 'confirmed']
+    list_filter = ['created_at', 'last_used_at', 'confirmed']
+
+    raw_id_fields = ['user']
+    readonly_fields = ['created_at', 'last_used_at']
+
     fieldsets = [
         (
             'Identity',
             {
                 'fields': ['user', 'name', 'confirmed'],
+            },
+        ),
+        (
+            'Timestamps',
+            {
+                'fields': ['created_at', 'last_used_at'],
             },
         ),
         (
@@ -24,7 +36,6 @@ class EmailDeviceAdmin(admin.ModelAdmin):
             },
         ),
     ]
-    raw_id_fields = ['user']
 
 
 # Somehow this is getting imported twice, triggering a useless exception.

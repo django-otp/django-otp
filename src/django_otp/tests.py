@@ -82,19 +82,22 @@ class TransactionTestCase(OTPTestCaseMixin, DjangoTransactionTestCase):
     pass
 
 
-class AuditableTestMixin:
+class TimestampTestMixin:
     """
-    Provides tests for models using the AuditableMixin, verifying proper management
-    of `created_at` and `last_used_at` timestamps. It ensures these fields are
-    automatically set and updated correctly in response to model usage.
+    Generic tests for :class:`~django_otp.models.TimestampMixin`.
 
-    Implementing tests must initialize `self.device` with the model instance to test
-    and provide `valid_token` and `invalid_token` methods for verifying token behavior.
+    Implementing tests must initialize `self.device` with the model instance to
+    test and provide `valid_token` and `invalid_token` methods for verifying
+    token behavior.
 
     Includes tests to:
+
     - Check automatic setting of `created_at` upon object creation.
-    - Validate that `last_used_at` is initially None and updated only after successful token verification.
-    - Ensure `set_last_used_timestamp` behaves correctly, respecting the `commit` parameter.
+    - Validate that `last_used_at` is initially None and updated only after
+      successful token verification.
+    - Ensure `set_last_used_timestamp` behaves correctly, respecting the
+      `commit` parameter.
+
     """
 
     def setUp(self):

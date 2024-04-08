@@ -6,7 +6,7 @@ from django.test import RequestFactory
 from django.test.utils import override_settings
 
 from django_otp.forms import OTPAuthenticationForm
-from django_otp.tests import AuditableTestMixin, TestCase, ThrottlingTestMixin
+from django_otp.tests import TestCase, ThrottlingTestMixin, TimestampTestMixin
 
 from .admin import StaticDeviceAdmin, StaticTokenInline
 from .lib import add_static_token
@@ -194,7 +194,7 @@ class ThrottlingTestCase(ThrottlingTestMixin, TestCase):
         return 'bogus'
 
 
-class AuditableTestCase(AuditableTestMixin, TestCase):
+class TimestampTestCase(TimestampTestMixin, TestCase):
     def setUp(self):
         try:
             user = self.create_user('alice', 'password')
