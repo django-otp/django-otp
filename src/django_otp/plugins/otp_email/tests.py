@@ -7,7 +7,12 @@ from django.db import IntegrityError
 from django.test.utils import override_settings
 
 from django_otp.forms import OTPAuthenticationForm
-from django_otp.tests import CooldownTestMixin, TestCase, ThrottlingTestMixin
+from django_otp.tests import (
+    AuditableTestMixin,
+    CooldownTestMixin,
+    TestCase,
+    ThrottlingTestMixin,
+)
 
 from .models import EmailDevice
 
@@ -268,3 +273,14 @@ class CooldownTestCase(EmailDeviceMixin, CooldownTestMixin, TestCase):
             self.device.refresh_from_db()
             message = self.device.generate_challenge()
             self.assertIn("Next generation allowed 5\xa0seconds from now.", message)
+
+
+class AuditableTestCase(EmailDeviceMixin, AuditableTestMixin, TestCase):
+    def valid_token(self):
+        if self.device.token is None:
+            self.device.generate_token()
+
+        return self.device.token
+
+    def invalid_token(self):
+        return -1

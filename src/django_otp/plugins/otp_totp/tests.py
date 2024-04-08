@@ -10,7 +10,7 @@ from django.test import RequestFactory
 from django.test.utils import override_settings
 from django.urls import reverse
 
-from django_otp.tests import TestCase, ThrottlingTestMixin
+from django_otp.tests import AuditableTestMixin, TestCase, ThrottlingTestMixin
 
 from .admin import TOTPDeviceAdmin
 from .models import TOTPDevice
@@ -330,6 +330,14 @@ class TOTPAdminTest(TestCase):
     OTP_TOTP_THROTTLE_FACTOR=1,
 )
 class ThrottlingTestCase(TOTPDeviceMixin, ThrottlingTestMixin, TestCase):
+    def valid_token(self):
+        return self.tokens[3]
+
+    def invalid_token(self):
+        return -1
+
+
+class AuditableTestCase(TOTPDeviceMixin, AuditableTestMixin, TestCase):
     def valid_token(self):
         return self.tokens[3]
 
