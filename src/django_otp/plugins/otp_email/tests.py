@@ -34,7 +34,7 @@ class AuthFormTest(EmailDeviceMixin, TestCase):
         data = {
             'username': 'alice',
             'password': 'password',
-            'otp_device': 'otp_email.emaildevice/1',
+            'otp_device': self.device.persistent_id,
             'otp_token': '',
             'otp_challenge': '1',
         }
