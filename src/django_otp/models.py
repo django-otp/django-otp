@@ -28,6 +28,7 @@ class DeviceManager(models.Manager):
         :param confirmed: If ``None``, all matching devices are returned.
             Otherwise, this can be any true or false value to limit the query
             to confirmed or unconfirmed devices, respectively.
+
         """
         devices = self.model.objects.filter(user=user)
         if confirmed is not None:
@@ -72,6 +73,7 @@ class Device(models.Model):
     .. attribute:: objects
 
         A :class:`~django_otp.models.DeviceManager`.
+
     """
 
     user = models.ForeignKey(
@@ -150,36 +152,41 @@ class Device(models.Model):
 
     def is_interactive(self):
         """
-        Returns ``True`` if this is an interactive device. The default
-        implementation returns ``True`` if
+        Returns ``True`` if this is an interactive device.
+
+        The default implementation returns ``True`` if
         :meth:`~django_otp.models.Device.generate_challenge` has been
         overridden, but subclasses are welcome to provide smarter
         implementations.
 
         :rtype: bool
+
         """
         return not hasattr(self.generate_challenge, 'stub')
 
     def generate_is_allowed(self):
         """
-        Checks whether it is permissible to call :meth:`generate_challenge`. If
-        it is allowed, returns ``(True, None)``. Otherwise returns ``(False,
+        Checks whether it is permissible to call :meth:`generate_challenge`.
+
+        If it is allowed, returns ``(True, None)``. Otherwise returns ``(False,
         data_dict)``, where ``data_dict`` contains extra information, defined
         by the implementation.
 
         This method can be used to implement throttling of token generation for
-        interactive devices. Client code should check this method before calling
-        :meth:`generate_challenge` and report problems to the user.
+        interactive devices. Client code should check this method before
+        calling :meth:`generate_challenge` and report problems to the user.
+
         """
         return (True, None)
 
     def generate_challenge(self):
         """
         Generates a challenge value that the user will need to produce a token.
+
         This method is permitted to have side effects, such as transmitting
         information to the user through some other channel (email or SMS,
-        perhaps). And, of course, some devices may need to commit the
-        challenge to the database.
+        perhaps). And, of course, some devices may need to commit the challenge
+        to the database.
 
         :returns: A message to the user. This should be a string that fits
             comfortably in the template ``'OTP Challenge: {0}'``. This may
@@ -188,6 +195,7 @@ class Device(models.Model):
 
         :raises: Any :exc:`~exceptions.Exception` is permitted. Callers should
             trap ``Exception`` and report it to the user.
+
         """
         return None
 
@@ -195,8 +203,9 @@ class Device(models.Model):
 
     def verify_is_allowed(self):
         """
-        Checks whether it is permissible to call :meth:`verify_token`. If it is
-        allowed, returns ``(True, None)``. Otherwise returns ``(False,
+        Checks whether it is permissible to call :meth:`verify_token`.
+
+        If it is allowed, returns ``(True, None)``. Otherwise returns ``(False,
         data_dict)``, where ``data_dict`` contains extra information, defined
         by the implementation.
 
@@ -219,11 +228,14 @@ class Device(models.Model):
 
     def verify_token(self, token):
         """
-        Verifies a token. As a rule, the token should no longer be valid if
-        this returns ``True``.
+        Verifies a token.
+
+        As a rule, the token should no longer be valid if this returns
+        ``True``.
 
         :param str token: The OTP token provided by the user.
         :rtype: bool
+
         """
         return False
 
@@ -234,6 +246,14 @@ class SideChannelDevice(Device):
 
     This model implements token generation, verification and expiration, so the
     concrete devices only have to implement delivery.
+
+    .. attribute:: token
+
+        The token most recently generated for the user.
+
+    .. attribute:: valid_until
+
+        The datetime at which the stored token will expire.
 
     """
 
@@ -252,11 +272,10 @@ class SideChannelDevice(Device):
         Generates a token of the specified length, then sets it on the model
         and sets the expiration of the token on the model.
 
-        Pass 'commit=False' to avoid calling self.save().
-
         :param int length: Number of decimal digits in the generated token.
         :param int valid_secs: Amount of seconds the token should be valid.
-        :param bool commit: Whether to autosave the generated token.
+        :param bool commit: Pass False if you intend to save the instance
+            yourself.
 
         """
         self.token = random_number_token(length)
@@ -294,7 +313,7 @@ class GenerateNotAllowed(enum.Enum):
     """
     Constants that may be returned in the ``reason`` member of the extra
     information dictionary returned by
-    :meth:`~django_otp.models.Device.generate_is_allowed`
+    :meth:`~django_otp.models.Device.generate_is_allowed`.
 
     .. data:: COOLDOWN_DURATION_PENDING
 
@@ -317,6 +336,10 @@ class CooldownMixin(models.Model):
 
     See the implementation of
     :class:`~django_otp.plugins.otp_email.models.EmailDevice` for an example.
+
+    .. attribute:: last_generated_timestamp
+
+        The last time a token was generated for this device.
 
     """
 
@@ -364,7 +387,8 @@ class CooldownMixin(models.Model):
         Call this method to reset cooldown (normally after a successful
         verification).
 
-        Pass 'commit=False' to avoid calling self.save().
+        :param bool commit: Pass False if you intend to save the instance
+            yourself.
 
         """
         self.last_generated_timestamp = None
@@ -376,7 +400,8 @@ class CooldownMixin(models.Model):
         Call this method to set the cooldown timestamp to now (normally when
         a token is generated).
 
-        Pass 'commit=False' to avoid calling self.save().
+        :param bool commit: Pass False if you intend to save the instance
+            yourself.
 
         """
         self.last_generated_timestamp = timezone.now()
@@ -438,6 +463,14 @@ class ThrottlingMixin(models.Model):
 
     See the implementation of
     :class:`~django_otp.plugins.otp_email.models.EmailDevice` for an example.
+
+    .. attribute:: throttling_failure_timestamp
+
+        The datetime of the last failed verification attempt.
+
+    .. attribute:: throttling_failure_count
+
+        The number of consecutive failed verification attempts.
 
     """
 
@@ -503,7 +536,8 @@ class ThrottlingMixin(models.Model):
         Call this method to reset throttling (normally when a verify attempt
         succeeded).
 
-        Pass 'commit=False' to avoid calling self.save().
+        :param bool commit: Pass False if you intend to save the instance
+            yourself.
 
         """
         self.throttling_failure_timestamp = None
@@ -516,7 +550,8 @@ class ThrottlingMixin(models.Model):
         Call this method to increase throttling (normally when a verify attempt
         failed).
 
-        Pass 'commit=False' to avoid calling self.save().
+        :param bool commit: Pass False if you intend to save the instance
+            yourself.
 
         """
         self.throttling_failure_timestamp = timezone.now()
@@ -554,6 +589,15 @@ class TimestampMixin(models.Model):
 
     Subclasses can use :meth:`set_last_used_timestamp` to update the
     `last_used_at` timestamp whenever the device is used for verification.
+
+    .. attribute:: created_at
+
+        The datetime at which this device was created.
+
+    .. attribute:: last_used_at
+
+        The datetime at which this device was last successfully used for
+        verification.
 
     """
 
