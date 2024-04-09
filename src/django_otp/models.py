@@ -542,3 +542,46 @@ class ThrottlingMixin(models.Model):
 
         """
         raise NotImplementedError()
+
+
+class TimestampMixin(models.Model):
+    """
+    Mixin class that adds timestamps to devices.
+
+    This mixin adds fields to record when a device was initially created in the
+    system and when it was last used. It enhances the ability to audit device
+    usage and lifecycle.
+
+    Subclasses can use :meth:`set_last_used_timestamp` to update the
+    `last_used_at` timestamp whenever the device is used for verification.
+
+    """
+
+    created_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        auto_now_add=True,
+        help_text="The date and time when this device was initially created in the system.",
+    )
+
+    last_used_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text="The most recent date and time this device was used.",
+    )
+
+    class Meta:
+        abstract = True
+
+    def set_last_used_timestamp(self, commit=True):
+        """
+        Updates the `last_used_at` field to the current datetime to indicate
+        that the device has been used.
+
+        :param bool commit: Pass False if you intend to save the instance
+            yourself.
+
+        """
+        self.last_used_at = timezone.now()
+        if commit:
+            self.save()

@@ -6,7 +6,7 @@ from django.test import RequestFactory
 from django.test.utils import override_settings
 
 from django_otp.forms import OTPAuthenticationForm
-from django_otp.tests import TestCase, ThrottlingTestMixin
+from django_otp.tests import TestCase, ThrottlingTestMixin, TimestampTestMixin
 
 from .admin import StaticDeviceAdmin, StaticTokenInline
 from .lib import add_static_token
@@ -176,6 +176,25 @@ class AuthFormTest(TestCase):
     OTP_STATIC_THROTTLE_FACTOR=1,
 )
 class ThrottlingTestCase(ThrottlingTestMixin, TestCase):
+    def setUp(self):
+        try:
+            user = self.create_user('alice', 'password')
+        except IntegrityError:
+            self.skipTest("Unable to create a test user.")
+        else:
+            self.device = user.staticdevice_set.create()
+            self.device.token_set.create(token='valid1')
+            self.device.token_set.create(token='valid2')
+            self.device.token_set.create(token='valid3')
+
+    def valid_token(self):
+        return self.device.token_set.first().token
+
+    def invalid_token(self):
+        return 'bogus'
+
+
+class TimestampTestCase(TimestampTestMixin, TestCase):
     def setUp(self):
         try:
             user = self.create_user('alice', 'password')

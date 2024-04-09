@@ -82,6 +82,115 @@ class TransactionTestCase(OTPTestCaseMixin, DjangoTransactionTestCase):
     pass
 
 
+class TimestampTestMixin:
+    """
+    Generic tests for :class:`~django_otp.models.TimestampMixin`.
+
+    Implementing tests must initialize `self.device` with the model instance to
+    test and provide `valid_token` and `invalid_token` methods for verifying
+    token behavior.
+
+    Includes tests to:
+
+    - Check automatic setting of `created_at` upon object creation.
+    - Validate that `last_used_at` is initially None and updated only after
+      successful token verification.
+    - Ensure `set_last_used_timestamp` behaves correctly, respecting the
+      `commit` parameter.
+
+    """
+
+    def setUp(self):
+        self.device = None
+
+    def valid_token(self):
+        """Returns a valid token to pass to our device under test."""
+        raise NotImplementedError()
+
+    def invalid_token(self):
+        """Returns an invalid token to pass to our device under test."""
+        raise NotImplementedError()
+
+    #
+    # Tests
+    #
+
+    def test_created_at_set_on_creation(self):
+        """Verify that the `created_at` field is automatically set upon creation."""
+        self.assertIsNotNone(
+            self.device.created_at, "created_at should be automatically set."
+        )
+
+    def test_last_used_at_initially_none(self):
+        """Ensure `last_used_at` is None upon initial creation."""
+        self.assertIsNone(
+            self.device.last_used_at, "last_used_at should be None initially."
+        )
+
+    def test_set_last_used_timestamp_updates_field(self):
+        """Check if `set_last_used_timestamp` correctly updates the `last_used_at` field."""
+        self.device.set_last_used_timestamp(commit=True)
+        self.device.refresh_from_db()  # Assuming it's a persisted model
+
+        self.assertIsNotNone(
+            self.device.last_used_at, "last_used_at should be updated."
+        )
+
+    def test_set_last_used_timestamp_without_commit(self):
+        """
+        Ensure `set_last_used_timestamp` updates `last_used_at` without persisting
+        when commit=False.
+        """
+        original_last_used_at = self.device.last_used_at
+        self.device.set_last_used_timestamp(commit=False)
+        # Check in-memory update without saving
+        self.assertNotEqual(
+            self.device.last_used_at,
+            original_last_used_at,
+            "last_used_at should be updated in memory without commit.",
+        )
+
+        # Refresh from db to confirm it wasn't committed
+        self.device.refresh_from_db()
+        self.assertEqual(
+            self.device.last_used_at,
+            original_last_used_at,
+            "last_used_at should not be updated in db without commit.",
+        )
+
+    def test_verify_token_successful_updates_last_used_at(self):
+        """
+        Verifying with a valid token updates 'last_used_at'.
+        """
+        valid_token = self.valid_token()  # Method to generate a valid token
+        initial_last_used_at = self.device.last_used_at
+        verified = self.device.verify_token(valid_token)
+
+        self.assertTrue(verified, "Token should be verified successfully.")
+        self.device.refresh_from_db()
+        self.assertNotEqual(
+            self.device.last_used_at,
+            initial_last_used_at,
+            "'last_used_at' should be updated on successful verification.",
+        )
+
+    def test_verify_token_failed_does_not_update_last_used_at(self):
+        """
+        Verifying with an invalid token does not update 'last_used_at'.
+        """
+        invalid_token = self.invalid_token()  # Method to generate an invalid token
+        initial_last_used_at = self.device.last_used_at
+        verified = self.device.verify_token(invalid_token)
+
+        self.assertFalse(verified, "Token should not be verified.")
+        self.device.refresh_from_db()
+        self.assertEqual(
+            self.device.last_used_at,
+            initial_last_used_at,
+            "'last_used_at' should not be updated on failed verification.",
+        )
+
+
 class ThrottlingTestMixin:
     """
     Generic tests for throttled devices.

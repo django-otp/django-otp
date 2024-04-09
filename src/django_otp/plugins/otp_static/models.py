@@ -4,10 +4,10 @@ from os import urandom
 from django.conf import settings
 from django.db import models
 
-from django_otp.models import Device, ThrottlingMixin
+from django_otp.models import Device, ThrottlingMixin, TimestampMixin
 
 
-class StaticDevice(ThrottlingMixin, Device):
+class StaticDevice(TimestampMixin, ThrottlingMixin, Device):
     """
     A static :class:`~django_otp.models.Device` simply consists of random
     tokens shared by the database and the user.
@@ -34,7 +34,9 @@ class StaticDevice(ThrottlingMixin, Device):
             match = self.token_set.filter(token=token).first()
             if match is not None:
                 match.delete()
-                self.throttle_reset()
+                self.throttle_reset(commit=False)
+                self.set_last_used_timestamp(commit=False)
+                self.save()
             else:
                 self.throttle_increment()
         else:
