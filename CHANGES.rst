@@ -1,3 +1,18 @@
+v1.4.0 - April 09, 2024 - Add TimestampMixin
+--------------------------------------------------------------------------------
+
+- `#137`_: Add TimestampMixin
+
+  Add a new TimestampMixin with ``created_at`` and ``last_used_at`` fields for
+  device models.
+
+  All builtin plugins now have these timestamp fields and require migrating.
+
+- Some documentation cleanup.
+
+.. _#137: https://github.com/django-otp/django-otp/pull/137
+
+
 v1.3.0 - November 08, 2023 - Support cooldowns for token generation
 --------------------------------------------------------------------------------
 
