@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: django-otp master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-09 12:20-0600\n"
+"POT-Creation-Date: 2024-04-10 09:57-0500\n"
 "PO-Revision-Date: 2022-11-09 19:43+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -17,30 +17,30 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/django_otp/forms.py:59
+#: src/django_otp/forms.py:60
 msgid "Please enter your OTP token."
 msgstr "Por favor introduzca su token OTP."
 
-#: src/django_otp/forms.py:60
+#: src/django_otp/forms.py:61
 #, python-brace-format
 msgid "Error generating challenge: {0}"
 msgstr "Error al generar el reto: {0}"
 
-#: src/django_otp/forms.py:61
+#: src/django_otp/forms.py:62
 msgid "The selected OTP device is not interactive"
 msgstr "EL dispositivo OTP seleccionado no es interactivo"
 
-#: src/django_otp/forms.py:62
+#: src/django_otp/forms.py:63
 #, python-brace-format
 msgid "OTP Challenge: {0}"
 msgstr "Reto OTP: {0}"
 
-#: src/django_otp/forms.py:63
+#: src/django_otp/forms.py:65
 msgid "Invalid token. Please make sure you have entered it correctly."
 msgstr ""
 "Token no válido. Por favor asegúrese de que lo ha introducido correctamente."
 
-#: src/django_otp/forms.py:65
+#: src/django_otp/forms.py:68
 #, python-format
 msgid ""
 "Verification temporarily disabled because of %(failure_count)d failed "
@@ -55,9 +55,13 @@ msgstr[1] ""
 "La verificación está temporalmente deshabilitada porque ha habido "
 "%(failure_count)d intentos fallidos, por favor inténtelo de nuevo más tarde."
 
-#: src/django_otp/forms.py:68
+#: src/django_otp/forms.py:73
 msgid "Verification of the token is currently disabled"
 msgstr "La verificación del token está desactivada en este momento"
+
+#: src/django_otp/plugins/otp_email/models.py:105
+msgid "sent by email"
+msgstr ""
 
 #: src/django_otp/templates/otp/admin111/login.html:38
 msgid "Please correct the error below."

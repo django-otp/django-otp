@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: django-otp master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-02 11:00-0500\n"
+"POT-Creation-Date: 2024-04-10 09:57-0500\n"
 "PO-Revision-Date: 2023-10-02 11:00-0500\n"
 "Last-Translator: João Duarte <jduar@protonmail.com>\n"
 "Language-Team: \n"
@@ -37,7 +37,8 @@ msgstr "Desafio OTP: {0}"
 
 #: src/django_otp/forms.py:65
 msgid "Invalid token. Please make sure you have entered it correctly."
-msgstr "Código inválido. Certifique-se por favor de que o inseriu corretamente."
+msgstr ""
+"Código inválido. Certifique-se por favor de que o inseriu corretamente."
 
 #: src/django_otp/forms.py:68
 #, python-format
@@ -58,6 +59,10 @@ msgstr[1] ""
 msgid "Verification of the token is currently disabled"
 msgstr "A verificação do código está desativada de momento"
 
+#: src/django_otp/plugins/otp_email/models.py:105
+msgid "sent by email"
+msgstr ""
+
 #: src/django_otp/templates/otp/admin111/login.html:38
 msgid "Please correct the error below."
 msgstr "Corrija por favor o erro abaixo."
@@ -72,8 +77,8 @@ msgid ""
 "You are authenticated as %(username)s, but are not authorized to access this "
 "page. Would you like to login to a different account?"
 msgstr ""
-"Está autenticado como %(username)s, mas não está autorizado a aceder "
-"a esta página. Gostaria de autenticar-se com uma conta diferente?"
+"Está autenticado como %(username)s, mas não está autorizado a aceder a esta "
+"página. Gostaria de autenticar-se com uma conta diferente?"
 
 #: src/django_otp/templates/otp/admin111/login.html:74
 msgid "OTP Device:"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: django-otp master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-24 12:34-0300\n"
+"POT-Creation-Date: 2024-04-10 09:57-0500\n"
 "PO-Revision-Date: 2023-05-24 12:34-0300\n"
 "Last-Translator: alex <alex@fabricadigital.com.br>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -47,12 +47,18 @@ msgid ""
 msgid_plural ""
 "Verification temporarily disabled because of %(failure_count)d failed "
 "attempts, please try again soon."
-msgstr[0] "Verificação temporariamente desativada devido a %(failure_count)d tentativa(s) "
+msgstr[0] ""
+"Verificação temporariamente desativada devido a %(failure_count)d "
+"tentativa(s) "
 msgstr[1] "falha(s), por favor tente novamente em breve."
 
 #: src/django_otp/forms.py:73
 msgid "Verification of the token is currently disabled"
 msgstr "A verificação de código está desativada no momento"
+
+#: src/django_otp/plugins/otp_email/models.py:105
+msgid "sent by email"
+msgstr ""
 
 #: src/django_otp/templates/otp/admin111/login.html:38
 msgid "Please correct the error below."
@@ -67,8 +73,9 @@ msgstr "Por favor corrija os erros abaixo."
 msgid ""
 "You are authenticated as %(username)s, but are not authorized to access this "
 "page. Would you like to login to a different account?"
-msgstr "Você está autenticado como %(username)s, mas não está autorizado a acessar essa "
-"página. Gostaria de autenticar-se com uma conta diferente?"
+msgstr ""
+"Você está autenticado como %(username)s, mas não está autorizado a acessar "
+"essa página. Gostaria de autenticar-se com uma conta diferente?"
 
 #: src/django_otp/templates/otp/admin111/login.html:74
 msgid "OTP Device:"
