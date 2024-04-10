@@ -99,6 +99,13 @@ class EmailDevice(TimestampMixin, CooldownMixin, ThrottlingMixin, SideChannelDev
         else:
             body_html = None
 
+        self._send_mail(body, body_html)
+
+        message = "sent by email"
+
+        return message
+
+    def _send_mail(self, body, body_html):
         send_mail(
             str(settings.OTP_EMAIL_SUBJECT),
             body,
@@ -106,10 +113,6 @@ class EmailDevice(TimestampMixin, CooldownMixin, ThrottlingMixin, SideChannelDev
             [self.email or self.user.email],
             html_message=body_html,
         )
-
-        message = "sent by email"
-
-        return message
 
     def verify_token(self, token):
         """"""
