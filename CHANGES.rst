@@ -1,3 +1,16 @@
+v1.4.1 - April 10, 2024 - Minor EmailDevice updates
+--------------------------------------------------------------------------------
+
+- `#140`_: Support customization of email delivery.
+
+  See the :class:`~django_otp.plugins.otp_email.models.EmailDevice`
+  documentation for API details.
+
+- Support translation of the "sent by email" message.
+
+.. _#140: https://github.com/django-otp/django-otp/pull/140
+
+
 v1.4.0 - April 09, 2024 - Add TimestampMixin
 --------------------------------------------------------------------------------
 
