@@ -211,12 +211,13 @@ django-otp includes support for several standard device types.
 :class:`~django_otp.plugins.otp_totp.models.TOTPDevice` handle standard OTP
 algorithms, which can be used with a variety of OTP generators. For example,
 it's easy to pair these devices with `Google Authenticator`_ using the `otpauth
-URL scheme`_. If you have the `qrcode`_ package installed, the admin interface
-will generate QR Codes for you.
+URL scheme`_. If you have either the `segno`_ or `qrcode`_ packages installed,
+the admin interface will generate QR Codes for you.
 
 
 .. _Google Authenticator: https://github.com/google/google-authenticator
 .. _otpauth URL scheme: https://github.com/google/google-authenticator/wiki/Key-Uri-Format
+.. _segno: https://pypi.python.org/pypi/segno/
 .. _qrcode: https://pypi.python.org/pypi/qrcode/
 
 
