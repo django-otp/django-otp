@@ -7,6 +7,7 @@ from django.urls import path, reverse
 from django.utils.html import format_html
 
 from django_otp.conf import settings
+from django_otp.qr import write_qrcode_image
 
 from .models import HOTPDevice
 
@@ -150,15 +151,9 @@ class HOTPDeviceAdmin(admin.ModelAdmin):
             raise PermissionDenied()
 
         try:
-            import qrcode
-            import qrcode.image.svg
-
-            img = qrcode.make(
-                device.config_url, image_factory=qrcode.image.svg.SvgImage
-            )
             response = HttpResponse(content_type='image/svg+xml')
-            img.save(response)
-        except ImportError:
+            write_qrcode_image(device.config_url, response)
+        except ModuleNotFoundError:
             response = HttpResponse('', status=503)
 
         return response

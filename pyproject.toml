@@ -23,6 +23,9 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+segno = [
+    "segno",
+]
 qrcode = [
     "qrcode",
 ]
@@ -38,6 +41,7 @@ Documentation = "https://django-otp-official.readthedocs.io/"
 
 [tool.hatch.envs.default]
 features = [
+    "segno",
     "qrcode",
 ]
 dependencies = [

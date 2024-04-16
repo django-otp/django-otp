@@ -1,3 +1,16 @@
+Pending
+--------------------------------------------------------------------------------
+
+- `#141`_: Support alternative QR code library `segno`_.
+
+  Previously, only the `qrcode`_ library was supported.
+
+  Use ``segno`` by installing ``django-otp[segno]`` or just install the
+  ``segno`` package.
+
+.. _#141: https://github.com/django-otp/django-otp/issues/141
+.. _segno: https://pypi.python.org/pypi/segno/
+
 v1.4.1 - April 10, 2024 - Minor EmailDevice updates
 --------------------------------------------------------------------------------
 
