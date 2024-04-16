@@ -1,4 +1,4 @@
-Pending
+v1.5.0 - April 16, 2024 - Support segno for QR codes
 --------------------------------------------------------------------------------
 
 - `#141`_: Support alternative QR code library `segno`_.
@@ -10,6 +10,7 @@ Pending
 
 .. _#141: https://github.com/django-otp/django-otp/issues/141
 .. _segno: https://pypi.python.org/pypi/segno/
+
 
 v1.4.1 - April 10, 2024 - Minor EmailDevice updates
 --------------------------------------------------------------------------------
