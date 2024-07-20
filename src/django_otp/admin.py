@@ -46,13 +46,15 @@ def user_model_search_fields(field_names):
             search_fields.append("user__" + field.name)
             help_texts.append(str(field.verbose_name))
 
-    # Join terms with commas, except use "or" before the last term
+    if len(help_texts) == 0:
+        search_help_text = ""
+    else:
+        search_help_text = "Search by user's "
 
-    search_help_text = (
-        "Search by " + ", ".join(help_texts[:-1]) + f" or {help_texts[-1]}"
-        if help_texts
-        else ""
-    )
+        if len(help_texts) == 1:
+            search_help_text += help_texts[0]
+        else:
+            search_help_text += ", ".join(help_texts[:-1]) + f" or {help_texts[-1]}"
 
     return search_fields, search_help_text
 
