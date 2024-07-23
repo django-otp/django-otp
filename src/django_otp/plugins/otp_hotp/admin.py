@@ -1,11 +1,13 @@
 from django.contrib import admin
 from django.contrib.admin.sites import AlreadyRegistered
+from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse
 from django.template.response import TemplateResponse
 from django.urls import path, reverse
 from django.utils.html import format_html
 
+from django_otp.admin import user_model_search_fields
 from django_otp.conf import settings
 from django_otp.qr import write_qrcode_image
 
@@ -18,8 +20,12 @@ class HOTPDeviceAdmin(admin.ModelAdmin):
     :class:`~django_otp.plugins.otp_hotp.models.HOTPDevice`.
     """
 
+    User = get_user_model()
+    candidate_search_field = [User.USERNAME_FIELD, 'email']
+
     list_display = ['user', 'name', 'created_at', 'last_used_at', 'confirmed']
     list_filter = ['created_at', 'last_used_at', 'confirmed']
+    search_fields, search_help_text = user_model_search_fields(candidate_search_field)
 
     raw_id_fields = ['user']
     readonly_fields = ['created_at', 'last_used_at', 'qrcode_link']

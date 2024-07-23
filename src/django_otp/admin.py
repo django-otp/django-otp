@@ -1,6 +1,8 @@
 from django import forms
 from django.contrib.admin.forms import AdminAuthenticationForm
 from django.contrib.admin.sites import AdminSite
+from django.contrib.auth import get_user_model
+from django.core.exceptions import FieldDoesNotExist
 
 from .forms import OTPAuthenticationFormMixin
 
@@ -14,6 +16,47 @@ def _admin_template_for_django_version():
     even with the most recent Django version.
     """
     return 'otp/admin111/login.html'
+
+
+def user_model_search_fields(field_names):
+    """
+    Check whether the provided field names exist, and return a tuple of
+    search fields and help text for the validated field names.
+
+    Parameters:
+    field_names (list of str): A list of field names to search for in the user model.
+
+    Returns:
+    tuple: A tuple containing:
+        - search_fields (list of str): A list of search fields formatted for querying.
+        - search_help_text (str): A help text string describing the valid search fields.
+    """
+    User = get_user_model()
+    valid_fields = []
+    search_fields = []
+    help_texts = []
+
+    for name in field_names:
+        try:
+            field = User._meta.get_field(name)
+        except FieldDoesNotExist:
+            continue
+        else:
+            valid_fields.append(field)
+            search_fields.append("user__" + field.name)
+            help_texts.append(str(field.verbose_name))
+
+    if len(help_texts) == 0:
+        search_help_text = ""
+    else:
+        search_help_text = "Search by user's "
+
+        if len(help_texts) == 1:
+            search_help_text += help_texts[0]
+        else:
+            search_help_text += ", ".join(help_texts[:-1]) + f" or {help_texts[-1]}"
+
+    return search_fields, search_help_text
 
 
 class OTPAdminAuthenticationForm(AdminAuthenticationForm, OTPAuthenticationFormMixin):
