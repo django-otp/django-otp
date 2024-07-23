@@ -1,3 +1,11 @@
+v1.5.1 - July 23, 2024 - Admin search fields
+--------------------------------------------------------------------------------
+
+- `#147`_: Add search ability in admin using username and email
+
+.. _#147: https://github.com/django-otp/django-otp/pull/147
+
+
 v1.5.0 - April 16, 2024 - Support segno for QR codes
 --------------------------------------------------------------------------------
 
