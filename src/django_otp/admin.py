@@ -32,7 +32,6 @@ def user_model_search_fields(field_names):
         - search_help_text (str): A help text string describing the valid search fields.
     """
     User = get_user_model()
-    valid_fields = []
     search_fields = []
     help_texts = []
 
@@ -42,8 +41,7 @@ def user_model_search_fields(field_names):
         except FieldDoesNotExist:
             continue
         else:
-            valid_fields.append(field)
-            search_fields.append("user__" + field.name)
+            search_fields.append(f'user__{field.name}')
             help_texts.append(str(field.verbose_name))
 
     if len(help_texts) == 0:
