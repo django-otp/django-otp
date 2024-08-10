@@ -1,11 +1,14 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.db import transaction
+from django.dispatch import Signal
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import ngettext_lazy
 
 from . import devices_for_user, match_token
 from .models import Device, VerifyNotAllowed
+
+otp_verification_failed = Signal()
 
 
 class OTPAuthenticationFormMixin:
@@ -176,6 +179,11 @@ class OTPAuthenticationFormMixin:
             device = match_token(user, token)
 
         if device is None:
+            otp_verification_failed.send(
+                sender=self.__class__,
+                user=user,
+                device=device,
+            )
             raise forms.ValidationError(
                 self.otp_error_messages['invalid_token'], code='invalid_token'
             )
