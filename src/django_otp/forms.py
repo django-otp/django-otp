@@ -182,7 +182,6 @@ class OTPAuthenticationFormMixin:
             otp_verification_failed.send(
                 sender=self.__class__,
                 user=user,
-                device=device,
             )
             raise forms.ValidationError(
                 self.otp_error_messages['invalid_token'], code='invalid_token'
