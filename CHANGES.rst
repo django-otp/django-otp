@@ -1,3 +1,11 @@
+v1.5.2 - August 18, 2024 - otp_verification_failed signal
+--------------------------------------------------------------------------------
+
+- `#150`_: Add signal when OTP verification fails
+
+.. _#150: https://github.com/django-otp/django-otp/pull/150
+
+
 v1.5.1 - July 23, 2024 - Admin search fields
 --------------------------------------------------------------------------------
 
