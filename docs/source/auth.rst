@@ -50,7 +50,8 @@ easiest way is to use :class:`django_otp.forms.OTPAuthenticationForm` instead.
 This form includes additional fields and behavior to solicit an OTP token from
 the user and verify it against their registered devices. This form's validation
 only succeeds if it is able to both authenticate the user with the username and
-password and also verify them with an OTP token. The form can be used with
+password and also verify them with an OTP token. If the verification fails, the
+:data:`~django_otp.forms.otp_verification_failed` signal is emitted. The form can be used with
 :class:`django.contrib.auth.views.LoginView` simply by passing it in the
 ``authentication_form`` keyword parameter::
 
@@ -116,6 +117,19 @@ If you already have an authenticated user and you just want to ask for an OTP
 token to verify, you can use :class:`django_otp.forms.OTPTokenForm`.
 
 .. autoclass:: django_otp.forms.OTPTokenForm
+
+Signals
+~~~~~~~
+
+.. data:: django_otp.forms.otp_verification_failed
+
+    This signal is sent when an OTP verification attempt fails. The source of the signal is :class:`~django_otp.forms.OTPAuthenticationFormMixin` therefore it will be emitted only if using the provided :class:`~django_otp.forms.OTPAuthenticationForm` and :class:`~django_otp.forms.OTPTokenForm`. The signal provides the following arguments:
+
+    ``sender``
+        The class of the form that attempted the verification.
+
+    ``user``
+        The user that attempted the verification.
 
 
 Custom Forms

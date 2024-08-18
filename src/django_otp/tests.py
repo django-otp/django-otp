@@ -28,7 +28,7 @@ from django_otp import (
     util,
     verify_token,
 )
-from django_otp.forms import OTPTokenForm
+from django_otp.forms import OTPTokenForm, otp_verification_failed
 from django_otp.middleware import OTPMiddleware
 from django_otp.models import GenerateNotAllowed, VerifyNotAllowed
 from django_otp.plugins.otp_static.models import StaticDevice, StaticToken
@@ -390,6 +390,37 @@ class APITestCase(TestCase):
 
         verified = match_token(self.alice, 'alice')
         self.assertEqual(verified, self.alice.staticdevice_set.first())
+
+
+class OTPVerificationFailedSignalTestCase(TestCase):
+    def setUp(self):
+        try:
+            self.alice = self.create_user('alice', 'password')
+        except IntegrityError:
+            self.skipTest("Unable to create a test user.")
+        else:
+            self.device = self.alice.staticdevice_set.create()
+            self.device.token_set.create(token='valid')
+
+        self.signal_received = False
+        otp_verification_failed.connect(self.signal_handler)
+
+    def tearDown(self):
+        otp_verification_failed.disconnect(self.signal_handler)
+
+    def signal_handler(self, sender, **kwargs):
+        self.signal_received = True
+
+    def test_otp_verification_failed_signal(self):
+        form = OTPTokenForm(
+            self.alice,
+            None,
+            {'otp_device': self.device.persistent_id, 'otp_token': 'invalid'},
+        )
+        form.is_valid()
+        self.assertTrue(
+            self.signal_received, "otp_verification_failed signal was not emitted."
+        )
 
 
 class OTPMiddlewareTestCase(TestCase):
