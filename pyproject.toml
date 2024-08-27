@@ -91,6 +91,7 @@ matrix.django.dependencies = [
     { value = "django ~= 4.1.0", if = ["4.1"] },
     { value = "django ~= 4.2.0", if = ["4.2"] },
     { value = "django ~= 5.0.0", if = ["5.0"] },
+    { value = "django ~= 5.1.0", if = ["5.1"] },
 ]
 matrix.mode.scripts = [
     { key = "run", value = "lint", if = ["lint"] },
@@ -108,11 +109,11 @@ django = ["3.2"]
 
 [[tool.hatch.envs.test.matrix]]
 python = ["3.10"]
-django = ["4.1", "4.2", "5.0"]
+django = ["4.1", "4.2", "5.0", "5.1"]
 
 [[tool.hatch.envs.test.matrix]]
 python = ["3.12"]
-django = ["4.2", "5.0"]
+django = ["4.2", "5.0", "5.1"]
 
 [[tool.hatch.envs.test.matrix]]
 mode = ["coverage"]
