@@ -1,3 +1,11 @@
+v1.5.3 - September 04, 2024 - Small admin template fix
+--------------------------------------------------------------------------------
+
+- `#158`_: Remove JS focus() in admin login template
+
+.. _#158: https://github.com/django-otp/django-otp/pull/158
+
+
 v1.5.2 - August 18, 2024 - otp_verification_failed signal
 --------------------------------------------------------------------------------
 
