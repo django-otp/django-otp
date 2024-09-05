@@ -1,5 +1,5 @@
 # django-otp test project
-
+import sys
 from os.path import abspath, dirname, join
 
 from django.urls import reverse_lazy
@@ -11,6 +11,7 @@ def project_path(path):
     return abspath(join(dirname(__file__), path))
 
 
+sys.path.insert(0, project_path('.'))
 cfg = config.load()
 
 
@@ -22,7 +23,6 @@ DATABASES = {
         'NAME': project_path('db.sqlite3'),
     }
 }
-
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django_otp.plugins.otp_hotp',
     'django_otp.plugins.otp_static',
     'django_otp.plugins.otp_totp',
+
+    "test_app",
 ]
 
 INSTALLED_APPS.extend(cfg.get('plugins', []))
