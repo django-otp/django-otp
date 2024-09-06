@@ -13,7 +13,7 @@ from django_otp.models import (
     TimestampMixin,
 )
 from django_otp.util import hex_validator, random_hex
-
+from django.template.exceptions import TemplateDoesNotExist
 from .conf import settings
 
 
@@ -93,7 +93,7 @@ class EmailDevice(TimestampMixin, CooldownMixin, ThrottlingMixin, SideChannelDev
         if plain_tmpl:
             try:
                 body = get_template(plain_tmpl).render(context)
-            except:
+            except TemplateDoesNotExist:
                 body = Template(plain_tmpl).render(Context(context))
         else:
             if settings.OTP_EMAIL_BODY_TEMPLATE:
@@ -105,7 +105,7 @@ class EmailDevice(TimestampMixin, CooldownMixin, ThrottlingMixin, SideChannelDev
                 body_html = get_template(html_tmpl).render(
                     context
                 )
-            except:
+            except TemplateDoesNotExist:
                 body_html = Template(html_tmpl).render(
                     Context(context)
                 )
