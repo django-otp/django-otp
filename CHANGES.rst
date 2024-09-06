@@ -1,4 +1,4 @@
-Unreleased - Ignore proxy models when enumerating device classes
+v1.5.4 - September 06, 2024 - Ignore proxy models when enumerating device classes
 --------------------------------------------------------------------------------
 
 - `#161`_: Discard proxied models when iterating device models
