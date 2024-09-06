@@ -1,7 +1,7 @@
 from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.core.mail import send_mail
 from django.db import models
-from django.template import Context, Template
+from django.template import Context, Template, TemplateDoesNotExist
 from django.template.loader import get_template
 from django.utils.translation import gettext
 
@@ -13,7 +13,7 @@ from django_otp.models import (
     TimestampMixin,
 )
 from django_otp.util import hex_validator, random_hex
-from django.template.exceptions import TemplateDoesNotExist
+
 from .conf import settings
 
 
