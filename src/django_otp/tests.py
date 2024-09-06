@@ -32,10 +32,7 @@ from django_otp import (
 from django_otp.forms import OTPTokenForm, otp_verification_failed
 from django_otp.middleware import OTPMiddleware
 from django_otp.models import GenerateNotAllowed, VerifyNotAllowed
-from django_otp.plugins.otp_email.models import EmailDevice
-from django_otp.plugins.otp_hotp.models import HOTPDevice
 from django_otp.plugins.otp_static.models import StaticDevice, StaticToken
-from django_otp.plugins.otp_totp.models import TOTPDevice
 
 
 def load_tests(loader, tests, pattern):
@@ -397,7 +394,8 @@ class APITestCase(TestCase):
 
     def test_device_classes(self):
         classes = list(device_classes())
-        self.assertEqual([EmailDevice, HOTPDevice, StaticDevice, TOTPDevice], classes)
+
+        self.assertFalse(any(model._meta.proxy for model in classes))
 
 
 class OTPVerificationFailedSignalTestCase(TestCase):

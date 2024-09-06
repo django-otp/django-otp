@@ -64,12 +64,12 @@ manage = "python -m django {args}"
 
 lint = [
     "flake8 src",
-    "isort --check --quiet src",
-    "black --check --quiet src",
+    "isort --check src",
+    "black --check src",
 ]
 fix = [
-    "isort --quiet src",
-    "black --quiet src",
+    "isort src",
+    "black src",
 ]
 
 test = "python -s -m django test {args:django_otp}"

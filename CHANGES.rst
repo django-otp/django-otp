@@ -1,3 +1,11 @@
+Unreleased - Ignore proxy models when enumerating device classes
+--------------------------------------------------------------------------------
+
+- `#161`_: Discard proxied models when iterating device models
+
+.. _#161: https://github.com/django-otp/django-otp/pull/161
+
+
 v1.5.3 - September 04, 2024 - Small admin template fix
 --------------------------------------------------------------------------------
 
