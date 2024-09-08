@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django_otp.plugins.otp_hotp',
     'django_otp.plugins.otp_static',
     'django_otp.plugins.otp_totp',
+
+    'test_project.test_app',
 ]
 
 INSTALLED_APPS.extend(cfg.get('plugins', []))

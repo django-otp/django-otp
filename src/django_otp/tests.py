@@ -22,6 +22,7 @@ from django.utils import timezone
 
 from django_otp import (
     DEVICE_ID_SESSION_KEY,
+    device_classes,
     match_token,
     oath,
     user_has_device,
@@ -390,6 +391,11 @@ class APITestCase(TestCase):
 
         verified = match_token(self.alice, 'alice')
         self.assertEqual(verified, self.alice.staticdevice_set.first())
+
+    def test_device_classes(self):
+        classes = list(device_classes())
+
+        self.assertFalse(any(model._meta.proxy for model in classes))
 
 
 class OTPVerificationFailedSignalTestCase(TestCase):
