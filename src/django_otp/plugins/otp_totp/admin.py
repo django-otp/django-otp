@@ -102,6 +102,7 @@ class TOTPDeviceAdmin(admin.ModelAdmin):
     # Columns
     #
 
+    @admin.display(description="QR Code")
     def qrcode_link(self, device):
         try:
             href = reverse('admin:otp_totp_totpdevice_config', kwargs={'pk': device.pk})
@@ -110,8 +111,6 @@ class TOTPDeviceAdmin(admin.ModelAdmin):
             link = ''
 
         return link
-
-    qrcode_link.short_description = "QR Code"
 
     #
     # Custom views
