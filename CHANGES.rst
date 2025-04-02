@@ -1,4 +1,4 @@
-Unreleased - Django 5.2
+v1.6.0 - April 02, 2025 - Django 5.2
 --------------------------------------------------------------------------------
 
 - Update test matrix for Django 5.2.
