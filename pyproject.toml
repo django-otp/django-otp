@@ -11,6 +11,9 @@ authors = [
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Framework :: Django",
+    "Framework :: Django :: 4.2",
+    "Framework :: Django :: 5.0",
+    "Framework :: Django :: 5.1",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: The Unlicense (Unlicense)",
     "Programming Language :: Python :: 3",
@@ -19,7 +22,7 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 dependencies = [
-    "django >= 3.2",
+    "django >= 4.2",
 ]
 
 [project.optional-dependencies]
