@@ -1,3 +1,10 @@
+Unreleased - Django 5.2
+--------------------------------------------------------------------------------
+
+- Update test matrix for Django 5.2.
+- Remove support for Django 3.2.
+
+
 v1.5.4 - September 06, 2024 - Ignore proxy models when enumerating device classes
 --------------------------------------------------------------------------------
 
