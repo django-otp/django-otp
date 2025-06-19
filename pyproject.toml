@@ -1,6 +1,6 @@
 [project]
 name = "django-otp"
-version = "1.5.4"
+version = "1.6.0"
 description = "A pluggable framework for adding two-factor authentication to Django using one-time passwords."
 readme = "README.rst"
 requires-python = ">=3.7"
@@ -11,6 +11,9 @@ authors = [
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Framework :: Django",
+    "Framework :: Django :: 4.2",
+    "Framework :: Django :: 5.1",
+    "Framework :: Django :: 5.2",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: The Unlicense (Unlicense)",
     "Programming Language :: Python :: 3",
@@ -19,7 +22,7 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 dependencies = [
-    "django >= 3.2",
+    "django >= 4.2",
 ]
 
 [project.optional-dependencies]
@@ -45,14 +48,14 @@ features = [
     "qrcode",
 ]
 dependencies = [
-    "black ~= 24.8.0",
+    "black ~= 25.1",
     "bumpversion ~= 0.6.0",
-    "coverage ~= 7.6.1",
-    "flake8 ~= 7.1.1",
+    "coverage ~= 7.8.0",
+    "flake8 ~= 7.2.0",
     "freezegun ~= 1.5.1",
-    "isort ~= 5.13.1",
+    "isort ~= 6.0.1",
     "psycopg2",
-    "tomli >= 1.1.0; python_version < '3.11'",
+    "tomli >= 2.2.1; python_version < '3.11'",
 ]
 
 [tool.hatch.envs.default.env-vars]
@@ -88,8 +91,8 @@ run = "test"
 [tool.hatch.envs.test.overrides]
 matrix.django.dependencies = [
     { value = "django ~= 4.2.0", if = ["4.2"] },
-    { value = "django ~= 5.0.0", if = ["5.0"] },
     { value = "django ~= 5.1.0", if = ["5.1"] },
+    { value = "django ~= 5.2.0", if = ["5.2"] },
 ]
 matrix.mode.scripts = [
     { key = "run", value = "lint", if = ["lint"] },
@@ -102,16 +105,16 @@ mode = ["lint"]
 # WARNING: When you update the Python versions, make sure to update
 # .github/workflows/* as well.
 [[tool.hatch.envs.test.matrix]]
-python = ["3.8"]
+python = ["3.9"]
 django = ["4.2"]
 
 [[tool.hatch.envs.test.matrix]]
-python = ["3.10"]
-django = ["5.0"]
+python = ["3.11"]
+django = ["5.1"]
 
 [[tool.hatch.envs.test.matrix]]
-python = ["3.12"]
-django = ["5.1"]
+python = ["3.13"]
+django = ["5.2"]
 
 [[tool.hatch.envs.test.matrix]]
 mode = ["coverage"]
