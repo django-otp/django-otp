@@ -100,6 +100,7 @@ class EmailTest(EmailDeviceMixin, TestCase):
             self.assertEqual(
                 msg.body, "Test template 1: {}\n".format(self.device.token)
             )
+
     @override_settings(
         OTP_EMAIL_SENDER="webmaster@example.com",
         OTP_EMAIL_SUBJECT="Test Subject with token: {token}",

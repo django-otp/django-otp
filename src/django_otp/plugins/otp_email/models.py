@@ -119,7 +119,7 @@ class EmailDevice(TimestampMixin, CooldownMixin, ThrottlingMixin, SideChannelDev
         subject = kwargs.pop('subject', None)
         if not subject:
             subject = str(settings.OTP_EMAIL_SUBJECT)
-        
+
         send_mail(
             subject,
             body,
