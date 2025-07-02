@@ -113,8 +113,10 @@ class EmailDevice(TimestampMixin, CooldownMixin, ThrottlingMixin, SideChannelDev
         Subclasses (e.g. proxy models) may override this to customize delivery.
 
         """
+        subject = str(settings.OTP_EMAIL_SUBJECT).format(token=self.token)
+
         send_mail(
-            str(settings.OTP_EMAIL_SUBJECT),
+            subject,
             body,
             settings.OTP_EMAIL_SENDER,
             [self.email or self.user.email],
