@@ -116,7 +116,9 @@ class EmailTest(EmailDeviceMixin, TestCase):
         with self.subTest(field='from_email'):
             self.assertEqual(msg.from_email, "webmaster@example.com")
         with self.subTest(field='subject'):
-            self.assertEqual(msg.subject, "Test Subject with token: {}".format(self.device.token))
+            self.assertEqual(
+                msg.subject, "Test Subject with token: {}".format(self.device.token)
+            )
         with self.subTest(field='body'):
             self.assertEqual(msg.body, "Test template: {}".format(self.device.token))
 
