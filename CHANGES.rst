@@ -1,4 +1,4 @@
-Unreleased - Small improvements
+v1.6.1 - July 08, 2025 - Small improvements
 --------------------------------------------------------------------------------
 
 - Allow a {token} placeholder in :setting:`OTP_EMAIL_SUBJECT`.
