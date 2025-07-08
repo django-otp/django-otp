@@ -100,13 +100,21 @@ class EmailDevice(TimestampMixin, CooldownMixin, ThrottlingMixin, SideChannelDev
         else:
             body_html = None
 
-        subject = str(settings.OTP_EMAIL_SUBJECT).format(token=self.token)
-
-        self.send_mail(body, html_message=body_html, subject=subject)
+        self.send_mail(body, html_message=body_html)
 
         message = gettext("sent by email")
 
         return message
+
+    def get_subject(self):
+        """
+        Returns a formatted email subject.
+
+        This renders :setting:`OTP_EMAIL_SUBJECT` with the optional `token`
+        placeholder. Subclasses may customize this.
+
+        """
+        return str(settings.OTP_EMAIL_SUBJECT).format(token=self.token)
 
     def send_mail(self, body, **kwargs):
         """
@@ -115,13 +123,8 @@ class EmailDevice(TimestampMixin, CooldownMixin, ThrottlingMixin, SideChannelDev
         Subclasses (e.g. proxy models) may override this to customize delivery.
 
         """
-
-        subject = kwargs.pop('subject', None)
-        if not subject:
-            subject = str(settings.OTP_EMAIL_SUBJECT)
-
         send_mail(
-            subject,
+            self.get_subject(),
             body,
             settings.OTP_EMAIL_SENDER,
             [self.email or self.user.email],
