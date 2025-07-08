@@ -103,6 +103,27 @@ class EmailTest(EmailDeviceMixin, TestCase):
 
     @override_settings(
         OTP_EMAIL_SENDER="webmaster@example.com",
+        OTP_EMAIL_SUBJECT="Test Subject with token: {token}",
+        OTP_EMAIL_BODY_TEMPLATE="Test template: {{token}}",
+    )
+    def test_settings_with_token_in_subject(self):
+        self.device.generate_challenge()
+
+        self.assertEqual(len(mail.outbox), 1)
+
+        msg = mail.outbox[0]
+
+        with self.subTest(field='from_email'):
+            self.assertEqual(msg.from_email, "webmaster@example.com")
+        with self.subTest(field='subject'):
+            self.assertEqual(
+                msg.subject, "Test Subject with token: {}".format(self.device.token)
+            )
+        with self.subTest(field='body'):
+            self.assertEqual(msg.body, "Test template: {}".format(self.device.token))
+
+    @override_settings(
+        OTP_EMAIL_SENDER="webmaster@example.com",
         OTP_EMAIL_SUBJECT="Test subject",
         OTP_EMAIL_BODY_TEMPLATE="Test template 2: {{token}}",
     )
