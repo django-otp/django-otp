@@ -50,7 +50,7 @@ class EmailDevice(TimestampMixin, CooldownMixin, ThrottlingMixin, SideChannelDev
         max_length=254,
         blank=True,
         null=True,
-        help_text='Optional alternative email address to send tokens to',
+        help_text="Optional alternative email address to send tokens to",
     )
 
     def generate_challenge(self, extra_context=None, plain_tmpl=None, html_tmpl=None):
@@ -72,9 +72,9 @@ class EmailDevice(TimestampMixin, CooldownMixin, ThrottlingMixin, SideChannelDev
         if generate_allowed:
             message = self._deliver_token(extra_context, plain_tmpl, html_tmpl)
         else:
-            if data_dict['reason'] == GenerateNotAllowed.COOLDOWN_DURATION_PENDING:
+            if data_dict["reason"] == GenerateNotAllowed.COOLDOWN_DURATION_PENDING:
                 next_generation_naturaltime = naturaltime(
-                    data_dict['next_generation_at']
+                    data_dict["next_generation_at"]
                 )
                 message = (
                     "Token generation cooldown period has not expired yet. Next"
@@ -89,7 +89,7 @@ class EmailDevice(TimestampMixin, CooldownMixin, ThrottlingMixin, SideChannelDev
         self.cooldown_set(commit=False)
         self.generate_token(valid_secs=settings.OTP_EMAIL_TOKEN_VALIDITY, commit=True)
 
-        context = {'token': self.token, **(extra_context or {})}
+        context = {"token": self.token, **(extra_context or {})}
         if plain_tmpl:
             try:
                 body = get_template(plain_tmpl).render(context)
@@ -97,27 +97,27 @@ class EmailDevice(TimestampMixin, CooldownMixin, ThrottlingMixin, SideChannelDev
                 body = Template(plain_tmpl).render(Context(context))
         else:
             if settings.OTP_EMAIL_BODY_TEMPLATE:
-                body = Template(settings.OTP_EMAIL_BODY_TEMPLATE).render(Context(context))
-            else:
-                body = get_template(settings.OTP_EMAIL_BODY_TEMPLATE_PATH).render(context)
-        if html_tmpl:
-            try:
-                body_html = get_template(html_tmpl).render(
-                    context
-                )
-            except TemplateDoesNotExist:
-                body_html = Template(html_tmpl).render(
+                body = Template(settings.OTP_EMAIL_BODY_TEMPLATE).render(
                     Context(context)
                 )
+            else:
+                body = get_template(settings.OTP_EMAIL_BODY_TEMPLATE_PATH).render(
+                    context
+                )
+        if html_tmpl:
+            try:
+                body_html = get_template(html_tmpl).render(context)
+            except TemplateDoesNotExist:
+                body_html = Template(html_tmpl).render(Context(context))
         else:
             if settings.OTP_EMAIL_BODY_HTML_TEMPLATE:
                 body_html = Template(settings.OTP_EMAIL_BODY_HTML_TEMPLATE).render(
                     Context(context)
                 )
             elif settings.OTP_EMAIL_BODY_HTML_TEMPLATE_PATH:
-                body_html = get_template(settings.OTP_EMAIL_BODY_HTML_TEMPLATE_PATH).render(
-                    context
-                )
+                body_html = get_template(
+                    settings.OTP_EMAIL_BODY_HTML_TEMPLATE_PATH
+                ).render(context)
             else:
                 body_html = None
 
