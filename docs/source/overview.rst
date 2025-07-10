@@ -416,7 +416,8 @@ will automatically use :setting:`DEFAULT_FROM_EMAIL`.
 
 Default: ``'OTP token'``
 
-The subject of the email. You probably want to customize this.
+The subject of the email. You probably want to customize this. A ``{token}``
+placeholder is available for the generated token.
 
 
 .. setting:: OTP_EMAIL_BODY_TEMPLATE

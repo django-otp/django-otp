@@ -1,3 +1,9 @@
+Unreleased - Small improvements
+--------------------------------------------------------------------------------
+
+- Allow a {token} placeholder in :setting:`OTP_EMAIL_SUBJECT`.
+
+
 v1.6.0 - April 02, 2025 - Django 5.2
 --------------------------------------------------------------------------------
 
@@ -6,7 +12,7 @@ v1.6.0 - April 02, 2025 - Django 5.2
 
 
 v1.5.4 - September 06, 2024 - Ignore proxy models when enumerating device classes
---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
 
 - `#161`_: Discard proxied models when iterating device models
 

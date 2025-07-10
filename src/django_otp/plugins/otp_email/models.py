@@ -127,6 +127,16 @@ class EmailDevice(TimestampMixin, CooldownMixin, ThrottlingMixin, SideChannelDev
 
         return message
 
+    def get_subject(self):
+        """
+        Returns a formatted email subject.
+
+        This renders :setting:`OTP_EMAIL_SUBJECT` with the optional `token`
+        placeholder. Subclasses may customize this.
+
+        """
+        return str(settings.OTP_EMAIL_SUBJECT).format(token=self.token)
+
     def send_mail(self, body, **kwargs):
         """
         A simple wrapper for :func:`django.core.mail.send_mail`.
@@ -135,7 +145,7 @@ class EmailDevice(TimestampMixin, CooldownMixin, ThrottlingMixin, SideChannelDev
 
         """
         send_mail(
-            str(settings.OTP_EMAIL_SUBJECT),
+            self.get_subject(),
             body,
             settings.OTP_EMAIL_SENDER,
             [self.email or self.user.email],
