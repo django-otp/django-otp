@@ -68,7 +68,7 @@ manage = "python -m django {args}"
 lint = [
     "flake8 src",
     "isort --check src",
-    "black --check src --diff",
+    "black --check src",
 ]
 fix = [
     "isort src",
