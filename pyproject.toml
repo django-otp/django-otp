@@ -150,12 +150,9 @@ exclude = [
 include = [
     "/src",
     "/docs",
+    "/test",
     "/CHANGES.rst",
     "/CONTRIBUTING.rst",
-]
-exclude = [
-    "/src/**/tests/**",
-    "/src/**/tests.py",
 ]
 
 #
