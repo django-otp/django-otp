@@ -1,3 +1,13 @@
+v1.6.2 - October 21, 2025 - Cleanup
+--------------------------------------------------------------------------------
+
+- `#179`_: Add missing gettext strings
+- `#180`_: Remove tests from wheels
+
+.. _#179: https://github.com/django-otp/django-otp/pull/179
+.. _#180: https://github.com/django-otp/django-otp/pull/180
+
+
 v1.6.1 - July 08, 2025 - Small improvements
 --------------------------------------------------------------------------------
 
