@@ -151,11 +151,9 @@ include = [
     "/src",
     "/docs",
     "/test",
-
     "/CHANGES.rst",
     "/CONTRIBUTING.rst",
 ]
-
 #
 # Other tools
 #
