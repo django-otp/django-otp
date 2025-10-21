@@ -142,8 +142,8 @@ build-backend = "hatchling.build"
 [tool.hatch.build.targets.wheel]
 packages = ["src/django_otp"]
 exclude = [
-  "src/django_otp/**/tests/**",
-  "src/django_otp/**/tests.py",
+   "src/django_otp/**/tests/**",
+   "src/django_otp/**/tests.py",
 ]
 
 [tool.hatch.build.targets.sdist]
@@ -154,8 +154,8 @@ include = [
     "/CONTRIBUTING.rst",
 ]
 exclude = [
-  "/src/**/tests/**",
-  "/src/**/tests.py",
+    "/src/**/tests/**",
+    "/src/**/tests.py",
 ]
 
 #
