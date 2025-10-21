@@ -71,11 +71,14 @@ class EmailDevice(TimestampMixin, CooldownMixin, ThrottlingMixin, SideChannelDev
                     data_dict['next_generation_at']
                 )
                 message = (
-                    "Token generation cooldown period has not expired yet. Next"
-                    f" generation allowed {next_generation_naturaltime}."
+                    gettext(
+                        "Token generation cooldown period has not expired yet. Next"
+                        " generation allowed %s."
+                    )
+                    % next_generation_naturaltime
                 )
             else:
-                message = "Token generation is not allowed at this time"
+                message = gettext("Token generation is not allowed at this time")
 
         return message
 
