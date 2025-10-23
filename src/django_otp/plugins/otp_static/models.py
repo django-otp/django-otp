@@ -68,7 +68,7 @@ class StaticToken(models.Model):
         """
         Returns a new random string that can be used as a static token.
 
-        :rtype: bytes
+        :rtype: str
 
         """
         return b32encode(urandom(5)).decode('utf-8').lower()
