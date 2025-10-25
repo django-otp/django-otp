@@ -1,3 +1,13 @@
+v1.6.3 - October 25, 2025 - Spanish update
+--------------------------------------------------------------------------------
+
+- `#182`_: Correct missing Spanish translations
+- `#181`_: Wrong :rtype: in StaticToken.random_token docstring
+
+.. _#181: https://github.com/django-otp/django-otp/issues/181
+.. _#182: https://github.com/django-otp/django-otp/pull/182
+
+
 v1.6.2 - October 21, 2025 - Cleanup
 --------------------------------------------------------------------------------
 
