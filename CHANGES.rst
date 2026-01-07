@@ -1,3 +1,13 @@
+Unreleased - Async support
+--------------------------------------------------------------------------------
+
+- `#185`_: Make OTPMiddleware async capable
+
+Thanks to Aljosha Papsch.
+
+.. _#185: https://github.com/django-otp/django-otp/pull/185
+
+
 v1.6.3 - October 25, 2025 - Spanish update
 --------------------------------------------------------------------------------
 

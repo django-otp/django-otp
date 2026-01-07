@@ -528,10 +528,10 @@ devices. Third-party plugins are not listed here.
 Asynchronous Support
 --------------------
 
-    - :class:`django_otp.middleware.OTPMiddleware` is async capable, ensuring there is
-      no context switch caused by this middleware in ASGI servers.
-    - Both ``request.user`` and ``request.auser()`` return the user model augmented
-      with additional properties.
+:class:`django_otp.middleware.OTPMiddleware` is async capable, ensuring there
+is no context switch caused by this middleware in ASGI servers. Both
+``request.user`` and ``request.auser()`` return the user model augmented with
+additional properties.
 
 
 Settings
