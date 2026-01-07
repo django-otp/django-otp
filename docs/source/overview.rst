@@ -162,6 +162,9 @@ user (if any). As a convenience, it also adds ``user.is_verified()`` as a
 counterpart to ``user.is_authenticated()``. It is not possible for a user to be
 verified without also being authenticated. [#agents]_
 
+The middleware is async capable. Using ``await request.auser()`` returns the
+user model augmented with the same properties as when using ``request.user``.
+
 
 Plugins and Devices
 -------------------
@@ -520,6 +523,15 @@ devices. Third-party plugins are not listed here.
 
     - `django-otp-yubikey`_ supports YubiKey USB devices.
     - `django-otp-twilio`_ supports delivering tokens via Twilio's SMS service.
+
+
+Asynchronous Support
+--------------------
+
+    - :class:`django_otp.middleware.OTPMiddleware` is async capable, ensuring there is
+      no context switch caused by this middleware in ASGI servers.
+    - Both ``request.user`` and ``request.auser()`` return the user model augmented
+      with additional properties.
 
 
 Settings
