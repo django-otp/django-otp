@@ -1,4 +1,4 @@
-Unreleased - Async support
+v1.7.0 - January 07, 2026 - Async support
 --------------------------------------------------------------------------------
 
 - `#185`_: Make OTPMiddleware async capable
