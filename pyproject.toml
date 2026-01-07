@@ -3,7 +3,7 @@ name = "django-otp"
 version = "1.6.3"
 description = "A pluggable framework for adding two-factor authentication to Django using one-time passwords."
 readme = "README.rst"
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 license = "Unlicense"
 authors = [
     { name = "Peter Sagerson", email = "psagers@ignorare.net" },
