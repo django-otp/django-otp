@@ -7,7 +7,7 @@ from django.db import IntegrityError
 from django.test.utils import override_settings
 
 from django_otp.forms import OTPAuthenticationForm
-from django_otp.tests import (
+from django_otp.test_utils import (
     CooldownTestMixin,
     TestCase,
     ThrottlingTestMixin,

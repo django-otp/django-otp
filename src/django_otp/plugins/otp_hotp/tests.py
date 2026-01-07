@@ -13,7 +13,7 @@ from django.test.utils import override_settings
 from django.urls import reverse
 
 from django_otp.forms import OTPAuthenticationForm
-from django_otp.tests import TestCase, ThrottlingTestMixin, TimestampTestMixin
+from django_otp.test_utils import TestCase, ThrottlingTestMixin, TimestampTestMixin
 
 from .admin import HOTPDeviceAdmin
 from .models import HOTPDevice

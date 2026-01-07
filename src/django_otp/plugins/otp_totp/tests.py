@@ -10,7 +10,7 @@ from django.test import RequestFactory
 from django.test.utils import override_settings
 from django.urls import reverse
 
-from django_otp.tests import TestCase, ThrottlingTestMixin, TimestampTestMixin
+from django_otp.test_utils import TestCase, ThrottlingTestMixin, TimestampTestMixin
 
 from .admin import TOTPDeviceAdmin
 from .models import TOTPDevice
