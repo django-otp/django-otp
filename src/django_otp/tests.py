@@ -12,7 +12,7 @@ from django.contrib.auth.models import AnonymousUser
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.db import IntegrityError, connection
-from django.test import RequestFactory
+from django.test import AsyncRequestFactory, RequestFactory
 from django.test import TestCase as DjangoTestCase
 from django.test import TransactionTestCase as DjangoTransactionTestCase
 from django.test import skipUnlessDBFeature
@@ -519,6 +519,104 @@ class OTPMiddlewareTestCase(TestCase):
 
         # Should not raise an exception.
         pickle.dumps(request.user)
+
+
+class OTPMiddlewareAsyncTestCase(TestCase):
+    def setUp(self):
+        self.factory = AsyncRequestFactory()
+
+        try:
+            self.alice = self.create_user("alice", "password")
+            self.bob = self.create_user("bob", "password")
+        except IntegrityError:
+            self.skipTest("Unable to create a test user.")
+        else:
+            for user in (self.alice, self.bob):
+                device = user.staticdevice_set.create()
+                device.token_set.create(token=user.get_username())
+
+        # Precompute anything that would otherwise hit the (sync) ORM inside async tests.
+        alice_device = self.alice.staticdevice_set.get()
+        bob_device = self.bob.staticdevice_set.get()
+
+        self.alice_device_pid = alice_device.persistent_id
+        self.bob_device_pid = bob_device.persistent_id
+        self.alice_device_legacy_pid = "{}.{}/{}".format(
+            alice_device.__module__, alice_device.__class__.__name__, alice_device.id
+        )
+
+        async def get_response(request):
+            return None
+
+        self.middleware = OTPMiddleware(get_response)
+
+    async def _run_middleware(self, user, session):
+        request = self.factory.get("/")
+        request.session = session
+        request.user = user
+
+        async def auser():
+            return user
+
+        request.auser = auser
+
+        await self.middleware(request)
+        return request
+
+    async def test_verified(self):
+        request = await self._run_middleware(
+            self.alice, {DEVICE_ID_SESSION_KEY: self.alice_device_pid}
+        )
+
+        user = await request.auser()
+        self.assertTrue(user.is_verified())
+
+    async def test_verified_legacy_device_id(self):
+        request = await self._run_middleware(
+            self.alice, {DEVICE_ID_SESSION_KEY: self.alice_device_legacy_pid}
+        )
+
+        user = await request.auser()
+        self.assertTrue(user.is_verified())
+
+    async def test_unverified(self):
+        request = await self._run_middleware(self.alice, {})
+
+        user = await request.auser()
+        self.assertFalse(user.is_verified())
+
+    async def test_no_device(self):
+        request = await self._run_middleware(
+            self.alice, {DEVICE_ID_SESSION_KEY: "otp_static.staticdevice/0"}
+        )
+
+        user = await request.auser()
+        self.assertFalse(user.is_verified())
+
+    async def test_no_model(self):
+        request = await self._run_middleware(
+            self.alice, {DEVICE_ID_SESSION_KEY: "otp_bogus.bogusdevice/0"}
+        )
+
+        user = await request.auser()
+        self.assertFalse(user.is_verified())
+
+    async def test_wrong_user(self):
+        request = await self._run_middleware(
+            self.alice, {DEVICE_ID_SESSION_KEY: self.bob_device_pid}
+        )
+
+        user = await request.auser()
+        self.assertFalse(user.is_verified())
+
+    async def test_pickling(self):
+        request = await self._run_middleware(
+            self.alice, {DEVICE_ID_SESSION_KEY: self.alice_device_pid}
+        )
+
+        user = await request.auser()
+        # Should not raise an exception.
+        pickle.dumps(user)
 
 
 class LoginViewTestCase(TestCase):

@@ -1,3 +1,4 @@
+from contextlib import suppress
 from datetime import timedelta
 import enum
 
@@ -133,22 +134,28 @@ class Device(models.Model):
             this must be called inside a transaction.
 
         """
-        device = None
+        with suppress(ValueError, LookupError):
+            return cls._filter_persistent_id(persistent_id, for_verify).first()
+        return None
 
-        try:
-            model_label, device_id = persistent_id.rsplit('/', 1)
-            app_label, model_name = model_label.split('.')
+    @classmethod
+    async def afrom_persistent_id(cls, persistent_id, for_verify=False):
+        with suppress(ValueError, LookupError):
+            return await cls._filter_persistent_id(persistent_id, for_verify).afirst()
+        return None
 
-            device_cls = apps.get_model(app_label, model_name)
-            if issubclass(device_cls, Device):
-                device_set = device_cls.objects.filter(id=int(device_id))
-                if for_verify:
-                    device_set = device_set.select_for_update()
-                device = device_set.first()
-        except (ValueError, LookupError):
-            pass
+    @classmethod
+    def _filter_persistent_id(cls, persistent_id, for_verify=False):
+        model_label, device_id = persistent_id.rsplit("/", 1)
+        app_label, model_name = model_label.split(".")
 
-        return device
+        device_cls = apps.get_model(app_label, model_name)
+        if issubclass(device_cls, Device):
+            device_set = device_cls.objects.filter(id=int(device_id))
+            if for_verify:
+                device_set = device_set.select_for_update()
+            return device_set
+        return None
 
     def is_interactive(self):
         """
