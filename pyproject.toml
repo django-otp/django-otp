@@ -51,7 +51,7 @@ dependencies = [
     "flake8 ~= 7.2.0",
     "freezegun ~= 1.5.1",
     "isort ~= 6.0.1",
-    "psycopg2",
+    "psycopg",
     "tomli >= 2.2.1; python_version < '3.11'",
 ]
 
@@ -87,9 +87,9 @@ run = "test"
 
 [tool.hatch.envs.test.overrides]
 matrix.django.dependencies = [
-    { value = "django ~= 4.2.0", if = ["4.2"] },
     { value = "django ~= 5.2.0", if = ["5.2"] },
     { value = "django ~= 6.0.0", if = ["6.0"] },
+    { value = "django ~= 6.1.0", if = ["6.1"] },
 ]
 matrix.mode.scripts = [
     { key = "run", value = "lint", if = ["lint"] },
@@ -102,16 +102,16 @@ mode = ["lint"]
 # WARNING: When you update the Python versions, make sure to update
 # .github/workflows/* as well.
 [[tool.hatch.envs.test.matrix]]
-python = ["3.9"]
-django = ["4.2"]
-
-[[tool.hatch.envs.test.matrix]]
-python = ["3.11"]
+python = ["3.10"]
 django = ["5.2"]
 
 [[tool.hatch.envs.test.matrix]]
-python = ["3.13"]
+python = ["3.12"]
 django = ["6.0"]
+
+[[tool.hatch.envs.test.matrix]]
+python = ["3.14"]
+django = ["6.1"]
 
 [[tool.hatch.envs.test.matrix]]
 mode = ["coverage"]
