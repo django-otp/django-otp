@@ -1,15 +1,21 @@
 {% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static "otp_totp/css/qrcode.css" %}" />
+    <script src="{% static "otp_totp/js/qrcode.js" %}"></script>
+{% endblock %}
 
 {% block content %}
-<div style="text-align: center;">
+<div class="qrcode-container">
   <p id="qrcode">
     <img width="200" height="200"
-         style="background-color: white"
+         class="qrcode-image"
          src="{% url "admin:otp_totp_totpdevice_qrcode" pk=device.pk %}"
-         onerror="document.getElementById('qrcode').style.display = 'none'; document.getElementById('no-qrcode').style.display = 'block';"
     >
   </p>
-  <p id="no-qrcode" style="display: none">
+  <p id="no-qrcode" class="qrcode-hidden">
     Install <a href="https://pypi.python.org/pypi/segno/">segno</a> or <a href="https://pypi.python.org/pypi/qrcode/">qrcode</a> or use the URL below:
   </p>
   <p>{{ device.config_url }}</p>

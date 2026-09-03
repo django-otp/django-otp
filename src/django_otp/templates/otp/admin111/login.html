@@ -4,20 +4,8 @@
 {% block extrastyle %}
     {{ block.super }}
     <link rel="stylesheet" type="text/css" href="{% static "admin/css/login.css" %}" />
+    <link rel="stylesheet" type="text/css" href="{% static "django_otp/css/login.css" %}" />
     {{ form.media }}
-
-    <style type="text/css">
-        input#id_otp_token,
-        select#id_otp_device
-        {
-            clear: both;
-            padding: 6px;
-            width: 100%;
-            -webkit-box-sizing: border-box;
-            -moz-box-sizing: border-box;
-                    box-sizing: border-box;
-        }
-    </style>
 {% endblock %}
 
 {% block bodyclass %}{{ block.super }} login{% endblock %}

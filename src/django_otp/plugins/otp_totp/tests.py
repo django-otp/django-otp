@@ -240,6 +240,27 @@ class TOTPAdminTest(TestCase):
                 response = self.client.get(url)
                 self.assertEqual(response.status_code, 200)
 
+    def test_config_page_has_no_inline_style_or_script(self):
+        """
+        The QR code config page shouldn't rely on inline style attributes,
+        <style> blocks, or event handler attributes (e.g. onerror), since
+        those are blocked by a strict Content-Security-Policy.
+
+        https://github.com/django-otp/django-otp/issues/143
+        """
+        self._add_device_perms('view_totpdevice')
+        self.client.login(username='admin', password='password')
+
+        url = reverse('admin:otp_totp_totpdevice_config', kwargs={'pk': self.device.pk})
+        response = self.client.get(url)
+        content = response.content.decode()
+
+        self.assertNotIn('style="', content)
+        self.assertNotIn('<style', content)
+        self.assertNotIn('onerror=', content)
+        self.assertIn('otp_totp/css/qrcode.css', content)
+        self.assertIn('otp_totp/js/qrcode.js', content)
+
     @override_settings(OTP_ADMIN_HIDE_SENSITIVE_DATA=True)
     def test_sensitive_information_hidden_while_adding_device(self):
         fields = self._get_fields(device=None)

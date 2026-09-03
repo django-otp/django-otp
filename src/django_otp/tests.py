@@ -427,6 +427,19 @@ class LoginViewTestCase(TestCase):
         )
         self.assertRedirects(response, '/')
 
+    def test_admin_login_template_has_no_inline_style(self):
+        """
+        The admin login page shouldn't rely on an inline <style> block,
+        since that's blocked by a strict Content-Security-Policy.
+
+        https://github.com/django-otp/django-otp/issues/143
+        """
+        response = self.client.get(reverse('otpadmin:login'))
+        content = response.content.decode()
+
+        self.assertNotIn('<style', content)
+        self.assertIn('django_otp/css/login.css', content)
+
     def test_authenticate(self):
         device = self.alice.staticdevice_set.get()
         token = device.token_set.get()

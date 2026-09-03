@@ -1,0 +1,11 @@
+.qrcode-container {
+    text-align: center;
+}
+
+.qrcode-image {
+    background-color: white;
+}
+
+.qrcode-hidden {
+    display: none;
+}
