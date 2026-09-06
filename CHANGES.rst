@@ -1,3 +1,11 @@
+v1.7.3 - September 06, 2026 - Admin asset fixes
+--------------------------------------------------------------------------------
+
+- `#191`_: Improve admin page compatibility with CSP (Varun Juneja)
+
+.. _#191: https://github.com/django-otp/django-otp/pull/191
+
+
 v1.7.2 - September 03, 2026 - Fix throttling overflow
 --------------------------------------------------------------------------------
 
