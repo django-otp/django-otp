@@ -2,6 +2,7 @@
 
 from os.path import abspath, dirname, join
 
+import django
 from django.urls import reverse_lazy
 
 from . import config
@@ -17,7 +18,8 @@ cfg = config.load()
 DEBUG = True
 
 DATABASES = {
-    'default': cfg.get('database') or {
+    'default': cfg.get('database')
+    or {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': project_path('db.sqlite3'),
     }
@@ -31,13 +33,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
     'django_otp',
     'django_otp.plugins.otp_email',
     'django_otp.plugins.otp_hotp',
     'django_otp.plugins.otp_static',
     'django_otp.plugins.otp_totp',
-
     'test_project.test_app',
 ]
 
@@ -83,7 +83,14 @@ TEMPLATES = [
     },
 ]
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+if django.VERSION >= (6, 1):
+    MAILERS = {
+        'default': {
+            'BACKEND': 'django.core.mail.backends.console.EmailBackend',
+        },
+    }
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 SECRET_KEY = 'test-key'
 
