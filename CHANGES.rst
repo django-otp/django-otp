@@ -1,3 +1,12 @@
+v1.7.4 - October 08, 2026 - Form improvement
+--------------------------------------------------------------------------------
+
+- `#194`_: Fix otp_device select silently defaulting to a device instead of
+  requiring an explicit choice (Varun Juneja)
+
+.. _#194: https://github.com/django-otp/django-otp/pull/194
+
+
 v1.7.3 - September 06, 2026 - Admin asset fixes
 --------------------------------------------------------------------------------
 
