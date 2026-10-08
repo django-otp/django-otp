@@ -161,10 +161,43 @@ class OTPAuthenticationFormDeviceRequiredTestCase(TestCase):
         self.assertEqual(
             set(form.fields['otp_device'].widget.choices),
             {
+                ('', '---------'),
                 (self.static_device.persistent_id, self.static_device.name),
                 (self.totp_device.persistent_id, self.totp_device.name),
             },
         )
+
+    def test_unselected_device_choice_is_rejected(self):
+        """
+        https://github.com/django-otp/django-otp/issues/193
+
+        A rendered otp_device <select> always submits some value, even if the
+        user never touches it - defaulting to its first option. Confirm that
+        option is the blank choice (not a real device), and that submitting
+        it - exactly as an untouched <select> would - is rejected the same
+        way an omitted field is, instead of silently verifying against
+        whichever device happened to be first.
+        """
+        token = str(oath.totp(self.totp_device.bin_key)).zfill(6)
+        first_render = OTPAuthenticationForm(
+            None, {'username': 'alice', 'password': 'password', 'otp_token': ''}
+        )
+        first_render.is_valid()
+        default_choice = first_render.fields['otp_device'].widget.choices[0][0]
+        self.assertEqual(default_choice, '')
+
+        form = OTPAuthenticationForm(
+            None,
+            {
+                'username': 'alice',
+                'password': 'password',
+                'otp_device': default_choice,
+                'otp_token': token,
+            },
+        )
+
+        self.assertFalse(form.is_valid())
+        self.assertEqual(form.errors['__all__'].as_data()[0].code, 'device_required')
 
     def test_omitted_device_does_not_throttle_unrelated_devices(self):
         token = str(oath.totp(self.totp_device.bin_key)).zfill(6)

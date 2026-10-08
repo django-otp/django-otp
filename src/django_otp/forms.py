@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.db import transaction
+from django.db.models.fields import BLANK_CHOICE_DASH
 from django.dispatch import Signal
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import ngettext_lazy
@@ -208,7 +209,10 @@ class OTPAuthenticationFormMixin:
 
     @staticmethod
     def device_choices(user):
-        return list((d.persistent_id, d.name) for d in devices_for_user(user))
+        # Without a blank entry, a <select> always submits a real device by default.
+        return BLANK_CHOICE_DASH + list(
+            (d.persistent_id, d.name) for d in devices_for_user(user)
+        )
 
 
 class OTPAuthenticationForm(OTPAuthenticationFormMixin, AuthenticationForm):
