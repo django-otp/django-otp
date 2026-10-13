@@ -198,7 +198,8 @@ Internally, device instances can be flagged as confirmed or unconfirmed. By
 default, devices are confirmed as soon as they are created, but a plugin or
 deployment that wishes to include a confirmation step can mark a device
 unconfirmed initially. Unconfirmed devices will be ignored by the high-level OTP
-APIs.
+APIs. A device that becomes unconfirmed will end its existing OTP verification
+on the next request.
 
 
 .. _YubiKey: http://www.yubico.com/yubikey

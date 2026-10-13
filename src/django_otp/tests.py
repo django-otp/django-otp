@@ -251,6 +251,27 @@ class OTPMiddlewareTestCase(TestCase):
 
         self.assertTrue(request.user.is_verified())
 
+    def test_unconfirmed_device_revokes_session(self):
+        device = self.alice.staticdevice_set.get()
+        session = {DEVICE_ID_SESSION_KEY: device.persistent_id}
+        request = self.factory.get('/')
+        request.user = self.alice
+        request.session = session
+
+        self.middleware(request)
+        self.assertTrue(request.user.is_verified())
+
+        device.confirmed = False
+        device.save(update_fields=['confirmed'])
+        request = self.factory.get('/')
+        request.user = self.alice
+        request.session = session
+
+        self.middleware(request)
+
+        self.assertFalse(request.user.is_verified())
+        self.assertNotIn(DEVICE_ID_SESSION_KEY, session)
+
     def test_verified_legacy_device_id(self):
         request = self.factory.get('/')
         request.user = self.alice
@@ -367,6 +388,19 @@ class OTPMiddlewareAsyncTestCase(TestCase):
 
         user = await request.auser()
         self.assertTrue(user.is_verified())
+
+    async def test_unconfirmed_device_revokes_session(self):
+        session = {DEVICE_ID_SESSION_KEY: self.alice_device_pid}
+        request = await self._run_middleware(self.alice, session)
+        user = await request.auser()
+        self.assertTrue(user.is_verified())
+
+        await self.alice.staticdevice_set.aupdate(confirmed=False)
+        request = await self._run_middleware(self.alice, session)
+        user = await request.auser()
+
+        self.assertFalse(user.is_verified())
+        self.assertNotIn(DEVICE_ID_SESSION_KEY, session)
 
     async def test_verified_legacy_device_id(self):
         request = await self._run_middleware(

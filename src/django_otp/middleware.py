@@ -79,9 +79,12 @@ class OTPMiddleware:
     @staticmethod
     def _finalize_device(request, user, device):
         """
-        Enforce device-user binding and keep session state consistent.
+        Enforce device-user binding and confirmation, and keep session state
+        consistent.
         """
-        if (device is not None) and (device.user_id != user.pk):
+        if (device is not None) and (
+            (device.user_id != user.pk) or (not device.confirmed)
+        ):
             device = None
 
         if (device is None) and (DEVICE_ID_SESSION_KEY in request.session):
