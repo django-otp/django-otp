@@ -1,3 +1,11 @@
+v1.7.5 - October 16, 2026 - Revoke sessions for unconfirmed devices
+--------------------------------------------------------------------------------
+
+- `#195`_: revoke session when device unconfirmed (Chris Griffin)
+
+.. _#195: https://github.com/django-otp/django-otp/pull/195
+
+
 v1.7.4 - October 08, 2026 - Form improvement
 --------------------------------------------------------------------------------
 
